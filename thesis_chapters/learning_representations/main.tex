@@ -1,0 +1,271 @@
+\chapter{Disentangled Representation Learning}
+\label{ch:learning-reps}
+
+%Throughout this thesis, we will show the temperature distribution on patient faces. We will always project the temperature distribution onto standardized face geometries to ensure the privacy of the patients.
+
+\section{Disentangling Spurious Variations}
+Through face detection and subsequent UV-mapping, we standardize patient faces to ensure comparability for machine learning models. This preprocessing step is crucial for reducing the degrees of freedom in the data. In raw thermal video feeds, where numerous extraneous elements may appear in the frame, it becomes challenging to ensure that the machine learning model focuses exclusively on the face rather than irrelevant background features, such as objects in the patient’s environment. This challenge is particularly pronounced in datasets with limited sample sizes, where spurious variations pose a significant threat.
+
+Spurious variations (SVs) refer to variations in the data that correlate with certain outcomes or labels but do not reflect the underlying processes of interest. For instance, the presence of an infusion line or a caregiver standing in close proximity to the patient may inadvertently correlate with clinical deterioration in a retrospective cohort. A machine learning model could exploit these correlations to predict deterioration, but such predictions would lack clinical utility, as they rely on confounding factors rather than the true physiological signal.
+
+Our preprocessing pipeline mitigates this risk by systematically reducing the degrees of freedom in the data, thereby minimizing the influence of spurious variations. However, despite these efforts, residual spurious variations (SVs) persist in the thermal data. These residual SVs must be disentangled from the physiologically relevant thermal patterns to ensure robust and interpretable predictions. The subsequent sections of this chapter explore advanced methods for addressing this challenge, focusing on disentanglement techniques that leverage both spatial and temporal information in the data.
+
+In the thermal UV-maps, SVs mostly manifest as abrupt temperature discontinuities or gradients that are fundamentally distinct from the underlying physiological thermal patterns of tissue. For instance, medical adhesive tape or oxygen tubing may introduce sharp temperature drops or spikes that do not accurately reflect the true skin temperature. We can categorize these SVs into two principal classes:
+
+\begin{itemize}
+  \item \textbf{Dynamic SVs}: Transient obstructions arising from medical equipment, patient movements, or environmental factors.
+  \item \textbf{Static SVs}: Persistent intrinsic features such as facial hair, eyebrow thickness, or anatomical variations.
+\end{itemize}
+
+To extract clinically relevant signals that remain robust to such spurious variations, we require a method that can, in an unsupervised manner, disentangle these SVs from the underlying ground truth thermal patterns.
+Additionally, visualization of the disentangled thermal distribution is essential to verify that SVs are indeed effectively separated and to ensure interpretability of the results.
+
+Variational Auto-Encoders (VAEs) \citep{kingma2013auto} are a predominant approach for disentangling generative factors in image data.
+A well-known characteristic of standard VAEs is that their reconstructions often appear blurred compared to the original input images \citep{kingma2019introduction}.
+Standard VAEs typically assume a Gaussian decoder with fixed variance.
+Under maximum likelihood training, this leads to overly smooth reconstructions.
+In our application, this behavior is not problematic because the thermal dynamics we aim to model are governed by diffusion processes, which naturally lack sharp edges or discontinuities.
+Thus, the inherent tendency of VAEs toward smoothness aligns well with the  characteristics of the temperature uv-maps we aim to model.
+
+\section{Variational Auto Encoders}
+
+Variational Autoencoders (VAEs) are trained by maximizing the Evidence Lower Bound (ELBO) \citep{kingma2019introduction}.
+For an observed data point $\x \in \mathbb{R}^D$, the evidence $\ln p(\x)$ is generally intractable. To address this challenge, one can introduce an approximate posterior distribution $q_{\phi}(\zz|\x)$ over latent variable $\zz \in \mathbb{R}^L$ (typically $D >> L$). Given the fact that $\ln p(\x)$ is constant with respect to the variational distribution $q_{\phi}(\cdot \mid \x)$, we can write:
+
+\begin{equation}
+  \begin{split}
+    \ln{p(\x)}
+    & =
+    \E_{\zz \sim q_{\phi}(\cdot \mid \x)}
+    \left[
+      \ln p(\x)
+      \right] \\
+  \end{split}
+\end{equation}
+
+we apply Bayes' theorem to expand the evidence explicitly in terms of $\zz$:
+
+\begin{equation}
+  \begin{split}
+    \ln{p(\x)}
+    = &
+    \E_{\zz \sim q_{\phi}(\cdot \mid \x)}
+    \left[
+      \ln \frac{p(\x, \zz)}{p(\zz \mid \x)}
+      \right] \\
+    = &
+    \E_{\zz \sim q_{\phi}(\cdot \mid \x)}
+    \left[
+      \ln
+      \frac
+      {p_{\theta}(\x \mid \zz) p(\zz)}
+      {p(\zz \mid \x)}
+      \right] \\
+    =&
+    \E_{\zz \sim q_{\phi}(\cdot \mid \x)}
+    \left[
+      \ln
+      \frac
+      {p_{\theta}(\x \mid \zz) p(\zz)}
+      {p(\zz \mid \x)}
+      \frac
+      {q_{\phi}(\zz \mid \x)}
+      {q_{\phi}(\zz \mid \x)}
+      \right] \\
+    =&
+    \E_{\zz \sim q_{\phi}(\cdot \mid \x)}
+    \left[
+      \ln
+      \frac
+      {p_{\theta}(\x \mid \zz) p(\zz)}
+      {p(\zz \mid \x)}
+      \frac
+      {q_{\phi}(\zz \mid \x)}
+      {q_{\phi}(\zz \mid \x)}
+      \right] \\
+    =&
+    \E_{\zz \sim q_{\phi}(\cdot \mid \x)}
+    \left[
+      \ln
+      {p_{\theta}(\x \mid \zz) }
+      \right]
+    + \DKL(q_{\phi}(\zz \mid \x)\mid \mid  p(\zz \mid \x))
+    \\
+    & - \DKL(q_{\phi}(\zz \mid \x)\mid \mid  p(\zz))
+  \end{split}
+\end{equation}
+
+While we lack direct access to the true posterior $p(\zz \mid \x)$, we know that $\DKL(q_{\phi}(\zz \mid \x)\mid \mid  p(\zz \mid \x))$ is always positive, thus we can form the evidence lower bound (ELBO) as:
+
+\begin{equation}
+  \begin{split}
+    \ln{p(\x)}
+    \geq
+    \underbrace{
+      \E_{\zz \sim q_{\phi}(\cdot \mid \x)}
+      \left[
+        \ln
+        {p_{\theta}(\x \mid \zz) }
+        \right]}_{(I)}
+    - \underbrace{
+      \DKL(q_{\phi}(\zz \mid \x)\mid \mid  p(\zz))
+    }_{(II)}
+  \end{split}
+\end{equation}
+
+In the VAE framework, the negative ELBO serves as the loss function $\mathcal{L}_{\text{VAE}}$. Specifically, the negation of term (I)—the expected log-likelihood—constitutes the \textit{reconstruction loss} $\mathcal{L}_{rec}$, which encourages the model to accurately reconstruct the input data. Similarly, the negation of term (II) forms the \textit{regularization loss} $\mathcal{L}_{\text{KL}}$, which constrains the approximate posterior distribution $q_{\phi}(\zz|\x)$ to remain close to the prior distribution $p(\zz)$. Thus, the overall loss function of a VAE can be succinctly expressed as:
+\[
+  \mathcal{L}_{\text{VAE}} = \mathcal{L}_{rec} + \mathcal{L}_{\text{KL}}.
+\]
+
+But how are these distributions defined and parameterized in practice? Typically, the prior distribution $p(\zz)$ is chosen to be uninformative, most commonly a standard normal distribution $\mathcal{N}(\mathbf{0},\mathbf{I})$. During VAE training, the parameters $\Pi$ of the approximate posterior $q_{\phi}(\zz \mid \x)$ are learned by an encoder network $f_{\phi}$ with trainable weights $\phi$. Similarly, the parameters $\Omega$ of the conditional likelihood $p_{\theta}(\x \mid \zz)$ are learned by a decoder network $d_{\theta}$ with weights $\theta$.
+
+Depending on the specific VAE implementation, the parameters $\Omega$ may represent only the mean of $p_{\theta}(\x \mid \zz)$—with other distributional parameters held constant—or they may be modeled more flexibly using additional neural network components.
+
+The parameters $\Pi$ typically include a mean vector $\mu \in \mathbb{R}^L$ and either a variance vector $\sigma^2 \in \mathbb{R}^L$ or a concentration parameter $\tau \in \mathbb{R}$. For instance, in the original VAE formulation by \cite{kingma2013auto}, the posterior is modeled as an uncorrelated Gaussian distribution with parameters $\Pi = \{\mu,\sigma\}$. Alternatively, in the Hyperspherical VAE introduced by \cite{Davidson2018-dq}, the posterior is modeled as a von Mises-Fisher (vMF) distribution with parameters $\Pi = \{\mu,\tau\}$.
+
+During training, a Variational Autoencoder (VAE) samples latent representations from its approximate posterior, enforcing a smooth and continuous latent space \cite{Valleti2024InvariantVAE}. This property is highly beneficial for generative modeling, as the structured latent space enables meaningful interpolation and consistent generation of new samples \cite{Vahdat2021LSGM}. Consequently, VAEs have become foundational components in numerous generative applications, from high-fidelity image synthesis \cite{Vahdat2020NVAE,Rombach2022LDM} to language generation \cite{Li2020Optimus}, thanks to their ability to learn latent spaces that capture semantic variations while ensuring smooth transitions between data points.
+
+\subsection{VAEs and Disentanglement}
+
+Disentanglement in VAEs has been the subject of extensive research in representation learning. For a comprehensive overview of various disentanglement definitions and the models designed to achieve them, we refer the reader to Chapter~\ref{ch:measuring-rep-utility}. Of particular relevance to our work is the impossibility result established by \citet{locatello2019challenging}, who demonstrated through orthogonal transformations and probability integral transforms that unsupervised disentanglement learning is fundamentally impossible without incorporating inductive biases on both models and datasets.
+
+In the following sections, we demonstrate how effective disentanglement can be achieved through a novel VAE architecture that explicitly incorporates domain-specific inductive biases tailored to our thermal imaging data. This approach allows us to overcome the limitations highlighted in prior work and successfully separate physiologically relevant thermal patterns from spurious variations.
+
+\subsection{Two-headed VAE for Disentanglement}
+
+To address the challenge of disentangling physiological thermal patterns from spurious variations (SVs), we introduce a structured latent-space Variational Autoencoder. This architecture extends the standard VAE framework discussed in the previous section by explicitly partitioning the latent space into complementary subspaces.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.7\textwidth]{\dir/figures/VAE_publ.png}
+  \caption{
+    \textbf{Structured latent-space VAE for disentangling thermal facial signals from spurious variations (SVs).}
+    The encoder $f_{\phi}$ maps the input thermal UV-map $\x \in \mathbb{R}^{w \times h}$ to the parameters of two posterior distributions: $[\mu_{\x}, \sigma_{\x}, \mu_{\zv}, \sigma_{\zv}]$, corresponding to latent subspaces $S_{\x}$ (representing the physiological thermal signal) and $S_{\zv}$ (capturing spurious variations). Latent variables sampled from these distributions are processed through two specialized decoder branches: $d_{\theta}^{\x}(\zz_{\x}) \rightarrow \hat{\x}$ reconstructs the artifact-free thermal map, while $d_{\gamma}^{\zv}(\zz_{\zv}) \rightarrow \zv$ estimates pixel-wise variance.
+    This heteroscedastic modeling framework is grounded in probabilistic principles, where the pixel-wise Gaussian likelihood $p(x_d \mid \zz_{\x}, \zz_{\zv}) = \mathcal{N}(\hat{x}_d, v_d)$ allows the model to express uncertainty in regions affected by SVs. By assigning higher variance to pixels with abrupt, non-physiological temperature deviations, the model effectively down-weights their contribution to the reconstruction loss. This probabilistic treatment ensures that the mean prediction $\hat{x}$ aligns more closely with the true underlying thermal distribution, even in the presence of occlusions or artifacts. Such a design not only enhances the interpretability of the learned representations but also ensures robustness in clinical applications where data quality may vary significantly.}
+  \label{fig:VAE}
+\end{figure}
+
+\textbf{Model Architecture.} Our model implements a specialized encoder $f_{\phi}$ and a bifurcated decoder structure. The encoder maps observations $\x \in \mathbb{R}^{w \times h}$ (an image of $D = w \times h$ pixels) to parameters $\Pi = \{\Pi_{\x}, \Pi_{\zv}\}$ of two independent posterior distributions, corresponding to distinct latent subspaces:
+\begin{itemize}
+  \item $S_{\x}$: captures intrinsic, SV-free facial thermal distributions—the physiological signal of interest.
+  \item $S_{\zv}$: encodes variations attributable to SVs, such as occlusions, facial hair, or transient artifacts.
+\end{itemize}
+
+Formally, the encoder outputs the following distributional parameters:
+\begin{align}
+  \Pi_{\x}  & = \{\mu_{\x}, \sigma_{\x}\}   \\
+  \Pi_{\zv} & = \{\mu_{\zv}, \sigma_{\zv}\}
+\end{align}
+where $\mu_{\x},\sigma_{\x} \in \mathbb{R}^{L_{\x}}$ and $\mu_{\zv},\sigma_{\zv} \in \mathbb{R}^{L_{\zv}}$, with $L_{\x}$ and $L_{\zv}$ denoting the dimensionalities of the respective latent subspaces $S_{\x}$ and $S_{\zv}$.
+
+Consistent with standard VAE methodology, latent variables are sampled using the reparameterization trick:
+\begin{align}
+  \zz_{\x}  & \sim \mathcal{N}(\mu_{\x}, \sigma_{\x}^2),   \\
+  \zz_{\zv} & \sim \mathcal{N}(\mu_{\zv}, \sigma_{\zv}^2).
+\end{align}
+
+\textbf{Bifurcated Decoder.} The conventional VAE decoder $d_{\theta}$ is replaced with two specialized decoder branches mapping to different parameters of the conditional likelihood $p_{\theta}(\x \mid \zz_{\x}, \zz_{\zv})$:
+\begin{align}
+  d_{\theta}^{\x}(\zz_{\x})   & \rightarrow \hat{\x} \quad \text{(mean decoder)}, \\
+  d_{\gamma}^{\zv}(\zz_{\zv}) & \rightarrow \zv \quad \text{(variance decoder)},
+\end{align}
+where $\hat{\x} \in \mathbb{R}^{w \times h}$ represents the reconstructed mean UV-map and $\zv \in \mathbb{R}^{w \times h}$ is a per-pixel variance map.
+
+\textbf{Heteroscedastic Probabilistic Model.} Our approach models a pixel-wise Gaussian likelihood for each pixel $x_d$ in the UV-map:
+\begin{equation}
+  p(x_d \mid \zz_{\x}, \zz_{\zv}) = \mathcal{N}(\hat{x}_d, v_d), \quad \forall d \in \{1,\dots,D\},
+\end{equation}
+Where $\hat{x}_d, v_d$ are the $d$-th element of $\hat{\x}$ and $\zv$ respectively.
+The log likelihood of pixel $d$ then becomes:
+
+\begin{align}
+  \ln p(x_d \mid \zz_{\x}, \zz_{\zv}) & =
+  -\frac{1}{2} \ln(2 \pi) -\frac{1}{2} \ln{v_d} - \frac{1}{2v_d}(x_d - \hat{x}_d)^2           \\
+                                      & \propto - \ln{v_d} - \frac{1}{v_d}(x_d - \hat{x}_d)^2
+\end{align}
+
+\paragraph{Reconstruction loss}
+This heteroscedastic modeling allows the network to express high uncertainty in regions affected by SVs, adaptively down-weighting their influence during both training and inference while focusing reconstruction efforts on inferring the true underlying thermal signal. Based on this we can formulate the reconstruction loss as:
+
+\begin{equation}
+  \mathcal{L}_{rec} = \sum_{d=1}^{D} m_d \left( \ln{v_d} + \frac{1}{v_d}(x_d - \hat{x}_d)^2 \right).
+\end{equation}
+
+To further disentangle the latent space $S_\x$ from dynamic SVs resulting from head movements or camera repositioning, we incorporate a binary visibility mask $m_d \in \{0,1\}$. Consider a scenario where a patient tilts their face, causing partial occlusion of one side of the nose from the thermal camera's perspective. In such occluded regions of the UV map, valid thermal information becomes unavailable. Instead of forcing the latent representation to encode peripheral artifacts such as occlusion boundaries or head positioning, our masking strategy allows the model to naturally infer the most probable temperature distribution based on physiologically plausible patterns. Moreover, as we will demonstrate in the subsequent section, the model maintains consistency with previous observations where the face might have been properly positioned and the occluded area fully visible.
+\paragraph{Regularization}
+We introduce separate regularization loss terms for each latent subspace:
+\begin{align}
+  \mathcal{L}_{\text{KL}}^{\x}  & =  \DKL(q_{\phi}(\zz_{\x}|\x) \, \| \, p(\zz_{\x})),  \\
+  \mathcal{L}_{\text{KL}}^{\zv} & = \DKL(q_{\phi}(\zz_{\zv}|\x) \, \| \, p(\zz_{\zv})).
+\end{align}
+
+\paragraph{VAE Loss}
+Combining the reconstruction and regularization terms, we formulate the VAE loss as:
+\begin{equation}
+  \mathcal{L}_{VAE} =  \mathcal{L}_{rec} + \beta_{\x}\mathcal{L}_{\text{KL}}^{\x} + \beta_{\zv} \mathcal{L}_{\text{KL}}^{\zv}
+\end{equation}
+
+We deploy differential regularization weight across the latent subspaces:
+\begin{itemize}
+  \item Subspace $S_\x$ receives stronger regularization (larger $\beta_{\x}$), which encourages smooth, structured representations of the physiological thermal patterns.
+  \item Subspace $S_\zv$ is subjected to weaker regularization (smaller $\beta_\zv$), allowing for more flexible encoding of the fine-grained details associated with static and dynamic SVs.
+\end{itemize}
+
+While these architectural considerations effectively leverage spatial features for disentanglement, another crucial dimension remains to be exploited: the temporal domain. Dynamic SVs typically manifest as fluctuations, whereas the underlying physiological thermal distributions in a patient's face evolve more gradually and consistently over time. Leveraging this temporal consistency provides additional constraints that can significantly enhance the disentanglement of SVs from physiological signals.
+Contrastive Learning for Temporal Consistency
+To fully leverage the temporal dynamics present in sequential thermal data, incorporating time-based consistency constraints into our model is essential. Numerous approaches have been proposed to integrate temporal information into variational frameworks \citep{bowman2015generating, li2018disentangled, zhu2020s3vae, NEURIPS2023_19a567ab, sachdeva2019sequential, fortuin2020gp}, ranging from recurrent architectures to specialized prior distributions that encourage temporal smoothness.
+
+However, in the specific domain of video representation learning, contrastive learning approaches have emerged as the most successful strategies in recent years \cite{hu2024comprehensive, qian2021spatiotemporal}.
+Contrastive learning represents a powerful paradigm for representation learning that trains an encoder network $f_{c}$ to map observations from input space into a structured latent space without requiring explicit reconstruction. The fundamental principle involves learning discriminative embeddings by establishing relative relationships between data points rather than focusing on generative capabilities.
+
+In this framework, each observation $\x$ is paired with a "similar" observation $\tx$, drawn from a conditional distribution $p(\tx \mid \x)$. For our temporal application, similarity is defined through temporal proximity—frames from the same patient captured within a short time interval. The contrastive training objective then encourages the latent representations $(\zz, \tzz)$ of temporally adjacent pairs $(\x, \tx)$ to be positioned in proximity within the latent space, while simultaneously maximizing the distance between representations $\{\z_j^-\}_{j=1}^M$ of $M$ dissimilar samples $\{\x_j^-\}_{j=1}^M$from different patients or distant time points.
+Formally, this learning paradigm is implemented through a contrastive loss function, with InfoNCE being particularly prevalent in the literature \citep{wu2018unsupervised, he2020momentum, tian2020contrastive, bachman2019learning, chen2020simple}:
+
+\begin{equation}
+  \mathcal{L}_{\text{contr}} = -\log \frac{\exp(\text{sim}(\zz, \tzz)/\tau)}{\exp(\text{sim}(\zz, \tzz)/\tau) + \sum_{j=1}^{M} \exp(\text{sim}(\zz, \zz^-_j)/\tau)}
+\end{equation}
+
+where $\text{sim}(\cdot,\cdot)$ denotes a similarity measure (typically cosine similarity) and $\tau$ is a temperature parameter. This approach effectively creates a latent space that captures semantically meaningful structures without requiring explicit density modeling or reconstruction capabilities.
+
+The contrastive learning paradigm has demonstrated remarkable effectiveness across diverse domains within machine learning. Particularly noteworthy implementations include SimCLR \citep{chen2020simple} and MoCo \citep{he2020momentum}, which have established new benchmarks for self-supervised image classification. For video representation learning, \citet{qian2021spatiotemporal} introduced CVRL (Contrastive Video Representation Learning), which effectively captures spatiotemporal features in sequential data. In the subsequent section, we examine how insights from CVRL can be incorporated into our variational framework, thereby enhancing the model's capability to disentangle physiologically relevant thermal patterns from spurious variations, leveraging the temporal dimension.
+
+
+\section{Combining VAEs and Contrastive Learning}
+
+We begin by incorporating a contrastive loss term into the existing VAE objective. Specifically, we introduce a time-contrastive loss, \(\mathcal{L}_{\text{contr}}\), designed to enforce temporal consistency in the physiological latent subspace \(S_{\x}\), while allowing variability in the SV latent subspace \(S_{\zv}\). This approach aims to further disentangle dynamic SVs from genuine physiological signals:
+
+\begin{equation}
+  \mathcal{L}_{\text{VAE}} = \mathcal{L}_{rec} + \beta_{\x}\mathcal{L}_{\text{KL}}^{\x} + \beta_{\zv} \mathcal{L}_{\text{KL}}^{\zv} + \kappa\mathcal{L}_{\text{contr}}(\zz_{\x}, \tzz_{\x}, \{\z_{\x,j}^-\}_{j=1}^M),
+\end{equation}
+
+where $\kappa$ controls the contribution of the contrastive term, and \(\tzz_{\x}\) represents the latent encoding of the same patient captured at a preceding time point. Following \citet{qian2021spatiotemporal}, we sample the temporal gap between observations corresponding to \(\tzz_{\x}\) and \(\zz_{\x}\) from an exponentially decaying distribution, which naturally emphasizes temporally proximal frames while still incorporating longer-term dependencies. We sample $\{\z_{\x,j}^-\}_{j=1}^M$ from time series of other patients.
+
+Initial empirical results indicate that naively combining these methods does not yield a robust overall model. Specifically, we observe that both reconstruction and contrastive losses plateau at high values, suggesting suboptimal convergence and insufficient synergy between the two objectives.
+
+These preliminary findings highlight the need for a deeper theoretical understanding of the interplay between contrastive learning and VAEs.
+
+\subsection{State of the Art}
+
+Previous literature has explored the integration of contrastive learning with VAEs, but existing approaches appear unsuitable for our specific application. For instance, \citet{wang2022contrastvae} introduced the ContrastELBO, establishing a connection between contrastive learning and VAEs. However, their formulation assumes a factorized joint approximate posterior \( q(\zz,\tzz \mid \x, \tx) = q(\zz \mid \x)q(\tzz \mid \tx) \), which does not align with our scenario. In our case, the latent representation \(\zz\) corresponding to a patient's facial thermal distribution at a given time point is clearly not independent of the latent representation \(\tzz\) or observation \(\tx\) from a temporally adjacent frame, when conditioned on $\x$. On the contrary, we explicitly rely on temporal dependencies to leverage additional contextual information when inferring $\zz$. For example, if observation \(\x\) depicts a patient's face partially occluded by medical equipment (e.g., a tube), the latent representation \(\zz\) can greatly benefit from information provided by a temporally adjacent observation \(\tx\), which may not exhibit the same occlusion. Thus, the factorization assumption made by \citet{wang2022contrastvae} is incompatible with our objective of capturing temporal consistency and disentangling spurious variations from the underlying physiological signal. This limitation is also highlighted by recent theoretical analyses of contrastive learning, such as those presented by \citet{Zimmermann2021-ax}. Similarly, other works, including \cite{abid2019contrastive}, adopt comparable factorization assumptions, rendering them unsuitable for our purposes.
+The approach by \citet{bai2021contrastively} initially appeared to be relevant; however, their method only disentangles non-varying static concepts, which is too restrictive for our application context. Additionally, attempts by other authors to establish a theoretical connection between contrastive learning and VAEs have not gained acceptance within the research community \citep{anonymous2022infonce}.
+
+One possible reason for this limited integration is the differing objectives of the two methods: VAEs primarily focus on generative modeling and reconstruction, whereas contrastive learning emphasizes discriminative representation learning without explicit generative capabilities. In our application, however, we require both generative capability—ensuring interpretability and enabling the evaluation of the models effectiveness in disentanglement of SVs from physiological signals—and, on the other hand, structured latent representations suitable for downstream temporal analysis.
+
+Thus, a fundamental question arises: can we effectively combine the strengths of contrastive learning and VAEs to leverage temporal consistency while preserving the desirable generative and disentanglement properties of VAEs?
+
+\subsection{Disentanglement and Contrastive Learning: A Conceptual Tension}
+
+To address this question, we must first clarify what constitutes a useful representation. Within the VAE literature, the concept of disentanglement has significantly influenced model architectures and has been widely credited with producing representations of high utility for down stream tasks. Disentanglement typically refers to the alignment of distinct generative factors with individual dimensions of the latent space, aligned with the canonical basis. In our structured latent-space VAE, we explicitly leverage inductive biases to partition the latent space into two orthogonal subspaces: one capturing the underlying physiological thermal distribution and the other encoding spurious variations (SVs). According to most disentanglement metrics, this explicit separation constitutes effective disentanglement, as each subspace exclusively encodes distinct generative factors.
+
+However, when we focus specifically on the latent subspace representing thermal distributions, the concept of disentanglement becomes less clear. Within this subspace, anatomical features such as eyes, mouth, nose, and cheeks are consistently present across all patients. A disentangled representation would map these distinct anatomical concepts onto separate dimensions aligned with the canonical basis of the latent space. Yet, formulating inductive biases to enforce such alignment is considerably less straightforward than the coarse separation of physiological signals from SVs.
+
+In stark contrast, contrastive learning does not inherently encourage alignment of latent dimensions with the canonical basis. The contrastive loss function, such as InfoNCE, is hyperspherically symmetric, meaning that any orthonormal transformation of the latent space leaves the loss unchanged \cite{pmlr-v139-zimmermann21a}. Consequently, contrastively learned representations typically exhibit no explicit alignment with the canonical basis, potentially ranking poorly according to traditional disentanglement metrics, despite demonstrating high utility in downstream tasks.
+
+This conceptual tension raises a critical question: by combining VAEs and contrastive learning, are we inadvertently undermining the disentanglement properties of VAEs through the introduction of a contrastive objective?
+
+\subsection{Towards a Unified Perspective: Orthogonality as a Measure of Representation Utility}
+
+Or is there a deeper underlying principle connecting these seemingly disparate approaches? Could it be that the same fundamental property underlies both the utility of contrastively learned representations and the effectiveness of disentangled representations?
+
+In the following chapter, we propose a novel perspective that bridges these two paradigms. We introduce the concept of \textit{orthogonality} as a new measure of latent space utility. Specifically, we develop metrics to quantify the orthogonality of learned representations and empirically demonstrate that these metrics correlate strongly with downstream task performance. By systematically investigating common datasets and model architectures, we aim to establish a solid theoretical foundation for this unified perspective. Subsequently, we will revisit the more complex clinical scenario, equipped with a deeper understanding of how orthogonality can reconcile the apparent tension between disentanglement and contrastive learning, ultimately enhancing the interpretability and utility of learned representations in our clinical application.

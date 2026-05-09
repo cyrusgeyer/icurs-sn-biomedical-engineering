@@ -1,0 +1,37 @@
+% Siavoosh Payandeh Azad Jan. 2019
+\ProvidesFile{gradient.tex}[Cell background highlighting based on user data]
+\RequirePackage{etoolbox}
+\RequirePackage{pgf} % for calculating the values for gradient
+\RequirePackage{xcolor} % enables the use of cellcolor make sure you have [table] option in the document class
+
+% We enable a smooth color coding from red to yellow to green.
+% 002400 ,
+\definecolor{high}{HTML}{739B7F} % the color for the highest number in your data set (green)
+\definecolor{medium}{HTML}{FFFFFF}  % The color in the medium (yellow)
+\definecolor{low}{HTML}{FFFFFF}  % the color for the lowest number in your data set (red)
+
+\newcommand*{\opacity}{90}% here you can change the opacity of the background color!
+
+\definecolor{EHR_color}{HTML}{99A9CF}
+\definecolor{WAVE_color}{HTML}{BFDAF1}
+\definecolor{TVI_color}{HTML}{ECD9E8}
+
+%======================================
+% Data set related!
+\newcommand*{\maxval}{0.9}% define the maximum value in your data set!
+\newcommand*{\midval}{0.6}% define the minimum value on your data set
+\newcommand*{\minval}{0.0}% define the minimum value on your data set
+%======================================
+% gradient function!
+\newcommand{\gradient}[2]{
+  % The values are calculated linearly between \minval \midval and \maxval
+  \ifdimcomp{#1pt}{<}{\midval pt}{
+    \pgfmathparse{int(round(100*(#1/(\midval-\minval))-(\minval*(100/(\midval-\minval)))))}
+    \xdef\tempa{\pgfmathresult}
+    \cellcolor{medium!\tempa!low!\opacity} #2
+  }{
+    \pgfmathparse{int(round(100*(#1/(\maxval-\midval))-(\midval*(100/(\maxval-\midval)))))}
+    \xdef\tempa{\pgfmathresult}
+    \cellcolor{high!\tempa!medium!\opacity} #2
+  }
+}

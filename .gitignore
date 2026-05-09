@@ -1,0 +1,32 @@
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.glg
+*.glo
+*.gls
+*.idx
+*.ilg
+*.ind
+*.ist
+*.lof
+*.log
+*.lot
+*.maf
+*.mtc
+*.mtc0
+*.nav
+*.out
+*.run.xml
+*.snm
+*.synctex.gz
+*.toc
+good_VAE_examples/*
+
+# Compiled output
+sn-article.pdf
+plot_components*
+sn-article-template-2/*

@@ -1,0 +1,21 @@
+\begin{table*}[t!]
+    \caption{
+        Per-patient risk ranks at 90 min after PACU admission for all combinations of EHR, WAVE, and TVI. Values are mean $\pm$ s.d. across seven random seeds.
+    }
+    \label{tab:results_ranks_90min}
+    \centering
+    \footnotesize
+    \setlength{\tabcolsep}{1pt}
+    \renewcommand{\arraystretch}{1}
+    \begin{tabularx}{\textwidth}{l|>{\centering\arraybackslash}X>{\centering\arraybackslash}X>{\centering\arraybackslash}X|>{\centering\arraybackslash}X>{\centering\arraybackslash}X>{\centering\arraybackslash}X>{\centering\arraybackslash}X}
+             & \multicolumn{3}{c|}{\textbf{Without TVI}} & \multicolumn{4}{c}{\textbf{With TVI}} \\
+             \midrule
+        EHR     & \cellcolor{EHR_color}EHR  & \cellcolor{EHR_color}EHR  &                              &                              & \cellcolor{EHR_color}EHR  &                              & \cellcolor{EHR_color}EHR  \\
+        WAVE    &                              & \cellcolor{WAVE_color}WAVE & \cellcolor{WAVE_color}WAVE &                              &                              & \cellcolor{WAVE_color}WAVE & \cellcolor{WAVE_color}WAVE \\
+        TVI     &                              &                              &                              & \cellcolor{TVI_color}TVI  & \cellcolor{TVI_color}TVI  & \cellcolor{TVI_color}TVI  & \cellcolor{TVI_color}TVI  \\
+        \midrule
+        \rankstablerows
+        \bottomrule
+    \end{tabularx}
+\end{table*}
+

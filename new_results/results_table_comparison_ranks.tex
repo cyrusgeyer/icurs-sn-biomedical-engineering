@@ -1,0 +1,16 @@
+\begin{minipage}[t]{0.48\textwidth}
+  \captionof{table}{
+    Per-patient risk ranks at 90 min after PACU admission comparing our structured VAE against a vanilla VAE for encoding TVI. All three modalities (EHR, WAVE, TVI) are active in both settings. Values are mean $\pm$ s.d. across seven random seeds.
+  }
+  \label{tab:results_comparison_ranks_90min}
+  \centering
+  \footnotesize
+  \setlength{\tabcolsep}{1pt}
+  \renewcommand{\arraystretch}{1}
+  \begin{tabularx}{\linewidth}{l|>{\centering\arraybackslash}X>{\centering\arraybackslash}X}
+    & \textbf{Our} & \textbf{Vanilla VAE} \\
+    \midrule
+    \generatecompranksrows
+    \bottomrule
+  \end{tabularx}
+\end{minipage}

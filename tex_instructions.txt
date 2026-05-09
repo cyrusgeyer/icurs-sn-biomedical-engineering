@@ -1,0 +1,8 @@
+To submit a TeX/LaTeX file, please use any of the standard class files such as article.cls, revtex.cls or amsart.cls.
+All textual material should be provided as a single file in default Computer Modern fonts. 
+Please avoid non-standard fonts and packages and remove all personal macros before submitting. 
+For graphics, we recommend graphicx.sty. 
+Please use numerical references only for citations, and include the references within the manuscript file itself.  
+If you wish to use BibTeX, please copy the reference list from the .bbl file, paste it into the main manuscript .tex file, and delete the associated \bibliography and \bibliographystyle commands. 
+Before submission, please ensure that the complete .tex file compiles successfully on your own system with no errors or warnings. 
+There is no need to spend time visually formatting the manuscript: our style will be imposed automatically when the paper is prepared for publication.

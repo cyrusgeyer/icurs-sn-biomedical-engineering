@@ -1,0 +1,485 @@
+\chapter{Multimodal Data Acquisition}
+\label{ch:multi-modal-data-acquisition}
+
+\section{Structuring the Landscape of Clinical Data Modalities}
+\label{sec:structuring-the-landscape-of-clinical-data-modalities}
+
+In clinical practice, medical professionals integrate multiple complementary information sources during patient assessment. These sources include electronic health records (EHR), physiological waveforms displayed on bedside monitors, visual evaluation of the patient's condition, and tactile information gathered through physical examination. This inherently multimodal approach to patient care forms the foundation of our research framework for machine learning applications in healthcare settings.
+
+When analyzing the expanding literature on pattern recognition in clinical data, we find it methodologically valuable to classify studies along two dimensions that parallel clinical workflow: the clinical setting where data was acquired, and the fundamental nature of the data itself. This classification schema reflects both traditional clinical assessment processes and emerging computational approaches to patient monitoring.
+With respect to the clinical setting, we distinguish between data acquired in Post-Anesthesia Care Units (PACU) and Intensive Care Units (ICU)---collectively, \textbf{PACU/ICU} data---and data acquired in all other settings, denoted \textbf{non-PACU/ICU} data.
+Regarding data characteristics, we establish the following classification:
+\begin{itemize}
+  \item \textbf{Electronic Health Records (EHR):} These data are systematically collected and stored in clinical systems, and can be further categorized into:
+        \begin{itemize}
+          \item \textbf{Low-frequency time series and structured data}: This encompasses signals with fixed sample frequencies $\leq 1$ Hz, typically vital signs such as heart rate, respiratory rate, temperature, and blood oxygenation. 'Structured data' refers to static information like age and sex, as well as consistently formatted entries such as laboratory results that may not follow a fixed frequency.
+          \item \textbf{Text and unstructured data}: This comprises clinical notes, reports, and free-text entries by medical professionals that do not conform to rigid data structures but contain valuable clinical information.
+        \end{itemize}
+
+  \item \textbf{Physiological Waveforms (WAVES)}: These higher-frequency signals (sample frequency $> 1$ Hz) include electrocardiogram (ECG), arterial blood pressure waveforms, and plethysmographic curves from pulse oximetry. While continuously monitored in PACU and ICU settings, these data streams are not routinely preserved in electronic records.
+  \item \textbf{Thermal Visual Imaging (TVI)}: This category encompasses nontraditional monitoring approaches capturing visual-spectrum video and long-wave infrared (thermal) data. Typical frame rates differ by modality: standard video is recorded at about 25--30 Hz (systems may support 50--60 Hz), whereas clinical thermal cameras often operate at 9 Hz due to export restrictions (specialized models can reach 30 Hz or higher). These streams are generally not routinely preserved in electronic records.
+        \begin{itemize}
+          \item \textbf{Visual imaging}: Patient appearance, facial expressions, and physical activity serve as important clinical indicators \citep{larsen2005anasthesie}. Though routinely assessed by clinicians at the bedside, these observations are typically not systematically recorded.
+          \item \textbf{Thermal imaging}: This modality is not routinely collected in clinical practice. Many physiological changes that healthcare professionals observe \citep{larsen2005anasthesie}, such as pallor, flushing, and perspiration, may manifest more distinctly in thermal images than in conventional visual assessment.
+        \end{itemize}
+\end{itemize}
+
+The research landscape in medical data analytics is diverse and rapidly evolving. To provide a structured overview of this complex field, Table \ref{tab:literature} presents a non-exhaustive summary of recent relevant publications, organized along the two key dimensions introduced: data origin (non-PACU/ICU versus PACU/ICU settings) and data type (from routinely stored EHR data, physiological waveforms (WAVE) to novel imaging modalities).
+
+This classification reveals several notable patterns in current research. First, there is a clear concentration of machine learning applications in the domain of low-frequency time series and structured data, particularly in critical care environments. Second, while high-frequency physiological waveforms offer rich information content, their analysis in PACU/ICU settings remains relatively underexplored, likely due to technical challenges in data acquisition and storage. Third, emerging modalities such as thermal and visual imaging represent promising but still nascent areas of investigation, with significant potential for future growth.
+
+Understanding these research patterns helps contextualize our multimodal approach and highlights both the established foundations and innovative aspects of our work. Table \ref{tab:literature} serves as a reference point throughout the subsequent sections, where we examine each data type in greater detail.
+
+
+\begin{sidewaystable}[H]
+  \centering
+  \small
+  \begin{tabular}{lccccc} \toprule
+     & \multicolumn{2}{c}{
+      \begin{tabular}[c]{@{}c@{}}\textbf{EHR} \\ Routinely monitored \\ \& routinely stored\end{tabular}
+    }
+     &
+    \begin{tabular}[c]{@{}c@{}}\textbf{WAVE} \\ Routinely monitored \\ \& not stored\end{tabular}
+     &
+    \multicolumn{2}{c}{
+      \begin{tabular}[c]{@{}c@{}}\textbf{TVI} \\ Not routinely monitored \end{tabular}
+    }
+    \\
+    \toprule
+     & \begin{tabular}[c]{@{}c@{}}Low frequency \\ time series \& \\ structured data\end{tabular}                                                                                       & \begin{tabular}[c]{@{}c@{}}Unstructured \\ data \\ \ and text\end{tabular} & \begin{tabular}[c]{@{}c@{}} WAVES \end{tabular} & \begin{tabular}[c]{@{}c@{}}Visual imaging\end{tabular} & \begin{tabular}[c]{@{}c@{}} Thermo imaging\end{tabular} \\\midrule
+
+    \begin{tabular}[c]{@{}c@{}}Non- \\ PACU/ICU\end{tabular}
+
+     & \citep{giannini2019machine}, \citep{rajkomar2018scalable}, \citep{barton2019evaluation}
+     & \citep{rajkomar2018scalable}, \textcolor{blue}{\citep{Wornow2023-wq}}, \textcolor{blue}{\citep{omiye2024large}}
+     &
+    \begin{tabular}[c]{@{}c@{}}
+      \textcolor{blue}{\citep{hong2020opportunities}},
+      \citep{7202837},
+      \citep{pandey2020patient}, \\
+      \citep{sahoo2020machine},
+      \citep{hannun2019cardiologist}
+    \end{tabular}
+     &
+     & (\citep{hermosilla2018face}, \citep{temperature_auditory_stimulus})
+    \\
+    PACU/ICU
+     &
+    \begin{tabular}[c]{@{}c@{}}
+      \textcolor{red}{\citep{hyland2020DATA}},
+      \textcolor{red}{\citep{johnson2016mimic}},
+      \textcolor{red}{\citep{pollard2018eicu}}, \\
+      \textcolor{blue}{\citep{gutierrez2020artificial}},
+      \citep{davoudi2019intelligent},
+      \citep{hyland2020early},                  \\
+      \citep{meyer2018machine},
+      \citep{nemati2018interpretable},
+      \citep{rajkomar2018scalable},             \\
+      \citep{komorowski2018artificial},
+      \citep{rockenschaub_external_2025}
+      \citep{sarma_key_2025}                    \\
+      (\citep{yoon2019predicting}, \citep{liu2014utility})
+    \end{tabular}
+     & \citep{rajkomar2018scalable}, \textcolor{blue}{\citep{Wornow2023-wq}}, \textcolor{blue}{\citep{omiye2024large}}
+     & (\textcolor{red}{\citep{johnson2016mimic}}), \citep{sarma_key_2025}, \citep{halpern_advances_2024}
+     & \citep{davoudi2019intelligent}
+     & (\citep{predicting_shock_from_thermal_images}, \citep{jorge_non-contact_2021})
+    \\ \bottomrule
+    \hline
+  \end{tabular}
+  \caption{Literature overview organized by clinical setting and data modality. Publications are categorized by origin (non-PACU/ICU vs. PACU/ICU) and data type (EHR, WAVE, and TVI). Citations highlighted in \textcolor{red}{red} indicate foundational datasets, while those in \textcolor{blue}{blue} represent comprehensive literature reviews. For instance, \textcolor{blue}{\citep{hong2020opportunities}} reviews over 100 publications on ECG analysis using machine learning since 2019. Publications spanning multiple categories appear in multiple cells. Parentheses indicate special considerations: \textcolor{red}{(\citep{johnson2016mimic})} appears bracketed under WAVE due to known quality limitations in its physiological waveforms; \citep{hermosilla2018face} and \citep{temperature_auditory_stimulus} are bracketed as they have physiological relevance despite not being strictly medical research; and \citep{predicting_shock_from_thermal_images} is bracketed as it features pediatric ICU data with non-exclusive facial thermal imaging.}
+  \label{tab:literature}
+\end{sidewaystable}
+
+
+\subsection{EHR}
+\vspace{1ex}
+\noindent
+\textbf{Low frequency time series and structured data:}
+
+Due to their routine collection, structured format, and ease of access, low-frequency time series and structured EHR data have become the predominant focus of machine learning research in PACU and ICU settings. A comprehensive overview of recent developments in this domain is provided by \citet{gutierrez2020artificial}, highlighting the breadth of applications ranging from early warning systems to predictive modeling of patient outcomes.\highLight[yellow]
+
+In a notable retrospective study, \citet{meyer2018machine} combined static patient information with structured low-frequency ICU time series data to predict three critical complications: mortality, renal failure, and postoperative bleeding. Their model generated updated predictions every 30 minutes, significantly outperforming established clinical reference tools. However, the balanced dataset used for training and evaluation—comprising equal proportions of patients with and without complications, where the latter are sampled at random—may not accurately reflect real-world distributions, potentially affecting the generalizability of their reported specificity.
+
+Similarly, \citet{hyland2020early} leveraged structured ICU data to predict circulatory failure, defined by arterial lactate levels and mean arterial pressure. Their model provided predictions every 5 minutes, forecasting circulatory failure within an 8-hour window. Despite promising results, the evaluation methodology—where a single clinical event could trigger multiple true-positive alarms—complicates the interpretation of real-world applicability. This highlights the importance of carefully designed evaluation protocols to ensure clinical relevance.
+
+Recent advancements have further expanded the scope of predictive modeling using structured EHR data. For instance, \citet{yang2023predicting} systematically reviewed machine learning models predicting sepsis onset in ICU patients, emphasizing the need for standardized evaluation metrics and transparent reporting to facilitate clinical adoption. Additionally, \citet{huang2021application} reviewed machine learning applications for predicting hospital readmissions, underscoring the potential of structured EHR data to improve patient management and resource allocation.
+
+In another study, \citet{wang2020utilizing} developed a deep learning model using structured EHR data to predict acute kidney injury (AKI) up to 48 hours in advance. Their model demonstrated robust performance across multiple hospital settings, highlighting the potential for generalizable predictive tools in clinical practice. Other related studies have since shown promising results \citep{gottlieb2022machine}.
+
+However, translating retrospective results into tangible clinical benefits remains challenging. For example, while \citet{giannini2019machine}, \citet{nemati2018interpretable}, and \citet{barton2019evaluation} reported encouraging retrospective performance for sepsis prediction algorithms, a subsequent prospective evaluation by \citet{ginestra2019clinician} revealed no significant impact on clinical outcomes or practice patterns when implemented in real-world ICU settings.
+
+In summary, structured EHR data and low-frequency time series continue to be central to machine learning research in critical care, with numerous promising approaches emerging in recent years. Nevertheless, bridging the gap between theoretical performance and practical clinical utility remains an ongoing challenge, necessitating rigorous prospective validation, standardized evaluation frameworks, and careful consideration of clinical workflows.
+
+\vspace{1ex}
+\vspace{1ex}
+\noindent
+\textbf{Text and unstructured data:}
+
+Machine learning on unstructured clinical data has experienced rapid growth in recent years, driven primarily by advances in natural language processing (NLP) and deep learning techniques. Early influential work by \citet{rajkomar2018scalable} demonstrated the potential of deep neural networks to leverage both structured and unstructured EHR data, including clinical notes, to predict patient outcomes such as mortality, hospital readmission, length of stay, and diagnosis. Their approach highlighted the utility of free-text clinical documentation for predictive modeling, achieving robust performance across multiple hospitals using standardized data formats such as Fast Healthcare Interoperability Resources (FHIR).
+
+More recently, the emergence of transformer-based large language models (LLMs), such as BERT \citep{devlin2019bert}, GPT-2 \citep{radford2019language}, GPT-3 \citep{brown2020language}, and domain-specific adaptations like ClinicalBERT \citep{alsentzer2019publicly}, BioBERT \citep{lee2020biobert}, and Med-BERT \citep{rasmy2021med}, has significantly advanced the state-of-the-art in clinical text analysis. These models have demonstrated remarkable capabilities in extracting clinically relevant information, summarizing patient histories, and predicting clinical outcomes from unstructured medical notes.
+
+For instance, ClinicalBERT \citep{alsentzer2019publicly} was fine-tuned specifically on clinical notes from the MIMIC-III database \citep{johnson2016mimic}, achieving superior performance on clinical NLP tasks such as named entity recognition, clinical concept extraction, and hospital readmission prediction. Similarly, BioBERT \citep{lee2020biobert}, pre-trained on biomedical literature, has shown strong performance in biomedical text mining tasks, including relation extraction and question answering.
+
+Despite promising developments, challenges remain in deploying LLMs in clinical practice, including interpretability, data privacy concerns, and the need for rigorous validation in prospective clinical settings. Nevertheless, the rapid progress in NLP and LLM research continues to unlock the potential of unstructured clinical data, offering substantial opportunities for improving patient care and clinical decision-making.
+
+
+\subsection{Physiological waveforms (WAVE)}
+Physiological waveforms monitored (but typically not recorded) in PACU and ICU settings commonly include:
+\begin{itemize}
+  \item Electrocardiogram (ECG) waveform
+  \item Arterial blood pressure (ABP) waveform from an arterial catheter
+  \item Plethysmographic (PLETH) waveform measured by pulse oximetry
+\end{itemize}
+
+\vspace{1ex}
+\noindent
+
+\textbf{Electrocardiogram:} Machine learning and deep learning approaches for ECG signal analysis have seen rapid growth and extensive research interest in recent years. A comprehensive review by \citet{hong2020opportunities}, covering 191 papers (108 published after 2019), categorizes research by task and methodology. The majority of recent studies focus on disease detection and classification using convolutional neural networks (CNNs). A notable advancement was achieved by \citet{hannun2019cardiologist}, whose CNN-based model for 11-class ECG classification (including arrhythmias such as tachycardia and atrial fibrillation) significantly outperformed individual cardiologists. Their research code and trained models have been made publicly available, facilitating further research and clinical translation.
+
+Recent developments have further advanced ECG analysis. For instance, \citet{Dubatovka2024} and \citet{ribeiro2020automatic} developed models capable of accurately identifying multiple cardiac abnormalities from ECG signals, demonstrating robust generalization across diverse patient populations. Similarly, \citet{attia2019screening} successfully applied deep learning to detect asymptomatic left ventricular dysfunction from standard ECG recordings, highlighting the potential of ECG-based screening for early detection of cardiac conditions. Additionally, transformer-based architectures have recently been explored for ECG analysis \citep{ansari2023deep, xiao2023deep}, achieving state-of-the-art performance in arrhythmia classification tasks \citep{hu2022transformer, el2024ecgtransform}.
+
+\vspace{1ex}
+\noindent
+\textbf{Arterial blood pressure and Plethysmographic waveforms:} ABP and PLETH waveforms have received comparatively little attention in machine learning research, primarily due to limited availability of high-quality datasets in and outside critical care environments. Nevertheless, these waveforms contain critical physiological information routinely utilized by clinicians for patient assessment and management. Recent studies have begun exploring machine learning applications for ABP and PLETH waveform analysis \citep{moghadam2020machine, alam2024systematic}, but the advances remain limited.
+
+\subsection{Thermal Visual Imaging (TVI)}
+
+\vspace{1ex}
+\noindent
+\textbf{Visual Imaging:}
+Clinical assessment of patient appearance, including facial expressions, skin coloration, and movement patterns, has long been recognized as a valuable indicator of patient status and deterioration risk \citep{madrigal2018faces, Do_Temporal_changes}. Experienced clinicians routinely integrate visual cues into their decision-making processes, often intuitively and without explicit quantification. Recent advancements in computer vision and deep learning have opened new avenues for systematically capturing and analyzing these visual indicators in clinical environments.
+
+
+State-of-the-art face detection and reconstruction algorithms, such as those presented by \citet{feng2018joint} and \citet{Deng_2020_CVPR}, enable automated and precise tracking of head movements, facial expressions, and subtle changes in patient appearance. These technological developments, primarily driven by non-medical applications, offer significant potential for clinical translation, particularly in intensive care and postoperative settings.
+
+A pioneering example of this translational research is provided by \citet{davoudi2019intelligent}, who explored the feasibility of automated video-based detection of delirium in ICU patients. Despite the limited sample size of 17 patients, their study demonstrated promising preliminary results, highlighting the potential of visual imaging to augment clinical monitoring. However, significant challenges remain unaddressed, including robustness against common clinical obstacles such as oxygen masks, tubes, variable lighting conditions, and patient positioning. Additionally, ethical considerations regarding patient privacy, data security, and informed consent pose substantial hurdles to widespread implementation of video monitoring in clinical practice. Practical constraints, such as limited space and infrastructure in PACU and ICU environments, further complicate the deployment of visual imaging systems.
+
+In subsequent sections, we detail our approach to overcoming these challenges, describing the design, implementation, and validation of a real-time visual monitoring system specifically tailored for PACU and ICU settings. Our methodology emphasizes robustness, clinical relevance, and ethical compliance, aiming to bridge the gap between promising technological advancements and practical clinical utility.
+
+\vspace{1ex}
+\noindent
+\textbf{Thermal Imaging:}
+Thermal imaging, or thermography, has a long-standing history in medical diagnostics, with applications ranging from inflammation detection to vascular assessments \citep{ammer2019thermal}. Despite its established clinical relevance, the integration of thermal imaging into routine patient monitoring remains limited, primarily due to historically high equipment costs and limited availability of standardized clinical protocols.
+
+
+Recent advances in thermal imaging technology, combined with machine learning methodologies, have revitalized interest in this modality. For instance, \citet{temperature_auditory_stimulus} demonstrated the capability of deep learning algorithms to detect subtle changes in facial temperature distributions induced by sudden auditory stimuli. Similarly, studies by \citet{koukiou2012drunk} and \citet{hermosilla2018face} successfully leveraged machine learning techniques to identify alcohol consumption through facial thermal imaging, highlighting the sensitivity of thermal imaging to physiological changes.
+
+A particularly promising clinical application was demonstrated by \citet{predicting_shock_from_thermal_images}, who investigated the predictive potential of thermal imaging for hemodynamic shock in infants within incubators. In their retrospective study, thermal images were manually captured hourly using handheld cameras, and a simple yet effective random forest classifier was trained on the temperature difference between the foot and chest regions. This approach achieved a mean area under the receiver operating characteristic curve (AUC) of 75\% for predicting shock onset within a three-hour window, underscoring the clinical potential of thermal imaging combined with machine learning.
+
+Clinically, the early detection of shock and hemodynamic instability remains a critical challenge, particularly in postoperative and intensive care settings. Medical literature extensively describes characteristic pre-shock physiological changes, such as peripheral vasoconstriction, altered skin perfusion, and temperature gradients between central and peripheral body regions \citep{Shock}. These physiological phenomena, routinely observed by clinicians at the bedside, may manifest more distinctly and objectively in thermal imaging data compared to conventional visual assessment.
+
+\subsection{Comprehensive Multimodal Data Integration Platform}
+
+Researchers at Charité hospital in Berlin conducted interviews with ICU staff to evaluate current patient monitoring systems and identify expectations for future technologies. Their findings highlighted several critical issues and desired improvements \citep{poncette2019clinical}:
+
+\begin{displayquote}
+  Inadequate alarm management as well as the entanglement of monitoring cables were rated as potential patient safety issues. For a future system, the importance of high usability was again emphasized; wireless, noninvasive, and interoperable monitoring sensors were desired; mobile phones for remote patient monitoring and alarm management optimization were needed; and clinical decision support systems based on artificial intelligence were considered useful.
+\end{displayquote}
+
+Motivated by these clinical insights and the recognized limitations of existing monitoring approaches, we developed a comprehensive multimodal data acquisition platform specifically optimized for continuous patient monitoring in PACU and ICU environments. Our platform integrates three complementary data streams—Thermal Visual Imaging (TVI), Electronic Health Records (EHR), and physiological waveforms (WAVE)—providing synchronized, real-time monitoring that mirrors the multifaceted assessment approach clinicians employ at the bedside.
+
+Our approach systematically addresses key limitations identified in previous research:
+
+\begin{itemize}
+  \item \textbf{Automated and continuous data acquisition:} The system ensures uninterrupted, operator-independent data capture across all modalities. This contrasts with manual thermal imaging methodologies employed in prior studies (e.g., \citep{predicting_shock_from_thermal_images}) and preserves high-frequency physiological waveform data typically discarded in clinical practice.
+  \item \textbf{Real-time processing and analysis:} Edge computing capabilities enable immediate analysis of multimodal data streams, including feature extraction from thermal signatures, waveform morphology analysis, and integration with structured EHR data.
+
+  \item \textbf{Integration into clinical workflows:} The platform design explicitly considers spatial constraints and operational realities of critical care environments, minimizing disruption to clinical routines while maximizing data quality and usability. Concretely:
+        \begin{itemize}
+          \item \textit{Limited space and cable entanglement:} A compact, cart-mounted arm with internal cable routing reduces clutter and tripping hazards, addressing the well-documented problem of “spaghetti syndrome,” where tangled bedside tubing and cords cause contamination, confusion, falls, and even device damage or patient harm \citep{haynes2015managing}.
+
+          \item \textit{Infection control and cleanability:} Non-contact TVI, wipe-down surfaces, and minimal-touch operation comply with hygiene workflows. As no additional patient-attached sensors are required for imaging, this approach minimizes infection risk and cross-patient contamination, which are critical concerns in intensive care \citep{choo2024application}.
+
+          \item \textit{Occlusions and routine care:} Overhead camera placement keeps the device clear of staff workspace and routine care activities. Automatic re-acquisition after occlusions (e.g., masks, tubes, linens) and robust tracking minimize the need for technician intervention and maintain continuous monitoring despite common visual obstructions \citep{huang2023challenges}.
+
+          \item \textit{IT and security constraints:} Operation within the isolated hospital network (no internet), NTP-based internal time synchronization, role-based access, audit logs, and read-only EHR interfaces follow least-privilege principles. Such measures directly address clinicians' concerns about data security and trust, ensuring safe and reliable system deployment \citep{aldosari2025cybersecurity}.
+
+          \item \textit{Workflow simplicity:} One-click start/stop, clear status indicators, and remote support reduce cognitive load for clinical staff. Auto focus and distance compensation (Section~\ref{sec:shape-through-focus}) remove manual focusing, and automated data integration eliminates the need for manual data export, aligning with ICU staff’s desire for highly usable systems \citep{ede2021non}.
+
+          \item \textit{Staff expectations for future systems:} ICU staff explicitly expressed a preference for noninvasive, interoperable sensors and mobile monitoring tools. Our non-contact TVI approach and reuse of existing monitors for WAVE acquisition directly address these stated needs \citep{ede2021non}.
+        \end{itemize}
+
+  \item \textbf{Precise multimodal synchronization:} All data streams—thermal imaging, physiological waveforms, and EHR updates—are accurately time-synchronized, enabling comprehensive correlation analyses and integrated modeling across modalities.
+\end{itemize}
+
+\section{Bed-side Monitoring and real time computing}
+\label{sec:bed-side-monitoring}
+We implemented a compact bedside computing solution, the Zotac Z-box, serving as the central integration hub for all multimodal data streams. This computer is equipped with an NVIDIA RTX 2070 GPU, 32 GB of RAM, and an Intel Core i9 processor, providing sufficient computational resources for real-time data acquisition, processing, and analysis across multiple modalities. The system operates on a Linux-based operating system, chosen for its stability, flexibility, and compatibility with our data processing pipelines.
+
+In close collaboration with the IT department at DHZC, we integrated the Zotac Z-box into the hospital's internal network infrastructure. This integration allows seamless connectivity to any Ethernet port within the PACU and ICU environments, facilitating flexible deployment across different patient bedsides. To ensure compliance with hospital security protocols and patient data privacy regulations, the computer remains isolated from external internet access, operating exclusively within the secure hospital network.
+
+The Zotac Z-box interfaces with multiple peripheral devices essential for multimodal data acquisition. A dedicated monitor provides an intuitive graphical user interface (GUI) for clinical staff, enabling straightforward initiation and termination of data recording sessions. The GUI also offers real-time feedback on the status of data acquisition and processing, ensuring transparency and facilitating immediate troubleshooting if necessary.
+
+For thermal visual imaging, the computer connects via Ethernet to a high-resolution thermal camera, enabling continuous, automated capture of thermal signatures. Physiological waveform data acquisition is achieved through a USB connection to a specialized connector device, which interfaces directly with the clinical monitoring equipment, ensuring high-fidelity waveform capture at clinical-grade sampling frequencies.
+
+To facilitate efficient system maintenance and minimize clinical workflow disruptions, we implemented remote access capabilities within the secure hospital network. Routine software updates, configuration adjustments, and system diagnostics are performed remotely, significantly reducing the need for physical intervention. For on-site debugging and emergency maintenance, a compact keyboard with an integrated mousepad is provided, allowing immediate local access when necessary.
+
+The entire computing and monitoring setup is mounted on a mobile camera arm with wheels, specifically designed for clinical environments with limited space. The arm features an extended reach of approximately 2 meters and positions the thermal camera at a height of 2.2 meters, providing an optimal vantage point for unobstructed patient monitoring. Internal cable management within the arm structure neatly organizes Ethernet, HDMI, and power cables, minimizing clutter and reducing potential hazards in the clinical setting.
+
+Figure~\ref{fig:bedside-setup} illustrates the complete bedside monitoring system, highlighting its compact design, mobility, and integration of multimodal data acquisition components. This carefully engineered setup ensures robust, non-disruptive, and continuous multimodal monitoring, aligning closely with clinical workflows and operational constraints in PACU and ICU environments.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.8\textwidth]{\dir/Setup.png}
+  \caption{The bedside monitoring system setup showing the Zotac Z-box computer mounted to a mobile camera arm with an extended reach of 2m. The system includes a monitor for staff interaction, a thermal imaging camera positioned at 2.2m height, and connections to physiological monitoring equipment. This configuration enables non-disruptive multimodal data acquisition in space-constrained PACU and ICU environments.}
+  \label{fig:bedside-setup}
+\end{figure}
+
+\section{Thermal Visual Platform}
+\label{sec:thermal-visual-imaging}
+
+The thermal camera employed in this study does not directly measure temperature. Instead, it records a surrogate measure corresponding to the emissive power of surfaces within its field of view. Although this emissive power surrogate could be directly utilized as input for machine learning algorithms, we explicitly convert these measurements into temperature values to enhance clinical interpretability. Interpretability is a critical factor for clinical acceptance and practical utility of decision support systems. Indeed, a study conducted at Charité \citep{poncette2019clinical} emphasized this point clearly:
+
+\begin{displayquote}
+  In our study, participating staff stated that they would utilize a clinical decision support systems for alarm management only if it was plausible and underlying algorithms were readily understandable.
+\end{displayquote}
+
+To convert the power measurements into meaningful temperature values, each and every camera is calibrated individually. This calibration enables mapping of the recorded power values to absolute temperature values. The process and implementation described below are specific to the FLUKE thermal imaging system used in our setup.
+
+\subsection{Thermal Camera Calibration}
+\label{sec:camera_calibration}
+
+\vspace{1ex}
+\noindent \textbf{Calibration Data:} The calibration information for the camera is embedded directly within the data stream, specifically encoded in the first bytes of each image file. This information includes coefficients defining temperature-to-power mappings across multiple calibration segments. As this information remains static for a given camera and setup, it is extracted only once at the beginning of the data acquisition session. The extracted data is used throughout the session to interpret raw frames.
+
+\vspace{1ex}
+\noindent \textbf{Power–Temperature Mapping:} Each calibration segment is characterized by a quadratic polynomial that maps temperature $T$ to emissive power surrogate $P$:
+
+\begin{equation}
+  P(T) = u_0 + u_1 T + u_2 T^2
+\end{equation}
+
+Conversely, to derive temperature from a measured power value, the inverse mapping is applied by solving the quadratic equation:
+
+\begin{equation}
+  T = \frac{-u_1 + \sqrt{u_1^2 - 4 u_2 u_0 + 4 u_2 P}}{2 u_2}
+\end{equation}
+
+The coefficients $u_0$, $u_1$, and $u_2$ are segment-specific and are stored in the calibration data. For any given power measurement, the correct segment is identified by locating the interval within which the power falls, ensuring that the appropriate coefficients are used for inversion.
+
+\subsection{Thermodynamic Corrections: Emissivity, Humidity, and Atmospheric Transmission}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\textwidth]{\dir/Radiation.pdf}
+  \caption{Thermodynamic radiation model illustrating the components influencing thermal measurements: emissivity of the target surface, reflected ambient radiation, atmospheric transmission losses, and window transmission effects. This physical model underpins the temperature correction methodology implemented in our thermal imaging system.}
+  \label{fig:radiation-model}
+\end{figure}
+
+The thermal camera calibration described above was conducted under near-vacuum conditions using a calibration target closely approximating an ideal blackbody. However, human skin exhibits emissive properties that deviate significantly from an ideal blackbody, and clinical environments such as intensive care units (ICUs) differ substantially from vacuum conditions. The emissive power observed by the thermal camera ($P_{\text{obs}}$) includes contributions from the emissivity of the target surface, reflected ambient radiation, atmospheric transmission losses, and thermal emission from the intervening atmosphere. To accurately estimate the true surface temperature ($T_{\text{surface}}$), these confounding influences must be systematically modeled and corrected.
+
+We adopt the notation $P$ to represent the emissive power an ideal blackbody would emit at a given temperature. For example, $P_{\text{skin}}$ denotes the emissive power a blackbody at skin temperature would emit. However, human skin has an emissivity ($\varepsilon_{\text{skin}}$) less than unity, reducing the actual emitted power to $\varepsilon_{\text{skin}} P_{\text{skin}}$. Since the thermal camera calibration was performed using a near-blackbody reference under vacuum conditions, corrections for emissivity, atmospheric transmission, and reflected radiation are essential to translate observed emissive power into accurate temperature measurements.
+
+\vspace{1ex}
+\noindent \textbf{Skin as a Radiative Surface:} In our clinical application, the target surface is human skin. To simplify the radiative transfer model, we assume skin to be an opaque, diffuse, and gray surface. An opaque surface is characterized by zero transmissivity, meaning no radiation passes through it. A diffuse surface emits and reflects radiation uniformly in all directions, unlike specular surfaces such as mirrors. A gray surface exhibits wavelength-independent radiative properties, allowing wavelength-integrated analysis without loss of generality.
+
+Under these assumptions, the radiative properties of skin can be described by the first law of thermodynamics in the context of radiative transfer:
+
+\begin{equation}
+  \text{Absorptivity} + \text{Reflectivity} + \text{Transmissivity} = 1
+\end{equation}
+
+Given the opacity assumption (transmissivity = 0), this simplifies to:
+
+\begin{equation}
+  \text{Absorptivity} = 1 - \text{Reflectivity}
+\end{equation}
+
+At thermal equilibrium, Kirchhoff's law of thermal radiation dictates that absorptivity equals emissivity. Thus, we establish the reflectivity of skin ($\rho_{\text{skin}}$) as:
+
+\begin{equation}
+  \rho_{\text{skin}} = 1 - \varepsilon_{\text{skin}}
+\end{equation}
+
+where $\varepsilon_{\text{skin}}$ denotes the emissivity of skin. Human skin emissivity ($\epsilon_{skin}$) exhibits remarkable consistency across individuals and body regions in the thermal infrared spectrum. According to comprehensive studies \citep{bernard2013infrared} the emissivity of clean human skin has an accepted average value of 0.98 ± 0.01.
+
+\vspace{1ex}
+\noindent \textbf{Atmospheric Transmission and Emission:} The intervening atmosphere between the camera and the skin surface is modeled as a non-reflective, participating medium. In this scenario, atmospheric transmissivity ($\tau_{\text{air}}$) quantifies the fraction of radiation transmitted through the air without absorption or scattering. Consequently, the emissivity of air ($\varepsilon_{\text{air}}$) is directly related to its transmissivity by:
+
+\begin{equation}
+  \varepsilon_{\text{air}} = 1 - \tau_{\text{air}}
+\end{equation}
+
+Air transmissivity $\tau_{air}$ is modeled via \textbf{Beer's Law}, which describes exponential attenuation of radiative energy with respect to humidity and path length:
+
+\begin{equation}
+  \tau_{air} = \exp(-\sigma R)
+\end{equation}
+
+where $\sigma$ is the humidity-dependent absorption coefficient, and $R$ is the optical path length in kilometers. The absorption coefficient $\sigma$ is interpolated from empirical measurements and varies nonlinearly with relative humidity. In our clinical setup, the optical path length is approximately 1m (0.001 km), and the controlled hospital environment maintains relative humidity at approximately 50\% \citep{saran2020heating}.
+
+\vspace{1ex}
+\noindent \textbf{Comprehensive Radiative Transfer Model:} Integrating these considerations, the observed radiant power ($P_{\text{obs}}$) can be expressed as the sum of three distinct contributions: emission from the atmosphere, reflected background radiation from the skin surface, and emission from the skin itself, each modulated by atmospheric transmissivity:
+
+\begin{equation}
+  P_{\text{obs}} = \varepsilon_{\text{air}} P_{\text{air}} + \tau_{\text{air}} \left[ \rho_{\text{skin}} P_{\text{bkgd}} + \varepsilon_{\text{skin}} P_{\text{skin}} \right]
+\end{equation}
+
+Substituting the relationships established above, we obtain the final expression:
+
+\begin{equation}
+  P_{\text{obs}} = (1 - \tau_{\text{air}}) P_{\text{air}} + \tau_{\text{air}} \left[ (1 - \varepsilon_{\text{skin}}) P_{\text{bkgd}} + \varepsilon_{\text{skin}} P_{\text{skin}} \right]
+\end{equation}
+
+Now, we can solve this for $P_{\text{skin}}$:
+
+\begin{equation}
+  P_{\text{skin}} = \frac{1}{\tau_{air} \varepsilon_{skin}} P_{obsv} - \frac{1 - \tau_{air}}{\tau_{air}\varepsilon_{skin}}P_{air} - \frac{1 - \varepsilon_{air}}{\varepsilon_{air}} P_{bkgrd}
+\end{equation}
+
+Having derived this relationship, we can now apply the temperature-to-power conversion to determine the values of $P_{\text{air}}$ and $P_{\text{bkgd}}$. Given that the ICU environment is air-conditioned, we assume a stable ambient temperature of approximately 24 degrees Celsius for both the surrounding air and the background surfaces (walls and ceiling). By converting this known ambient temperature into corresponding emissive power values, we can substitute these into the derived equation to accurately compute the actual skin temperature from the observed thermal measurements.
+
+To validate the accuracy of our thermodynamic correction methodology, we conducted a preliminary validation experiment using adhesive skin-temperature sensors on one patient. Due to practical constraints and limited availability of clinical personnel to reliably attach these sensors, this validation was limited to a single patient. Nevertheless, the results from this initial validation demonstrated that our corrected temperature measurements closely matched the sensor readings, with deviations of approximately $1$ Kelvin. In contrast, uncorrected thermal measurements exhibited larger discrepancies, ranging from approximately $2$ to $3$ Kelvin. It is important to emphasize that the correction methodology applied here is not novel; rather, it follows the established standard recommended by FLUKE engineers for accurate thermal imaging measurements.
+
+\subsection{Video Compression}
+\label{sec:video-compression}
+
+Real-time multimodal monitoring generates substantial data volumes, particularly from continuous visual and thermal imaging streams. Efficient video compression is therefore essential to manage storage requirements, facilitate rapid data transfer, and enable subsequent analysis. Our compression pipeline leverages the widely adopted FFmpeg framework ~\cite{ffmpeg}, integrating specialized codecs optimized for each imaging modality. The compression process is implemented in Python, utilizing the Ray~\cite{moritz2018ray} parallel computing framework to achieve efficient, real-time performance.
+
+\vspace{1ex}
+\noindent \textbf{Visual Image Compression:} The visual imaging stream, captured at a resolution of 1080p, is compressed using the High Efficiency Video Coding (HEVC/H.265) standard~\cite{sullivan2012overview}. To achieve real-time compression performance, we utilize NVIDIA's hardware-accelerated NVENC encoder~\cite{nvenc}, available on the Zotac Z-box's integrated NVIDIA RTX 2070 GPU. NVENC provides significant speed advantages over CPU-based encoding, enabling real-time compression with minimal latency. However, hardware acceleration introduces a slight loss in visual fidelity compared to CPU-based encoding at equivalent compression settings. We empirically selected a moderate compression quality setting (CRF = 30) to balance visual quality and storage efficiency, ensuring that clinically relevant visual details remain clearly discernible.
+
+The visual compression pipeline is implemented as follows:
+
+\begin{enumerate}
+  \item Raw visual frames are acquired from the camera in YUV422 8-bit depth format.
+  \item Frames are buffered and concatenated into one-minute segments.
+  \item Each segment is compressed in real-time using FFmpeg with the NVENC encoder, resulting in compact HEVC-encoded MP4~\cite{iso14496-14-2020} video files.
+\end{enumerate}
+
+\vspace{1ex}
+\noindent \textbf{Thermal Image Compression:} Thermal imaging data, captured at a resolution of 640x480 pixels with 16-bit grayscale depth, requires careful handling to preserve subtle temperature variations critical for clinical analysis. Unlike visual images, thermal images encode quantitative temperature information, necessitating lossless or near-lossless compression to maintain diagnostic accuracy.
+
+To the best of our knowledge, no existing compression algorithm is specifically designed for the 16-bit power data obtained from our thermal camera. Storing these data without compression would result in prohibitively large storage requirements. Therefore, we developed a custom compression approach that leverages the widely adopted HEVC (H.265) codec and the YUV420 12-bit pixel format. The YUV420 format encodes luminance (Y) information at full resolution, while chrominance (U and V) channels are subsampled at quarter resolution. We exploit this structure by encoding the 16-bit power data into the 12-bit luminance channel, carefully scaling the data to fit within the 12-bit range. Specifically, we set the minimum recordable temperature to approximately 10°C and scale the data accordingly to utilize the full 12-bit dynamic range (0–4095). The chrominance channels are set to a constant middle-value (2048), effectively indicating the absence of information in these channels. This approach efficiently utilizes the codec's capabilities while preserving clinically relevant thermal information and minimizing storage demands.
+
+The thermal compression pipeline is implemented as follows:
+
+\begin{enumerate}
+  \item Raw thermal frames are acquired from the camera as 16-bit grayscale images.
+  \item Frames are converted and stored in the YUV420 12-bit format, with chrominance channels set to 2048.
+  \item Frames are buffered into one-minute segments and compressed using the CPU-based x265 encoder (libx265) with a lossless compression setting (CRF = 0). This ensures minimal information loss, preserving critical temperature gradients and subtle thermal patterns.
+\end{enumerate}
+
+While CPU-based encoding is computationally more demanding than GPU-based encoding, it provides superior control over compression quality and ensures minimal distortion of thermal data. Empirical analysis of the compression error distribution confirms that the resulting compression artifacts are negligible and normally distributed, thus preserving the integrity of the thermal measurements for subsequent clinical analysis.
+
+\vspace{1ex}
+\noindent \textbf{Parallelization and Real-time Performance:} To achieve real-time compression performance, we implemented the compression pipeline using the Ray parallel computing framework. The visual and thermal compression tasks are executed concurrently as separate Ray actors, each allocated dedicated computational resources (CPU cores and GPU resources). This parallelization strategy ensures that both visual and thermal streams are compressed simultaneously without introducing latency or bottlenecks in the data acquisition pipeline.
+
+\vspace{1ex}
+\noindent \textbf{In summary:}, our video compression approach effectively balances computational efficiency, storage requirements, and data fidelity. By leveraging hardware-accelerated encoding for visual data and carefully optimized CPU-based encoding for thermal data, we ensure real-time performance while preserving the clinical utility of the multimodal imaging streams.
+
+\subsection{Face Detection and Reconstruction}
+We use the work of \cite{guo2020towards} for real-time 3D face reconstruction to process the visual data stream, enabling precise tracking and parametric representation of facial geometry. Our approach employs a machine learning model that characterizes each face using a set of 84 parameters, capturing both identity-specific features and dynamic expressions.
+
+Accurate mapping of temperature distributions onto the patient's face requires precise registration between thermal and visual images. However, the lenses of the thermal and visual cameras are not aligned, complicating direct registration. Additionally, the thermal camera exhibits a narrow depth of field, and its focal length varies significantly with focus adjustments, further challenging accurate image alignment.
+
+\subsection{Automated Shape-Through-Focus for Precise Thermal Imaging}
+\label{sec:shape-through-focus}
+
+Due to the narrow depth of field inherent to thermal cameras, precise focus adjustment is essential for accurate facial temperature measurement. Maintaining optimal focus is particularly challenging in clinical settings, as the distance between the camera and the patient's face frequently changes due to patient repositioning or adjustments of the monitoring setup.
+
+To address this, we developed an automated shape-through-focus algorithm. At the beginning of each recording session, the algorithm systematically scans a predefined range of focus distances, capturing thermal images at incremental steps. For each captured frame, a sharpness metric based on image gradients is computed, and the frame with the highest sharpness is selected as the optimal focus setting. Using the previously obtained 3D facial reconstruction, we estimate the real-world dimensions of the patient's face at this optimal focus distance. Subsequently, we continuously track the patient's facial position in real-time, dynamically estimating the camera-to-patient distance and automatically adjusting the camera's focus throughout the monitoring session. This ensures consistently sharp thermal imaging and reliable temperature measurements.
+
+The following pseudocode summarizes the shape-through-focus algorithm:
+
+\begin{algorithm}[H]
+  \caption{Automated Shape-Through-Focus Algorithm}
+  \begin{algorithmic}[1]
+    \State Define a set of discrete focus distances: $F = \{f_1, f_2, \dots, f_n\}$
+    \State Initialize empty list for sharpness scores: $S = []$
+    \For{each focus distance $f_i$ in $F$}
+    \State Set camera focus to $f_i$
+    \State Capture thermal image frame $I_i$
+    \State Compute sharpness metric $s_i$ (e.g., gradient magnitude):
+    \[
+      s_i = \sum_{x,y} \sqrt{\left(\frac{\partial I_i}{\partial x}\right)^2 + \left(\frac{\partial I_i}{\partial y}\right)^2}
+    \]
+    \State Append sharpness score: $S \leftarrow S \cup \{s_i\}$
+    \EndFor
+    \State Identify optimal focus distance: $f_{\text{optimal}} = f_{\arg\max(S)}$
+    \State Set camera focus to $f_{\text{optimal}}$
+    \State Perform 3D facial reconstruction at optimal focus to estimate real-world facial dimensions
+    \State Store estimated facial dimensions for subsequent distance tracking
+    \While{recording session is active}
+    \State Track patient's face position in real-time visual frames
+    \State Estimate current distance using stored facial dimensions and current face size
+    \State Dynamically adjust camera focus based on estimated distance
+    \EndWhile
+  \end{algorithmic}
+\end{algorithm}
+
+This automated approach ensures robust, accurate, and continuous focus adjustment, significantly enhancing the quality and clinical utility of thermal imaging data throughout patient monitoring sessions.
+
+\subsection{Registration and UV-Mapping}
+\label{sec:registration}
+
+We implement UV-mapping, a technique widely employed in 3D computer graphics, to standardize facial thermal distributions across patients. This approach represents the facial surface in a flattened, two-dimensional (2D) domain, wherein consistent UV coordinates are assigned to corresponding anatomical landmarks (e.g., eyes, nose tip, cheeks). Such standardization facilitates meaningful comparative analysis across different patients and temporal sequences.
+
+For visibility determination, we employ an algorithm conceptually similar to ray tracing, which establishes whether a facial region is visible to the camera by determining if another facial region intervenes between the camera and the point of interest. The resulting power UV maps are subsequently compressed using the same methodology applied to raw thermal frames and stored in 256×256 dimensional frames.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{\dir/system_1.png}
+  \caption{Real-time visualization of the multimodal interface during patient monitoring. On the left side, thermal and visual video streams are overlaid with a dynamically updated 3D facial geometry mesh. On the right side, the corresponding standardized UV map representation of the patient's facial temperature distribution is displayed, facilitating consistent anatomical referencing across patients and monitoring sessions.}
+  \label{fig:UI-uv}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{\dir/system_2.png}
+  \caption{Interactive temperature tracking interface for clinical personnel. Medical staff can define and monitor specific facial regions of interest by interactively selecting points on the 3D facial mesh to form closed contours. The system continuously tracks and visualizes temperature changes within these user-defined areas, enabling targeted clinical assessment and real-time monitoring of patient condition.}
+  \label{fig:UI-tracking}
+\end{figure}
+
+\subsection{User Interface}
+Figures~\ref{fig:UI-uv} and \ref{fig:UI-tracking} show the user interface of the multimodal monitoring system as presented to clinical personnel during active recording sessions. The interface integrates thermal imaging, visual video streams, and real-time 3D facial geometry reconstruction, providing intuitive visualization and interactive tools for precise temperature monitoring and clinical decision support.
+
+\section{Physiological Waveform Monitoring}
+\label{sec:physiological-waveforms}
+
+The acquisition of physiological waveform data required interfacing directly with clinical bedside monitors. At DHZC, the existing monitoring equipment did not support direct data export functionality. To overcome this limitation, the bedside monitors at the locations of our multimodal setup were upgraded to GE Carescape B650 monitors, which allowed waveform data export via the open-source software VSCapture.
+
+Establishing a reliable hardware connection to the GE Carescape B650 monitors proved challenging due to proprietary communication protocols and hardware restrictions imposed by the manufacturer. Following VSCapture guidelines, we implemented the connection using a specific hardware configuration:
+
+\begin{itemize}
+  \item An ATEN UC-232A USB-to-serial converter was connected directly to one of the four available USB ports on the back of the GE Carescape B650 monitor. The use of this specific ATEN converter was mandatory, as alternative USB-to-serial converters were not recognized by the monitor.
+  \item The ATEN converter was then connected to the bedside computing system (Zotac Z-box) via a female-to-female null modem (cross gender) and a USB-to-serial converter.
+\end{itemize}
+
+Another significant challenge encountered during waveform data acquisition was the inaccurate timestamps generated by the GE Carescape B650 monitors. These inaccuracies arose because the monitors did not synchronize their internal clocks over the hospital network, resulting in substantial discrepancies between recorded timestamps and actual event times. To address this critical issue, we modified the source code of the VSCapture software, enabling it to utilize the synchronized system time from the bedside computing platform (Zotac Z-box) rather than relying on the monitor's internal timestamps. This modification ensured precise synchronization of physiological waveform data with other multimodal data streams, a crucial requirement for accurate real-time analysis and subsequent clinical interpretation. To ensure precise temporal alignment of all data streams across the multimodal platform, we implemented a robust time synchronization strategy. The Zotac Z-box was configured to synchronize with the DHZC's Network Time Protocol (NTP) server.
+
+Although described succinctly here, resolving these timestamp synchronization issues represented an exceptionally complex and time-consuming undertaking. The successful implementation of this solution was only possible due to the extensive support provided by the medical technology team at DHZC. Specifically, Robin Geyer and Fabian Laumer were granted access to spare GE Carescape B650 monitors stored by the hospital, allowing them to conduct extensive testing, debugging, and iterative refinement of the hardware and software integration. This collaborative effort, involving countless hours of dedicated work, ultimately enabled robust and reliable physiological waveform data acquisition, significantly enhancing the overall quality and clinical utility of our multimodal monitoring platform.
+
+Once established, the VSCapture software continuously acquired high-frequency physiological waveform data, including ECG, arterial blood pressure (ABP), and plethysmographic (PLETH) signals, ensuring synchronized and uninterrupted data streams for subsequent real-time analysis and storage.
+
+
+\section{Network Interface and cross-institutional data sharing}
+\label{sec:electronic-health-records}
+
+\subsection{Electronic Health Record Integration Architecture}
+
+Integration with clinical information systems represented a critical component of our multimodal data acquisition platform. At DHZC, patient data is managed through two complementary systems: mlife and medfolio. Establishing secure, reliable connections to these databases required developing an interface architecture that satisfied both technical requirements and regulatory compliance standards.
+
+Our interface implementation leverages SQLAlchemy, a Python SQL toolkit and Object-Relational Mapping (ORM) system, to establish connections to the underlying Microsoft SQL Server databases.
+
+The connection architecture employs a multi-layered security model:
+
+\begin{itemize}
+  \item \textbf{Network layer security:} All connections are established via the secure internal hospital network, with strict firewall rules limiting access to authorized systems only.
+  \item \textbf{Authentication layer:} Database access utilizes application-specific service accounts with precisely defined read-only permissions, following the principle of least privilege.
+\end{itemize}
+
+\subsection{Data Synchronization and Standardization}
+
+Electronic health record systems typically present significant heterogeneity in data structures, terminology, and temporal resolution. At DHZC, this heterogeneity manifests as structural differences between the mlife and medfolio systems, with each storing complementary but non-overlapping patient information. To address this challenge, we developed a comprehensive data harmonization framework.
+
+\subsection{Cross-Institutional Data Sharing Between ETH and DHZC}
+
+To ensure the highest standards of data privacy and security, we leveraged the high-security computing infrastructure provided by ETH Zurich's LeoMed cluster for data storage and analysis. LeoMed is specifically designed to handle sensitive medical data, offering robust security measures, strict access controls, and compliance with regulatory requirements for patient data protection.
+
+To facilitate secure cross-institutional data sharing between ETH Zurich and DHZC, we established a dedicated, encrypted network connection linking the LeoMed cluster directly to DHZC's internal network. This secure connection was implemented using a virtual machine (VM) deployed within DHZC's network infrastructure, serving as a secure proxy between the bedside multimodal data acquisition setup and the LeoMed cluster. The VM was configured with stringent firewall rules, encrypted communication protocols, and rigorous authentication mechanisms to ensure data integrity and confidentiality during transmission.
+
+The successful implementation of this secure cross-institutional data sharing architecture was made possible through close collaboration and extensive support from both the IT department at DHZC and the LeoMed support team at ETH Zurich. Their expertise and proactive engagement were instrumental in navigating technical complexities, addressing security considerations, and ensuring compliance with institutional policies and regulatory frameworks. This collaborative effort enabled seamless, secure, and efficient transfer of multimodal clinical data.
+

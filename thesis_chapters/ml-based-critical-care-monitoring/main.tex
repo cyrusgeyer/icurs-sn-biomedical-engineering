@@ -1,0 +1,347 @@
+\chapter{Machine Learning-Based Critical Care Monitoring}
+\label{chap:ml-based-critical-care-monitoring}
+
+%Having discussed the data acquisition and preprocessing in the previous chapters, we now turn our attention to the core of this thesis: the development of machine learning models for critical care monitoring. This chapter presents a comprehensive overview of the machine learning techniques employed in our research, focusing on their application to the multi-modal data collected from patients in critical care settings.
+
+%As the number of patients in critical care units continues to rise, the demand for effective monitoring systems has never been greater. Traditional monitoring methods often rely on a limited set of physiological parameters, which may not provide a complete picture of a patient's condition. In contrast, machine learning models can leverage the rich, multi-modal data collected from various sources, enabling more accurate and timely assessments of patient health.
+
+%\begin{itemize}
+%    \item The role of machine learning in critical care monitoring
+%    \item The specific machine learning techniques employed in our research
+%    \item The evaluation metrics used to assess the performance of the models
+%    \item The results obtained from applying these models to the multi-modal data
+%    \item A discussion of the implications of our findings for future research and clinical practice
+%\end{itemize}
+
+%This is particularly handy as it allows us to leverage the power of machine learning to identify patterns and trends in the data that may not be immediately apparent through traditional analysis methods. By harnessing the capabilities of machine learning, we aim to improve patient outcomes and enhance the overall quality of care provided in critical care settings.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{\dir/figs/Overview.png}
+    \caption{\textbf{Overview of the multimodal patient risk prediction pipeline.} The proposed framework integrates heterogeneous clinical data streams acquired continuously from critical care patients, encompassing thermo-visual imaging (TVI), physiological waveforms (WAVES), and electronic health records (EHR). Each modality undergoes specialized preprocessing tailored to its unique characteristics: TVI data are processed through a custom pipeline employing 3D facial reconstruction, UV-mapping, and a pretrained Variational Autoencoder (VAE) to robustly extract clinically relevant thermal features; WAVES data are analyzed to derive physiologically meaningful parameters; and EHR data are standardized and filtered for artifacts. Modality-specific embeddings are subsequently aligned and jointly encoded within a unified latent representation space using a transformer encoder. The transformer's output layer computes the probability of patient transition into clinically significant adverse states, enabling early detection and timely intervention in postoperative critical care settings.}
+    \label{fig:overview}
+\end{figure}
+
+\section{Main Study}
+
+In this chapter, we integrate the previously developed components into a cohesive analytical framework. Specifically, we establish robust processing pipelines for the novel data modality of thermal visual imaging (TVI), as well as for electronic health records (EHR) and physiological waveforms (WAVE).
+
+Each pipeline generates modality-specific latent representations, which are subsequently combined and fed into a transformer encoder neural network. This model is trained to predict critical postoperative complications following cardiac surgery.
+
+To ensure homogeneity and comparability, our analysis focuses exclusively on patients from the PACU cohort for whom complete multimodal datasets—comprising EHR, WAVE, and TVI data—were successfully acquired. Out of the initial cohort, complete multimodal data were available for $123$ patients. The remaining $52$ patients had at least one modality either missing or corrupted, precluding their inclusion in the current multimodal analysis. However, these cases may be considered in future unimodal investigations.
+
+The final study population comprised $93$ male and $30$ female patients, with a mean age of 66 years (IQR 57–74). The most common cardiac procedures were mitral valve surgery ($n=50$) and aortic valve surgery ($n=40$). Patients were typically monitored for $4$ to $6$ hours post-operation.
+
+\subsection{Prediction Tasks}
+
+By systematically integrating the three distinct modalities—standard EHR, underutilized WAVES, and the novel TVI—we aimed to rigorously evaluate their individual and combined predictive performance for clinically significant postoperative states following cardiac surgery:
+
+\begin{itemize}
+    \item \textbf{Neurological complications (NEUC):} Currently, no established screening method exists for early detection of postoperative neurological deterioration \citep{liu2022recent}, eventhough they pose a significant risk \citep{venkatapura2021postoperative}. Clinical assessment typically requires waiting until patients regain consciousness, delaying potential interventions \citep{floyd2000postoperative}.
+    \item \textbf{Postoperative Blood Product Transfusion Requirement (PBTR):} Decisions regarding postoperative blood transfusions are highly complex and patient-specific \cite{trivella2021transfusion}. Although hemoglobin thresholds exist \citep{vlaar2009determinants}, they are overly simplistic and insufficient for nuanced clinical decision-making \citep{montoro2022indications, trivella2021transfusion}.
+    \item \textbf{High Vasoactive-Inotropic Requirement (HVIR):} Early prediction of circulatory instability and elevated catecholamine requirements are clinically highly relevant \citep{na2019vasoactive}. Previous research has addressed this issue \citep{hyland2020early}; we hypothesized that our multimodal approach could further improve predictive performance.
+\end{itemize}
+
+\section{Thermal Visual Imaging (TVI) Pipeline}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{\dir/figs/thermal_pipeline.png}
+    \caption{\textbf{Thermal processing pipeline:} Visual data was used for 3D face reconstruction, which was registered to the thermal stream. The 3D geometry was unwrapped into 2D UV-maps and encoded into a latent space via a pretrained VAE encoder.}
+    \label{fig:thermal_preprocessing}
+\end{figure}
+
+Building upon the practical and theoretical foundations established in previous chapters, we developed a specialized preprocessing pipeline, illustrated in Figure~\ref{fig:thermal_preprocessing} to effectively leverage thermal visual imaging (TVI) data.
+In summary: Initially, a 3D face reconstruction algorithm was applied to visual frames, generating a patient-specific facial mesh. This mesh was subsequently registered to the corresponding thermal video stream, enabling accurate alignment of thermal data with facial geometry. The resulting 3D facial geometry was then unwrapped into a standardized 2D representation using UV-mapping techniques.
+
+To encode these 2D thermal maps into meaningful latent representations, we build upon the theoretical foundations established in Chapter~\ref{ch:learning-reps}. We developed a one-encoder-two-decoder contrastive heteroscedastic VAE specifically engineered to disentangle underlying facial temperature patterns from common artifacts such as medical device occlusions, facial hair variations, and patient movements. This architectural design ensures robust feature extraction by isolating physiologically relevant thermal variations from spurious correlations.
+
+During training, the VAE was optimized according to the objective described in Chapter~\ref{ch:kappa-vae}, with the hyperparameter $\kappa$ initialized at 1 and gradually decreasing throughout training:
+
+\begin{equation}
+    \mathcal{L}_{\text{VAE}} = \mathcal{L}_{\text{rec}} + \mathcal{L}_{\text{KL}}^{\mathbf{v}} + (1 - \kappa) \mathcal{L}_{\text{KL}}^{\mathbf{x}} + \kappa \mathcal{L}_{\text{contr}}(\mathbf{z}_{\mathbf{x}}, \mathbf{z}_{\mathbf{x}}'),
+\end{equation}
+
+where $\mathbf{z}_{\mathbf{x}}$ denotes the latent representation of the current thermal UV-map, and $\mathbf{z}_{\mathbf{x}}'$ represents the latent embedding of a preceding UV-map from the same patient. The temporal gap between these embeddings was sampled according to an exponentially decaying distribution, following the approach proposed by \citep{qian2021spatiotemporal}. To further enhance model robustness, we applied data augmentation techniques, including horizontal flipping and random elastic deformations as introduced by \cite{ronneberger2015miccai}. Training continued until convergence of all loss components was achieved.
+
+The resulting heteroscedastic VAE effectively disentangles spurious variations from the underlying physiological thermal distribution by explicitly modeling both the mean and variance of the data likelihood, in contrast to conventional VAEs that typically model only the mean. This capability is visually demonstrated in Figure~\ref{fig:overview}.
+
+Finally, we define the TVI feature vector at time $t$ as:
+\begin{equation}
+    \mathbf{c}_{\text{TVI}}(t) = [\mu_{\mathbf{x}},\, \sigma_{\mathbf{x}}]^\top,
+\end{equation}
+capturing the disentangled thermal information. This vector is subsequently embedded and provided as input to the transformer encoder for downstream predictive modeling.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.45\textwidth]{\dir/figs/disentangled_thermal_distributions.png}
+    \caption{\textbf{Disentanglement capabilities of the heteroscedastic VAE.} Our model effectively separates spurious variations from the underlying physiological thermal distribution by explicitly modeling both the mean and variance of the data likelihood, in contrast to conventional VAEs that typically model only the mean.}
+    \label{fig:overview}
+\end{figure}
+
+\section{Physiological Waveform (WAVE) Pipeline }
+
+We collect physiological signals including electrocardiography (ECG) at 300 Hz, invasive arterial blood pressure (ABP) at 100 Hz, and plethysmographic waveforms (PLETH) from the fingertip at 100 Hz. To ensure robust detection of cardiac cycles, we extract heartbeat timestamps from the ECG and PLETH signals. These are subsequently used to segment the ABP waveform into individual cardiac cycles.
+
+\subsection{ABP Feature Extraction}
+For each identified cardiac cycle in the arterial blood pressure (ABP) waveform, we extract five physiologically meaningful features that characterize cardiac dynamics and vascular compliance:
+
+\begin{itemize}
+    \item \textbf{\(f_1\): Steepness between diastolic and systolic blood pressure (DBP to SBP):} Quantifies the rate of pressure increase during early systole, serving as a proxy for left ventricular contractility. It is computed as the mean first derivative of a cubic spline fitted between DBP and SBP.
+
+    \item \textbf{\(f_2\): Curvature at DBP:} Reflects the local acceleration of pressure at the onset of systole, potentially indicative of diastolic function and aortic compliance. Estimated via finite difference approximation using three adjacent points around the DBP trough.
+
+    \item \textbf{\(f_3\): Curvature at SBP:} Captures the sharpness of the systolic peak, which may relate to arterial stiffness or pulse wave reflection. Computed analogously to \(f_2\).
+
+    \item \textbf{\(f_4\): Maximum amplitude at SBP:} Corresponds to the systolic peak pressure, a direct measure of afterload and central arterial pressure.
+
+    \item \textbf{\(f_5\): Ventricular ejection volume proxy:} Estimated as the area under the ABP curve during systole using numerical integration, serving as an indirect surrogate for stroke volume.
+\end{itemize}
+
+\subsection{Feature Aggregation Over Temporal Windows}
+At each time step $t$, we define a temporal window of length $T$, denoted as $[t - T, t]$, and compute mean and standard deviation of the extracted features over all cardiac cycles within this window.
+The resulting WAVE feature vector $\mathbf{c}_{\text{WAVE}}$ at time $t$ comprises the aggregated statistics:
+
+\begin{equation}
+    \mathbf{c}_{\text{WAVE}}(t) = \left[ \mu_{f_1}(t), \sigma_{f_1}(t), \dots, \mu_{f_5}(t), \sigma_{f_5}(t) \right]^\top.
+\end{equation}
+
+Just like $\mathbf{c}_{\text{TVI}}(t)$, this vector is subsequently embedded and input to the transformer encoder.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.45\textwidth]{\dir/figs/ABP.png}
+    \caption{\textbf{Physiological feature extraction from a single arterial blood pressure (ABP) waveform cycle.}
+        Key features derived from each heartbeat include: steepness between diastolic (DBP) and systolic (SBP) blood pressure (\(f_1\)), quantified as the mean slope of a spline fit; curvature at DBP and SBP (\(f_2, f_3\)), estimated using second-order finite differences; maximum amplitude at SBP (\(f_4\)), corresponding to peak systolic pressure; and ventricular ejection proxy (\(f_5\)), computed as the area under the systolic portion of the ABP curve.}
+    \label{fig:ABP}
+\end{figure}
+
+\section{Electronic Health Record (EHR) Pipeline}
+
+To extract structured physiological features from the electronic health records (EHR), we include variables from three categories: fluids, laboratory measurements, and respiratory parameters. All time series are filtered for outliers and artifacts and subsequently normalized within their cross validation split set. Table \ref{tab:ehr} holds all the EHR values used in our study. We then concatenate all EHR features into the feature vector $\mathbf{c}_{EHR}(t)$. Just like $\mathbf{c}_{\text{TVI}}(t)$ and $\mathbf{c}_{\text{WAVE}}(t)$, this vector is subsequently embedded and input to the transformer encoder.
+
+\subsection{Electronic Health Record (EHR) Variables}
+
+\textbf{Overview of structured EHR variables used for modeling.} Variables are grouped into fluids, laboratory values, and respiratory parameters. All time series were filtered for artifacts and outliers, then standardized using z-score normalization. At each time step, we employ carry-forward logic, using the last available measurement when no new data point is available.
+\label{tab:ehr}
+
+\begin{enumerate}
+    \item \textbf{Fluids}
+          \begin{enumerate}
+              \item Indwelling catheter
+              \item Retransfusion container
+          \end{enumerate}
+
+    \item \textbf{Lab Values}
+          \begin{enumerate}
+              \item Base excess (ABEc)
+              \item Calcium (BG)
+              \item Carboxyhemoglobin (COHB)
+              \item Glucose (BG)
+              \item Bicarbonate (HCO$_3$)
+              \item Potassium (BG)
+              \item Lactate (BG)
+              \item Laboratory specimen
+              \item Methemoglobin (METHB)
+              \item Sodium (BG)
+              \item Oxygen saturation
+              \item Oxyhemoglobin (O$_2$HB)
+              \item pCO$_2$
+              \item pH
+              \item pO$_2$
+              \item Reduced hemoglobin (RHb)
+          \end{enumerate}
+
+    \item \textbf{Respiratory Parameters}
+          \begin{enumerate}
+              \item Compliance
+              \item Correlation factor
+              \item Elastance
+              \item Expiratory tidal volume (mandatory)
+              \item Inspiratory pressure (minimum)
+              \item Leakage
+              \item Minute volume leak
+              \item Mean airway pressure
+              \item Positive end-expiratory pressure
+              \item Pulmonary compliance (C20)
+              \item Resistance
+              \item Respiratory volume (tidal)
+              \item Tidal volume per body weight
+              \item Mandatory tidal volume (VT)
+              \item Expiratory minute volume
+              \item Expiratory tidal volume
+          \end{enumerate}
+\end{enumerate}
+
+\section{Transformer Based Architecture}
+
+
+After prepossessing, all modalities were individually embedded into $100$-dimensional latent spaces. These embeddings served as input to a transformer-encoder architecture optimized for binary classification.
+
+We employ a transformer-based architecture for downstream predictive modeling. Input feature vectors—\(\mathbf{c}_{\text{TVI}}(t)\), \(\mathbf{c}_{\text{WAVE}}(t)\), and \(\mathbf{c}_{\text{EHR}}(t)\)—are first passed through modality-specific embedding functions, each projecting into a 100-dimensional latent space. In multimodal settings, these embeddings are concatenated and fed into a shared transformer encoder. All embedding layers and the transformer encoder are trained jointly in an end-to-end manner, enabling seamless integration and representation of heterogeneous, multimodal data streams.
+
+The transformer model processes sequences within a fixed context window of length $T = 200$ time steps. During training, each patient stay is represented by dynamically sampled sequences. Specifically, for a given time step $t$, we uniformly sample $T$ data points from the interval starting at patient admission ($t=0$) up to the current time point ($t$). Thus, the transformer consistently incorporates the complete historical patient trajectory, albeit at varying temporal resolutions as the patient stay progresses.
+
+To explicitly encode temporal dynamics, we introduce both absolute and relative temporal positional embeddings. The absolute embeddings indicate the elapsed time since patient admission, while the relative embeddings reflect the temporal distance from the current (latest) sampled data point. Consequently, the model maintains temporal context awareness at each step of processing.
+
+The transformer architecture comprises multiple transformer encoder layers, each followed by layer normalization to stabilize training and improve convergence. The encoded sequence representation from the final transformer encoder layer is subsequently aggregated through a custom attention mechanism. This attention module selectively emphasizes relevant temporal features and generates the final prediction output for downstream tasks.
+
+
+\section{Experiments}
+
+We formulated three binary classification tasks, each corresponding to clinically significant postoperative patient states. Our analysis specifically targets the initial four-hour postoperative recovery period following cardiac surgery, commonly referred to as the "wake-up" phase. During this critical interval, patients arrive in the PACU sedated and intubated, gradually regain consciousness, undergo extubation, and are subsequently transferred either to a general ward or intensive care. Accurate and early identification of patients at risk for complications during this vulnerable period is essential, as patients remain largely unresponsive, limiting clinical assessment and necessitating vigilant monitoring.
+
+To rigorously evaluate the predictive utility of novel data modalities (WAVES and TVI) in comparison and combination with standard EHR data, we defined three clinically validated postoperative states based on established clinical criteria and retrospective clinical actions. Following the structured problem framing approach proposed by Lauritsen et al.~\citep{lauritsen2021framing}, we explicitly define the observation window, prediction time, and prediction window for each complication state to ensure clarity and reproducibility:
+
+\begin{enumerate}
+    \item \textbf{High Vasoactive-Inotropic Requirement (HVIR):} Defined as patients requiring significant hemodynamic support, characterized by a postoperative vasoactive-inotropic score (VI-Score) $\geq 15$ within the observation window following PACU admission. This task represents a detection scenario, as the clinical state is already present during the observation window. HVIR was observed in $17$ of $123$ patients ($\approx 14\%$).
+
+    \item \textbf{Postoperative Blood Product Transfusion Requirement (PBTR):} Defined as patients who required transfusion of blood products—including platelets, erythrocytes, or fresh frozen plasma—within a 12-hour prediction window following the prediction time. This state was retrospectively identified based on actual transfusion events and represents either detection of imminent or prediction of future transfusion requirements. PBTR was observed in $9$ patients ($\approx 7\%$).
+
+    \item \textbf{Neurological Complications (NEUC):} Defined as patients who experienced neurological insults (e.g., stroke) whose clinical manifestations became apparent only upon emergence from anesthesia, or who subsequently developed postoperative delirium or seizures after the prediction time. This state was clinically diagnosed and represents either detection of underlying neurological complications stemming from surgery or prediction of neurological symptoms that become apparent after wake-up. NEUC was observed in $10$ patients ($\approx 8\%$).
+\end{enumerate}
+
+Interestingly, we observed minimal overlap between these complication cohorts.
+Transformer-based predictive models (designed for real-time inference) were systematically developed to detect these clinically relevant states using the three data modalities—EHR, WAVES, and TVI—both individually and in all possible multimodal combinations (three unimodal, three bimodal, and one trimodal). This comprehensive evaluation allowed us to rigorously assess the individual predictive contributions of each modality and their potential synergistic effects, thereby elucidating the clinical value of integrating novel data streams into postoperative patient monitoring workflows.
+
+\input{\dir/results/results_table}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{\dir/figs/thermal_evolution_vis_means.png}
+    \caption{
+        Comparison of facial thermal distributions between patients with \textbf{High Vasoactive-Inotropic Requirement (HVIR)} and those without during the first three hours of their stay in the post-anesthesia care unit (PACU). Rows 1 and 2 depict mean facial temperature distributions aggregated over consecutive 15-minute intervals for patients without (row 1) and with (row 2) HVIR. Rows 3 and 4 illustrate the corresponding standard deviations across patients within each cohort. Row 5 presents bladder-derived core body temperature. The temporal evolution of core body temperature demonstrates a gradual warming trend in both groups.
+        No significant differences between the aggregation of the cohorts were observed, either in body core temperature nor in facial thermal distribution.
+    }
+    \label{fig:vis-temp}
+\end{figure}
+
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{\dir/figs/thermal_evolution_trans_means.png}
+    \caption{
+        Comparison of facial thermal distributions between patients with \textbf{Postoperative Blood Product Transfusion Requirement (PBTR)} and those without during the first three hours of their stay in the post-anesthesia care unit (PACU). Rows 1 and 2 depict mean facial temperature distributions aggregated over consecutive 15-minute intervals for patients without (row 1) and with (row 2) PBTR. Rows 3 and 4 illustrate the corresponding standard deviations across patients within each cohort. Row 5 presents bladder-derived core body temperature measurements for both groups. The temporal evolution of core body temperature demonstrates a gradual warming trend in both groups.
+        Subtle differences in facial thermal patterns are observable between cohorts, particularly in the periorbital and nasal regions during the third hour, although these variations did not reach statistical significance.
+    }
+    \label{fig:trans-temp}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{\dir/figs/thermal_evolution_neuro_means.png}
+    \caption{
+        Comparison of facial thermal distributions between patients experiencing postoperative \textbf{Neurological Complications (NEUC)} and those without such complications during the first three hours of their stay in the post-anesthesia care unit (PACU). Rows 1 and 2 depict mean facial temperature distributions aggregated over consecutive 15-minute intervals for patients without (row 1) and with (row 2) NEUC. Rows 3 and 4 illustrate the corresponding standard deviations. Row 5 presents bladder-derived core body temperature. The temporal evolution of core body temperature demonstrates a gradual warming trend in both groups. Notably, patients with NEUC exhibited distinctly lower mean facial temperatures across many facial regions, especially visible in the first two hours post-admission. Despite these peripheral temperature differences, bladder-derived core temperature measurements revealed no significant differences between cohorts, suggesting reduced peripheral blood flow rather than systemic hypothermia.
+    }
+    \label{fig:neuro-temp}
+\end{figure}
+
+Transformer-based models were trained for each complication and modality configuration using a three-fold cross-validation protocol with three independent random seeds, resulting in $3 \times 7 \times 3 \times 3 = 189$ model instances.
+To ensure reliability despite class imbalance, model performance was assessed using the area under the receiver operating characteristic curve (AUROC). This metric effectively quantifies model ranking capability, making it particularly well-suited for highly imbalanced datasets. In the medical context presented, AUROC evaluates how accurately patients can be ranked according to their relative risk of complications, it also operates independently of decision threshold specification, thus avoiding arbitrary trade-offs between sensitivity and specificity. This aligns with the study's primary objective of evaluating whether TVI and WAVES data integration enhances detecting/predictive performance beyond EHR-only models, rather than proposing a specific clinical alarm system.
+AUROC statistics (means and standard deviations) are calculated across all random seeds and cross-validation splits. Our balanced cross-validation approach maintained approximately equal numbers of complication cases in each fold. Table~\ref{tab:results} summarizes model performance at key time points following PACU admission.
+
+\subsubsection*{High Vasoactive-Inotropic Requirement (HVIR)}
+
+\vspace{1ex}
+\noindent\textbf{EHR-only models} demonstrated modest performance for HVIR detection as early as 30 minutes after admission (AUROC = \getms{Test}{vis}{0}{1}{0}{0.5}). This performance progressively increased at 2 hours (AUROC = \getms{Test}{vis}{0}{1}{0}{2.0}) and further improved by the 4-hour mark (AUROC = \getms{Test}{vis}{0}{1}{0}{4.0}).
+
+\vspace{1ex}
+\noindent\textbf{WAVE-only models} showed no discriminative ability for HVIR within the first 30 minutes post-admission (AUROC = \getms{Test}{vis}{0}{0}{1}{0.5}). By 2 hours, performance improved marginally (AUROC = \getms{Test}{vis}{0}{0}{1}{2.0}) with reduced variability, and after 4 hours, a modest discriminative capability emerged (AUROC = \getms{Test}{vis}{0}{0}{1}{4.0}).
+
+\vspace{1ex}
+\noindent\textbf{TVI-only models} consistently performed at chance level, showing no detection of HVIR at 30 minutes (AUROC = \getms{Test}{vis}{1}{0}{0}{0.5}), 2 hours (AUROC = \getms{Test}{vis}{1}{0}{0}{2.0}), or 4 hours (AUROC = \getms{Test}{vis}{1}{0}{0}{4.0}).
+
+\vspace{1ex}
+\noindent\textbf{Fusion models} failed to enhance detection beyond unimodal EHR models, instead leading to performance deterioration. Although transformer-based architectures can theoretically disregard uninformative inputs, incorporating modalities with minimal predictive signal increases optimization complexity, particularly in data-constrained scenarios. The model must effectively distinguish relevant from irrelevant features across heterogeneous data streams, potentially resulting in overfitting and reduced generalization capability. Consequently, when additional modalities do not contribute clear benefits, their principled exclusion preserves model robustness.
+
+\subsubsection*{Postoperative Blood Product Transfusion Requirement (PBTR)}
+
+\vspace{1ex}
+\noindent\textbf{EHR-only models} demonstrated no significant predictive capability for PBTR at any evaluated time point. Performance remained at chance level 30 minutes after admission (AUROC = \getms{Test}{transfusions}{0}{1}{0}{0.5}), with no meaningful improvement observed at 2 hours (AUROC = \getms{Test}{transfusions}{0}{1}{0}{2.0}) or 4 hours post-admission (AUROC = \getms{Test}{transfusions}{0}{1}{0}{4.0}).
+
+\vspace{1ex}
+\noindent\textbf{WAVE-only models} similarly lacked discriminative ability for PBTR during early observation periods, yielding AUROCs of \getms{Test}{transfusions}{0}{0}{1}{0.5} and \getms{Test}{transfusions}{0}{0}{1}{2.0} at 30 minutes and 2 hours, respectively. However, by 4 hours post-admission, performance improved to a moderate level (AUROC = \getms{Test}{transfusions}{0}{0}{1}{4.0}).
+
+\vspace{1ex}
+\noindent\textbf{TVI-only models} exhibited minimal predictive signal for PBTR within the first 30 minutes (AUROC = \getms{Test}{transfusions}{1}{0}{0}{0.5}). Performance gradually increased to AUROCs of \getms{Test}{transfusions}{1}{0}{0}{2.0} at 2 hours and \getms{Test}{transfusions}{1}{0}{0}{4.0} at 4 hours post-admission, indicating modest but better-than-random discrimination as patients progressed through recovery.
+
+\vspace{1ex}
+\noindent\textbf{WAVE+TVI fusion models} demonstrated enhanced predictive performance for PBTR compared to their individual constituent modalities. These multimodal models achieved AUROCs of \getms{Test}{transfusions}{1}{0}{1}{0.5} at 30 minutes, \getms{Test}{transfusions}{1}{0}{1}{2.0} at 2 hours, and \getms{Test}{transfusions}{1}{0}{1}{4.0} at 4 hours post-admission.
+
+\subsubsection*{Neurological Complications (NEUC)}
+
+\vspace{1ex}
+\noindent\textbf{EHR-only models} demonstrated no significant predictive capability for NEUC at any evaluated time point. Performance remained at chance level throughout the observation period, with AUROCs of \getms{Test}{neuro}{0}{1}{0}{0.5} at 30 minutes, \getms{Test}{neuro}{0}{1}{0}{2.0} at 2 hours, and \getms{Test}{neuro}{0}{1}{0}{4.0} at 4 hours post-admission.
+
+\vspace{1ex}
+\noindent\textbf{WAVE-only models} similarly showed no discriminative ability for NEUC across all time intervals. The models yielded AUROCs of \getms{Test}{neuro}{0}{0}{1}{0.5}, \getms{Test}{neuro}{0}{0}{1}{2.0}, and \getms{Test}{neuro}{0}{0}{1}{4.0} at 30 minutes, 2 hours, and 4 hours post-admission, respectively.
+
+\vspace{1ex}
+\noindent\textbf{TVI-only models} exhibited remarkable predictive performance for NEUC prediction beginning from the earliest assessment point. At just 30 minutes post-admission, these models achieved an AUROC of \getms{Test}{neuro}{1}{0}{0}{0.5}, maintaining this high performance at 2 hours (\getms{Test}{neuro}{1}{0}{0}{2.0}) and 4 hours (\getms{Test}{neuro}{1}{0}{0}{4.0}).
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.6\textwidth]{\dir/figs/neuro/model_embedding_dims_thermal_100_model_embedding_dims_mlife_0_model_embedding_dims_waves_0_model_embedding_dims_static_0/Ranking_Test.png}
+    \caption{\textbf{TVI-data only model for neurological complications.} Visualization of patient ranking by predicted risk, stratified by severity. Rows 1-5: Relative ranks across nine model runs (3-fold CV × 3 seeds), with left column showing severe cases and right column showing moderate cases. Row 6: Mean relative rank curves. Bottom row: Aggregated AUROC curve from all test predictions.}
+    \label{fig:modality_comparison_tvi}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.6\textwidth]{\dir/figs/neuro/model_embedding_dims_thermal_0_model_embedding_dims_mlife_100_model_embedding_dims_waves_0_model_embedding_dims_static_0/Ranking_Test.png}
+    \caption{\textbf{EHR-data only model for neurological complications.} Visualization of patient ranking by predicted risk, stratified by severity. Rows 1-5: Relative ranks across nine model runs (3-fold CV × 3 seeds), with left column showing severe cases and right column showing moderate cases. Row 6: Mean relative rank curves. Bottom row: Aggregated AUROC curve from all test predictions.}
+    \label{fig:modality_comparison_ehr}
+\end{figure}
+
+
+\section{Discussion}
+
+To the best of our knowledge, this study represents the first systematic investigation of real-time multimodal data integration—combining electronic health records (EHR), physiological waveforms (WAVE), and thermo-visual imaging (TVI)—for postoperative critical care settings. Below, we discuss the key experimental findings for the postoperative states HVIR, PBTR and NEUC, followed by an examination of the limitations inherent to our experimental approach.
+
+\vspace{1ex}
+\noindent\textbf{High Vasoactive-Inotropic Requirement (HVIR)}
+For HVIR detection, models trained exclusively on EHR data demonstrated highest performance. Notably, neither WAVE nor TVI modalities contributed significant discriminative information to this detection task. Analysis of the raw thermal data (Figure~\ref{fig:vis-temp}) revealed no substantial differences in facial thermal distributions between patients with HVIR and those without during the initial three hours following PACU admission. This absence of distinguishable macro-level thermal patterns aligns with the observed absence of detection capability of our transformer models when using TVI data.
+
+In summary, our experimental results indicate that within the constraints of the present study cohort, EHR data alone provided the most robust detection signal for postoperative HVIR. This finding suggests that established clinical variables captured in the EHR may adequately characterize this state without requiring additional sensing modalities.
+
+\vspace{1ex}
+\noindent\textbf{Postoperative Blood Product Transfusion Requirement (PBTR)}
+In contrast, PBTR could not be reliably predicted using EHR data alone. However, physiological waveform (WAVE) data demonstrated moderate predictive capability, suggesting presence of early indicators of impending transfusion requirements. Given that waveform data are routinely monitored at the bedside but rarely systematically archived and analyzed, our findings highlight the potential clinical value of systematically recording these data streams to facilitate future machine learning applications.
+
+Thermo-visual imaging (TVI) also exhibited moderate predictive performance for PBTR. Nevertheless, the predictive signal was relatively weak, raising questions regarding the clinical utility.
+
+Interestingly, combining WAVE and TVI data improved predictive performance beyond either modality individually, indicating complementary information between these modalities. This multimodal synergy warrants further investigation, as it may reflect an interplay between arterial blood pressure dynamics and subtle thermal manifestations on the patient's face.
+
+The modest predictive performance of TVI aligns with the absence of clear macro-level differences in facial thermal distributions between patients with and without PBTR (Figure~\ref{fig:trans-temp}). Although subtle thermal variations may exist, these were not prominently discernible at the aggregate level within our cohort. Consequently, the observed moderate predictive capability of TVI likely reflects subtle perfusion patterns rather than pronounced thermal signatures.
+
+\vspace{1ex}
+\noindent\textbf{Neurological Complications (NEUC)}
+Neither EHR nor WAVE data demonstrated predictive utility for early detection of postoperative neurological complications within our cohort. This may reflect either a genuine absence of predictive signal or limitations imposed by the small sample size.
+
+In contrast, as shown in Figure~\ref{fig:modality_comparison_tvi} and \ref{fig:modality_comparison_ehr}, the TVI-only model achieved consistently high discriminative performance across nine independent runs (3-fold cross-validation repeated with three random seeds). Notably, the model consistently assigned high relative ranks to patients with severe neurological complications within each test set, indicating strong discriminative confidence. Detection of moderate complications was less consistent, with greater variability in assigned ranks across runs, yet still contributed positively to overall performance.
+By contrast, the EHR-only model failed to reliably rank either severe or moderate complications, yielding near-chance AUROC values.
+
+Figure~\ref{fig:neuro-temp} illustrates the mean facial temperature distributions during the first two hours following PACU admission, comparing patients who experienced neurological complications with those who did not. Notably, patients with neurological complications exhibited distinctly lower mean facial temperatures across many facial regions, except for areas closely correlated with core body temperature, such as the inner corners of the eyes. Concurrent core temperature measurements obtained from bladder sensors revealed no significant differences between the two cohorts, suggesting that the observed facial temperature differences reflect reduced peripheral blood flow rather than systemic hypothermia.
+
+These findings complement existing literature, which has primarily focused on core body temperature measurements due to their widespread availability, rather than the more granular thermal signatures enabled by our approach. Previous studies have nonetheless identified associations between intraoperative hypothermia and neurological deterioration following cardiac surgery \citep{wang2024relationship, ju2023association, qu2025hypothermic}. Our thermal imaging methodology extends this work by capturing subtle peripheral perfusion variations that remain undetectable through conventional core temperature monitoring, potentially enabling earlier and more specific identification of neurological complications.
+
+Peripheral perfusion differences were evident immediately upon PACU admission and persisted for approximately two hours. During this period, core body temperature gradually increased, and the disparity in peripheral blood flow between cohorts diminished, becoming indistinguishable after approximately three hours. Importantly, the standard deviation of facial temperatures among patients experiencing neurological complications was notably low early after PACU admission, indicating a consistent and reliable thermal signature within this cohort. This consistent pattern likely explains the transformer's robust predictive performance in identifying neurological complications. Furthermore, the observed thermal differences were particularly pronounced in patients with severe neurological deficits, aligning with the transformer's superior performance in detecting these cases.
+
+It is important to emphasize that core body temperatures did not differ significantly between cohorts, and neurological complications were clinically identified only after patients regained consciousness from anesthesia (approximately two to three hours post-admission).
+
+Additionally, after approximately two hours, increased variability in nasal region temperatures was observed, attributable to differential oxygen supplementation methods following extubation. However, this variability was absent during the initial postoperative period when all patients remained sedated and uniformly orally intubated amd mechanically ventilated.
+
+The early postoperative thermal differences identified by TVI suggest that altered facial perfusion may serve as an early indicator of neurological deterioration. Despite the heterogeneous nature of postoperative neurological complications (e.g., stroke, delirium, seizures), a common thermal signature emerged, potentially reflecting a shared underlying pathophysiological mechanism such as compromised cerebral perfusion during surgery. These findings raise the possibility that intraoperative hypoperfusion events, potentially leading to increased vasoconstriction, may predispose patients to neurological complications by impairing cerebral circulation and increasing the risk of thrombotic events and cerebral hypoxia.
+
+Two recent studies have provided further evidence supporting this hypothesis in patients undergoing aortic arch surgery. Hori et al. \cite{hori2024prevalence} demonstrated that patients who developed postoperative cerebral infarction exhibited significantly reduced intraoperative regional cerebral oxygen saturation, suggesting compromised cerebral perfusion during surgery. Similarly, Weijs et al. \cite{weijs2023perioperative} identified decreased blood flow velocity during antegrade selective cerebral perfusion as an independent predictor of postoperative neurological deficits.
+
+
+Given the high risk of neurological complications in post-cardiac surgery patients—particularly during the sedated recovery phase when clinical assessment is challenging—early, non-invasive detection via TVI holds significant clinical promise. Timely identification of neurological deterioration could facilitate prompt intervention, potentially improving patient outcomes, reducing morbidity, and enhancing patient safety.
+
+\subsection{Limitations}
+
+Several limitations of our study warrant careful consideration. Foremost among these is the relatively small sample size. Although our dataset is rich in multimodal information per patient, the limited number of enrolled patients restricts the generalizability and statistical power of our findings. Despite employing data augmentation techniques and rigorous cross-validation protocols to mitigate this limitation, the small cohort size inherently constrains the robustness of our conclusions. This limitation was unavoidable, as ethical approval was explicitly granted for a limited patient cohort due to the exploratory nature of the study and the novel integration of thermo-visual imaging (TVI), a modality not previously established in clinical practice.
+
+The small sample size also implies that only signals with a high signal-to-noise ratio can be reliably detected. Consequently, subtle physiological patterns or weaker predictive signals—such as those potentially associated with High Vasoactive-Inotropic Requirement (HVIR)—may remain undetected or underestimated in our analysis. It remains plausible that a larger and more diverse patient cohort could reveal additional predictive signals, enhance model performance, and enable more nuanced detection of postoperative complications. Nevertheless, the robust predictive performance observed for neurological complications (NEUC) suggests that the signal-to-noise ratio for this particular clinical state was sufficiently high to yield meaningful insights even within our limited cohort.
+
+Another important limitation is the single-center nature of our study, conducted exclusively at a tertiary cardiac care facility. The integration of our multimodal data acquisition setup into the complex workflow of a busy critical care unit required extensive collaboration among nurses, clinicians, administrative personnel, technicians, and IT staff. This complexity poses significant challenges for replicating our data collection approach in other clinical settings, particularly when compared to simpler retrospective analyses based solely on electronic health records (EHR). Consequently, the generalizability of our findings to other institutions or patient populations remains uncertain, and further multicenter validation studies are necessary to confirm the broader applicability and clinical utility of our multimodal predictive framework.

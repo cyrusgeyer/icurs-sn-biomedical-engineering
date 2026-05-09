@@ -1,0 +1,411 @@
+\usepackage{luacode}
+
+\begin{luacode*}
+  results = {}
+
+  -- Split CSV line while preserving empty fields.
+  local function split_csv(line)
+  local fields = {}
+  for field in (line .. ","):gmatch("([^,]*),") do
+  fields[#fields + 1] = field
+  end
+  return fields
+  end
+
+  -- Normalize a row key: integers stay as integer strings, everything else stays raw.
+  local function normalize_key(s)
+  local n = tonumber(s)
+  if n and n == math.floor(n) then
+  return string.format("%d", n)
+    elseif n then
+    return tostring(n)
+    else
+    return s
+    end
+    end
+
+    -- Load a pivoted CSV where rows are timepoints (or pseudonyms) and columns are modality combinations.
+    -- Expected structure:
+    -- row 1: ehr,<flags...>
+    -- row 2: waves,<flags...>
+    -- row 3: thermal,<flags...>
+    -- row 4: time_min,,,,
+    -- row 5+: <time>,<value_for_combo_1>,...,<value_for_combo_n>
+    function load_pivot_csv(dataset, condition, filepath)
+    if not results[dataset] then results[dataset] = {} end
+    if not results[dataset][condition] then results[dataset][condition] = {} end
+
+    local ehr_flags = {}
+    local waves_flags = {}
+    local thermal_flags = {}
+    local combo_keys = {}
+
+    local row_idx = 0
+    for line in io.lines(filepath) do
+    row_idx = row_idx + 1
+    local fields = split_csv(line)
+
+    if row_idx == 1 then
+    for col = 2, #fields do
+    ehr_flags[col] = fields[col]
+    end
+    elseif row_idx == 2 then
+    for col = 2, #fields do
+    waves_flags[col] = fields[col]
+    end
+    elseif row_idx == 3 then
+    for col = 2, #fields do
+    thermal_flags[col] = fields[col]
+    combo_keys[col] = thermal_flags[col] .. "-" .. ehr_flags[col] .. "-" .. waves_flags[col]
+    if not results[dataset][condition][combo_keys[col]] then
+    results[dataset][condition][combo_keys[col]] = {}
+    end
+    end
+    elseif row_idx >= 5 then
+    local row_key = normalize_key(fields[1])
+    if row_key and row_key ~= "" then
+    for col = 2, #fields do
+    local key = combo_keys[col]
+    local val = tonumber(fields[col])
+    if key then
+    if val then
+    results[dataset][condition][key][row_key] = string.format("%.2f", val)
+      else
+      results[dataset][condition][key][row_key] = "??"
+      end
+      end
+      end
+      end
+      end
+      end
+      end
+
+      -- Load the new by-time AUROC results.
+      load_pivot_csv("Test_mean", "auroc_by_time", "new_results/auroc_epoch2_by_time_mean.csv")
+      load_pivot_csv("Test_std", "auroc_by_time", "new_results/auroc_epoch2_by_time_std.csv")
+      load_pivot_csv("Validation_mean", "auroc_by_time", "new_results/auroc_epoch2_by_time_mean.csv")
+      load_pivot_csv("Validation_std", "auroc_by_time", "new_results/auroc_epoch2_by_time_std.csv")
+
+      -- Load the ranks snapshot at 90min.
+      load_pivot_csv("Test_mean", "ranks_90min", "new_results/ranks_epoch2_snapshot_90min_mean.csv")
+      load_pivot_csv("Test_std", "ranks_90min", "new_results/ranks_epoch2_snapshot_90min_std.csv")
+      load_pivot_csv("Validation_mean", "ranks_90min", "new_results/ranks_epoch2_snapshot_90min_mean.csv")
+      load_pivot_csv("Validation_std", "ranks_90min", "new_results/ranks_epoch2_snapshot_90min_std.csv")
+
+      -- Load a two-method comparison CSV where:
+      -- row 1: <row_label>,Our,Vanilla VAE
+      -- row 2+: <key>,<our_val>,<vanilla_val>
+      -- Stored as results[dataset][condition][method][row_key].
+      function load_comparison_csv(dataset, condition, filepath)
+      if not results[dataset] then results[dataset] = {} end
+      if not results[dataset][condition] then results[dataset][condition] = {} end
+
+      local method_keys = {}
+      local row_idx = 0
+      for line in io.lines(filepath) do
+      row_idx = row_idx + 1
+      local fields = split_csv(line)
+      if row_idx == 1 then
+      for col = 2, #fields do
+      method_keys[col] = fields[col]
+      if not results[dataset][condition][method_keys[col]] then
+      results[dataset][condition][method_keys[col]] = {}
+      end
+      end
+      else
+      local row_key = normalize_key(fields[1])
+      if row_key and row_key ~= "" then
+      for col = 2, #fields do
+      local key = method_keys[col]
+      local val = tonumber(fields[col])
+      if key then
+      if val then
+      results[dataset][condition][key][row_key] = string.format("%.2f", val)
+        else
+        results[dataset][condition][key][row_key] = "??"
+        end
+        end
+        end
+        end
+        end
+        end
+        end
+
+        -- Our vs. Vanilla VAE comparison (all modalities active).
+        load_comparison_csv("Test_mean", "auroc_comparison", "new_results/auroc_comparison_mean.csv")
+        load_comparison_csv("Test_std", "auroc_comparison", "new_results/auroc_comparison_std.csv")
+        load_comparison_csv("Test_mean", "ranks_comparison_90min", "new_results/ranks_comparison_90min_mean.csv")
+        load_comparison_csv("Test_std", "ranks_comparison_90min", "new_results/ranks_comparison_90min_std.csv")
+
+        -- Generate comparison ranks table rows from patient_list.
+        -- Each row: label & \gradient{our_mean}{our_mean±std} & \gradient{vanilla_mean}{vanilla_mean±std} \\
+        function generate_comparison_ranks_rows()
+        local methods = { "Our", "Vanilla VAE" }
+        for _, p in ipairs(patient_list) do
+        local pseudo = p.pseudo
+        local label = p.label
+        local cells = {}
+        for _, method in ipairs(methods) do
+        local m = results["Test_mean"] and results["Test_mean"]["ranks_comparison_90min"]
+        and results["Test_mean"]["ranks_comparison_90min"][method]
+        and results["Test_mean"]["ranks_comparison_90min"][method][pseudo] or "??"
+        local s = results["Test_std"] and results["Test_std"]["ranks_comparison_90min"]
+        and results["Test_std"]["ranks_comparison_90min"][method]
+        and results["Test_std"]["ranks_comparison_90min"][method][pseudo]
+        local ms = m
+        if m ~= "??" and s then ms = m .. " \\pm " .. s end
+        cells[#cells + 1] = "\\gradient{" .. m .. "}{" .. ms .. "}"
+        end
+        tex.print("        " .. label .. " &")
+        tex.print("        " .. cells[1] .. " &")
+        tex.print("        " .. cells[2] .. " \\\\")
+        end
+        end
+
+        -- Load patient descriptions: pseudonym -> label, description
+        patient_labels = {}
+        patient_descriptions = {}
+        patient_list = {}
+        do
+        local first = true
+        for line in io.lines("new_results/patient_descriptions.csv") do
+        if first then
+        first = false
+        else
+        local label = line:match("^([^,]*)")
+        local rest = line:sub(#label + 2)
+        local pseudo = rest:match("^([^,]*)")
+        local desc = rest:sub(#pseudo + 2)
+        patient_labels[pseudo] = label
+        patient_descriptions[pseudo] = desc
+        patient_list[#patient_list + 1] = { pseudo = pseudo, label = label, desc = desc }
+        end
+        end
+        end
+
+        -- Generate ranks table rows from patient_list.
+        -- Each row: label & \gradient{mean}{mean±std} & ... \\
+        function generate_ranks_rows()
+        local combos = {
+          {0,1,0}, {0,1,1}, {0,0,1}, {1,0,0}, {1,1,0}, {1,0,1}, {1,1,1}
+        }
+        for i, p in ipairs(patient_list) do
+        local pseudo = p.pseudo
+        local label = p.label
+        local cells = {}
+        for _, c in ipairs(combos) do
+        local key = c[1] .. "-" .. c[2] .. "-" .. c[3]
+        local m = results["Test_mean"] and results["Test_mean"]["ranks_90min"]
+        and results["Test_mean"]["ranks_90min"][key]
+        and results["Test_mean"]["ranks_90min"][key][pseudo] or "??"
+        local s = results["Test_std"] and results["Test_std"]["ranks_90min"]
+        and results["Test_std"]["ranks_90min"][key]
+        and results["Test_std"]["ranks_90min"][key][pseudo]
+        local ms = m
+        if m ~= "??" and s then ms = m .. " \\pm " .. s end
+        cells[#cells + 1] = "\\gradient{" .. m .. "}{" .. ms .. "}"
+        end
+        tex.print("        " .. label .. " &")
+        for j = 1, #cells - 1 do
+        tex.print("        " .. cells[j] .. " &")
+        end
+        tex.print("        " .. cells[#cells] .. " \\\\")
+        end
+        end
+
+        -- Generate patient description table rows from patient_list.
+        -- Each row: label & description \\
+        function generate_patient_rows()
+        for _, p in ipairs(patient_list) do
+        tex.print("        " .. p.label .. " & " .. p.desc .. " \\\\")
+        end
+        end
+
+      \end{luacode*}
+
+      \newcommand{\patientlabel}[1]{%
+        \directlua{
+          local pseudo = "#1"
+          local label = patient_labels[pseudo]
+          if label then
+          tex.print(label)
+          else
+          tex.print("??")
+          end
+        }%
+      }
+
+      \newcommand{\patientdesc}[1]{%
+        \directlua{
+          local pseudo = "#1"
+          local desc = patient_descriptions[pseudo]
+          if desc then
+          tex.print(desc)
+          else
+          tex.print("??")
+          end
+        }%
+      }
+
+      \newcommand{\rankstablerows}{\directlua{generate_ranks_rows()}}
+      \newcommand{\patienttablerows}{\directlua{generate_patient_rows()}}
+      \newcommand{\generatecompranksrows}{\directlua{generate_comparison_ranks_rows()}}
+
+      \newcommand{\getcm}[4]{%
+        \directlua{
+          local base = "#1"
+          local condition = "#2"
+          local method = "#3"
+
+          local function normalize_time(t)
+          local n = tonumber(t)
+          if n and n == math.floor(n) then return tostring(math.floor(n))
+          elseif n then return tostring(n)
+          else return t end
+          end
+
+          local row_key = normalize_time("#4")
+          local mean_dataset = base .. "_mean"
+
+          local mean_val = results[mean_dataset]
+          and results[mean_dataset][condition]
+          and results[mean_dataset][condition][method]
+          and results[mean_dataset][condition][method][row_key]
+
+          if mean_val then
+          tex.print(mean_val)
+          else
+          tex.print("??")
+          end
+        }%
+      }
+
+      \newcommand{\getcms}[4]{%
+        \directlua{
+          local base = "#1"
+          local condition = "#2"
+          local method = "#3"
+
+          local function normalize_time(t)
+          local n = tonumber(t)
+          if n and n == math.floor(n) then return tostring(math.floor(n))
+          elseif n then return tostring(n)
+          else return t end
+          end
+
+          local row_key = normalize_time("#4")
+
+          local mean_dataset = base .. "_mean"
+          local std_dataset = base .. "_std"
+
+          local mean_val = results[mean_dataset]
+          and results[mean_dataset][condition]
+          and results[mean_dataset][condition][method]
+          and results[mean_dataset][condition][method][row_key]
+
+          local std_val = results[std_dataset]
+          and results[std_dataset][condition]
+          and results[std_dataset][condition][method]
+          and results[std_dataset][condition][method][row_key]
+
+          if mean_val and std_val then
+          tex.print(mean_val .. " ± " .. std_val)
+          else
+          tex.print("??")
+          end
+        }%
+      }
+
+      \newcommand{\getms}[6]{%
+        \directlua{
+          local base = "#1"
+          local condition = "#2"
+          local key = "#3-#4-#5"
+
+          local function normalize_time(t)
+          local n = tonumber(t)
+          if n and n == math.floor(n) then return tostring(math.floor(n))
+          elseif n then return tostring(n)
+          else return t end
+          end
+
+          local time = normalize_time("#6")
+
+          local mean_dataset = base .. "_mean"
+          local std_dataset = base .. "_std"
+
+          local mean_val = results[mean_dataset]
+          and results[mean_dataset][condition]
+          and results[mean_dataset][condition][key]
+          and results[mean_dataset][condition][key][time]
+
+          local std_val = results[std_dataset]
+          and results[std_dataset][condition]
+          and results[std_dataset][condition][key]
+          and results[std_dataset][condition][key][time]
+
+          if mean_val and std_val then
+          tex.print(mean_val .. " ± " .. std_val)
+          else
+          tex.print("??")
+          end
+        }%
+      }
+
+      \newcommand{\getm}[6]{%
+        \directlua{
+          local base = "#1"
+          local condition = "#2"
+          local key = "#3-#4-#5"
+
+          local function normalize_time(t)
+          local n = tonumber(t)
+          if n and n == math.floor(n) then return tostring(math.floor(n))
+          elseif n then return tostring(n)
+          else return t end
+          end
+
+          local time = normalize_time("#6")
+          local mean_dataset = base .. "_mean"
+
+          local mean_val = results[mean_dataset]
+          and results[mean_dataset][condition]
+          and results[mean_dataset][condition][key]
+          and results[mean_dataset][condition][key][time]
+
+          if mean_val then
+          tex.print(mean_val)
+          else
+          tex.print("??")
+          end
+        }%
+      }
+
+      \newcommand{\getstd}[6]{%
+        \directlua{
+          local base = "#1"
+          local condition = "#2"
+          local key = "#3-#4-#5"
+
+          local function normalize_time(t)
+          local n = tonumber(t)
+          if n and n == math.floor(n) then return tostring(math.floor(n))
+          elseif n then return tostring(n)
+          else return t end
+          end
+
+          local time = normalize_time("#6")
+          local std_dataset = base .. "_std"
+
+          local std_val = results[std_dataset]
+          and results[std_dataset][condition]
+          and results[std_dataset][condition][key]
+          and results[std_dataset][condition][key][time]
+
+          if std_val then
+          tex.print(std_val)
+          else
+          tex.print("??")
+          end
+        }%
+      }

@@ -1,0 +1,163 @@
+Instructions for submitting your manuscript
+
+These two pages of instructions, and the guidelines and example text in the manuscript template that follows, should be deleted before submitting the file. Please do not change the formatting.
+
+You will need to paste text from your manuscript into the manuscript template. To do so, make sure to use ‘merge formatting’ (keystrokes in Word for Windows: CTRL+V, then CTRL, then M; keystrokes in Word for Mac: ⌘+Option+Shift+V).
+
+To adhere to editorial policies and journal style, please address all applicable points below.
+
+Manuscript. All content in the manuscript and its Supplementary Information (except any supplementary videos, data and code) should be provided in this file; however, if file size exceeds 50 Mb, provide the SI separately. You can also submit the manuscript as a TeX/LaTeX file; if so, please read these instructions, and submit a single .tex file that follows the same structure as the manuscript template. 
+	Please make sure that all acronyms are spelled out at first use, minimize the number of acronyms used, and avoid acronyms that are also common words.
+	To adhere to house style, please avoid any use of ‘breakthrough’, 'paradigm shift', 'innovative', 'striking', ‘major advance’, ‘unprecedented’, ‘successfully’, and of similar wording denoting the importance of the results described in the manuscript; it is up to readers to judge the advance. Also, please remove any instances of 'for the first time', 'novel' and ‘new’, unless strictly needed. ‘Platform’ (an often-misused term) should be substituted by ‘technology’, ‘method’, ‘approach’ or similar wording.
+	Do avoid any pompous language, such as ‘opening up new vistas’, ‘accomplished a feat’, ‘holy grail’, ‘an overarching framework’ and ‘unparalleled applicability opportunities’; be specific, and let the reader judge the broader relevance and implications of the work.
+	The word ‘significant' and its derivatives should only be used to denote statistical significance. Otherwise, please use ‘substantial’, ‘considerable’, ‘notable’ or similar wording.
+
+Figures and tables. Please make sure that all images comply with our guidelines for image integrity. Note that the maximum number of display items (figures and tables) in Articles is 8. Each figure should be laid out alongside the text near where it is first cited, and should fit within one single A4 page along with its caption. All the elements in the figure should be clearly visible when the page is visualized at a magnification comfortable for reading the main text. Non-standard drawings, symbols, and abbreviations that are not spelled out in the main text should be defined. Please consider colour-blind readers when choosing colours for figures (avoid combinations of green and red; instead, green and magenta, turquoise and red, and yellow and blue are colour-safe combinations; this colour-blindness simulator may be helpful). Tables should have one or two headings and be laid out in simple rows and columns of text only; please avoid complex layouts, shadings and colours. 
+	As noted in the editorial 'Show the dots in plots', we request that, for all bar plots (in the main figures and in the SI), measurements are shown as individual data points (in addition to measures of central tendency and error bars), unless sample numbers are large.
+	For all cropped gels and blots, please provide images of the full scans (with the boundaries of the crops outlined) in the SI, and refer to them in the respective figure captions.
+	All p-values (unless smaller than 0.001) should be provided as precise figures (rather than as p < number); and, space allowing, they are best placed on the graphs rather than in the figure caption.  Statistical tests, whether they are one-sided or two-sided, and whether adjustments were made for multiple comparisons, should be specified in each relevant figure caption.
+	For all graphs with error bars, please define in the figure caption the centre values, measure of dispersion, and sample numbers (please do not provide sample ranges).
+	The axes of all plots should be properly labelled, with units (or arbitrary units; ‘a.u.’). When axes are normalized, the figure caption should mention the normalization factor used.
+	Measurement replicates: for all relevant figures, please state in the caption whether replicates are biological or technical. Reporting statistics on technical replicates is discouraged (in such cases, a clear justification should be provided).
+	Box plots: the minima, maxima, centre, and percentiles need to be defined in each relevant figure caption.
+	Note that house style forbids the use of tables within figures. Tables should be standalone items; if a table has few entries, the information can be provided as main text or as part of a figure caption.
+	Note that panel titles (that is, descriptions of a whole panel in the figure itself) are against house style. We instead recommend that the information is provided in the caption. Alternatively, panels can be merged so that the descriptions apply to parts of a panel rather than to a whole panel.
+
+Reporting Summary. If your paper is published, the Reporting Summary will be appended to the PDF of the paper and will also be available as SI. Please make sure that you use the latest version of the Reporting Summary (that is, the date at the bottom of the red strip should be the same as in this reference form) and that all the information in it is clear and up-to-date. All relevant fields should be filled in; that is, no visible field should be left blank or mention ‘N/A’ (not applicable) or equivalent wording; rather, explain why the item is not applicable.
+
+	Software and code: please ensure that all software used for either data collection or data analysis is included, specifying the version and what it was used for. If custom code has been used, its availability should be specified in the Code availability section of the manuscript.
+	Data: please ensure that the statement is identical to that under the Data Availability section in the manuscript.
+	Life Sciences study design: in Sample size, please describe how sample sizes were chosen and provide a rationale for why these sample sizes were sufficient; in Data exclusions, specify any exclusion criteria, and whether these were pre-established; in Randomization and Blinding, mention any criteria for group allocation and whether the investigators were blinded to it; if sample-size rationale, randomization and/or blinding were not applicable, describe why.
+	Antibodies: for all antibodies used, provide supplier name, catalogue number, clone name, lot number and dilution when applicable, as well how the antibodies were validated for the system at hand (such as any validation statements on the manufacturer's website, relevant citations, antibody profiles in online databases, or data provided in the manuscript).
+	Laboratory animals: please add all the necessary details, including the supplier, the specific strains of all mice used, and their sex, age and weight.
+	Ethics oversight: please ensure that the statement indicating compliance with all relevant animal-use guidelines and ethical regulations is also included in the relevant part of the Methods section of the manuscript.
+
+Supplementary Information (SI). Place the supplementary text, tables and figures at the end of this document. Any supplementary videos, data and code should be included as separate files, and their captions placed at the very end of this document.
+
+	Make sure that text, figures and tables in the SI (as well as any supplementary videos, data and code) include descriptive captions and are appropriately referenced in the manuscript. References to any item in the SI should follow the format ‘Supplementary Item #’, where ‘item’ can be ‘Fig.’, ‘Table’, ‘Methods’ ‘Note’ or ‘Discussion’, and ‘#’ its number (should there be more than one item). 
+
+THIS IS THE END OF THE INSTRUCTIONS SECTION
+
+The rest of the document is the manuscript template, which we encourage you to use. Please substitute the guidelines and example text in the template with the text in your manuscript. To paste text into the document, please make sure to use ‘merge formatting’ (keystrokes in Word for Windows: CTRL+V, then CTRL, then M; keystrokes in Word for Mac: ⌘+Option+Shift+V).  
+Title [max 130 characters including spaces; see our tips for constructing an effective title]
+Ludwig E. Boltzmann1,&, Marie Skłodowska-Curie2,&, Erwin-Rudolf J. A. Schrödinger1,3, Dorothy M. Hodgkin1,2* and C. R. Darwin1,2,3*
+
+1Institution’s full address, including postcode
+2Institution’s full address, including postcode
+3Institution’s full address, including postcode
+4Institution’s full address, including postcode
+
+&These authors contributed equally
+*Corresponding authors, e-mail1@institution.edu; e-mail2@institution.edu
+
+Abstract [1 paragraph; max. 175 words; no referencing; strictly needed acronyms only; avoid defining new acronyms or words; Use ‘Here, we show/report/demonstrate/introduce’ after at least one sentence of background.]
+
+The main text starts here. Note that house style does not allow for the heading ‘Introduction’, and that the journal uses British spelling. See our recommendations for writing accessibly.
+ 
+Paragraphs should be clearly spaced. The main text can be divided into sections with headings that are specific yet short (less than 60 characters including spaces for first-level headings; here an example). Otherwise, the usual sections are Results, Discussion and, optionally, Outlook. Using Results and discussion (and, optionally, Outlook), is another possibility. Methods, Reporting Summary, Data Availability, References, Acknowledgements, Author contributions, Competing interests, and Additional information are mandatory sections.
+
+Citing names of researchers (unless widely known) is against house style. Therefore, please rephrase any sentences to remove instances such as ‘Smith et al.', ‘Smith’s lab.’ or Smith's group'.
+
+
+Results
+Abbreviations, particularly those that are not standard, should be kept to a minimum, and should be defined at their first occurrence. Please restrain from defining new acronyms, and avoid acronyms that are (or resemble) common words, such as SMART, GR8 or FONNY.
+
+Please ensure that all display items are cited in the main text. Display items are the main figures and tables, and the Extended Data figures. Please also cite all items (and sections, if needed) in the main Supplementary Information file as well as any Additional Supplementary Information (such as Supplementary Fig. 1; Supplementary Table 1; Supplementary Note 1; Supplementary Methods, section ‘Statistical analyses’; Supplementary Video 1; or Supplementary Dataset 1). The main figures and Extended Data figures should be cited correlatively; hence, Fig. 1 should be called out before Fig. 2, and Extended Data Fig. 1 should be called out before Extended Data Fig. 2, followed by the rest of the figures (multiple items at once can be called out by using an en dash, as in Figs. 3–8). Please cite all individual figure panels (Fig. 3a,b); correlative call-outs for figure panels is not mandatory, however. Please follow the call-out style of this paragraph, using bold font for each call-out for easier visualization. Tables should also be cited correlatively; hence, Table 1 comes before Table 2. When calling out references, please do so correlatively and use superscript numbers1, except when the reference number follows other numbers, symbols or acronyms; in such cases, use the form ‘(Ref. #)’, as in these examples: the success fraction is 0.5 (ref. 1); the Nernst equation is E=E^0-(RT/(zF)) ln Q (refs. 1–3); high levels of expression of KRAS (refs. 4,5).
+
+Subheadings. Note that house style only allows for two levels of section headings (here an example). A second-level heading can’t be immediately preceded by a first-level heading; there must be at least one paragraph in between.
+
+Gene nomenclature. Please use symbols rather than italicized full names (Ttn, not titin), and approved nomenclature (please consult the appropriate nomenclature databases; a useful resource is Gene). For proposed gene names that are not already approved, please submit the gene symbols to the appropriate nomenclature committees as soon as possible, as these must be deposited and approved before publication.
+
+Avoid listing multiple names of genes (or proteins) separated by a slash, as in 'Oct4/Pou5f1', as this is ambiguous (it could mean a ratio, a complex, alternative names or different subunits). Use one name throughout and include the other at first mention: 'Oct4 (also known as Pou5f1)'.
+
+Chemical and biological nomenclature and abbreviations. When possible, refer to chemical compounds and biomolecules using systematic nomenclature, preferably using IUPAC and IUBMB rules. Standard chemical and biological abbreviations should be used. Unconventional or specialist abbreviations should be defined at their first occurrence in the text.
+
+Equations. Equations and mathematical expressions should be provided in the main text of the paper as editable objects. Equations that are referred to in the text are identified by parenthetical numbers (such as (1)), and are referred to in the manuscript as 'equation (1)'.
+
+
+Discussion
+We recommend that you ask a colleague with different expertise to review the manuscript before final submission, in order to identify concepts and terminology that may present difficulties to non-specialist readers.
+
+No paper will be rejected for poor language. However, if reviewers or editors have pointed out major deficiencies with the writing of the manuscript, or you would like assistance with editing your manuscript, you can consider asking a colleague whose native language is English for their input and/or use a professional editing service such as those provided by our affiliates Nature Research Editing Service or American Journal Experts. The use of a language editing service has no bearing on editorial decisions and is not a requirement for publication.
+
+Outlook
+This section, or the last paragraph of the discussion if this section is not included, should only discuss the implications of the findings rather than be a repetition of findings already discussed.
+
+Avoid hype, empty and fancy words, and overstatements. An example: ‘This overarching framework solely utilizes common standards, expediting unprecedented and unparalleled applicability opportunities’.
+
+
+Methods
+This section should not contain figures or tables, and should be structured in sub-sections, with appropriate specific headings such as Study design, Cell culture, Materials, Device fabrication, and Statistical analyses. The last subheading should be Reporting Summary. Any supplementary methods, discussion, figures and tables should be included as SI.
+
+
+Reporting Summary. Further information on research design is available in the Nature Research Reporting Summary linked to this article.
+
+
+Data availability
+A data availability statement is required. For purposes of replicability, reproducibility and data re-use, the statement should clearly state how the data used in the study can be accessed by interested researchers. If (some of) the data are not available or available only on request, the statement should clearly specify why. Follow these tips for how to write one. Three example statements follow:
+
+The main data supporting the results in this study are available within the paper and its Supplementary Information. Source data for the figures will be provided with this paper. All data generated in this study are [will be] available from figshare with the identifier https://doi.org/10.6084/m9.figshare.xxxxxxx.
+
+The main data supporting the results in this study are available within the paper and its Supplementary Information. The genomic data used in Fig. 1 were extracted from TCGA (ref. 1). Source data for Figs. 2 and 3 will be provided with this paper. The raw and analysed datasets generated during the study are too large to be publicly shared, yet they are [will be made] available for research purposes from the corresponding authors on reasonable request. The processed images supporting the results in Fig. 4 are available from figshare with the identifier https://doi.org/10.6084/m9.figshare.xxxxxxx.
+
+The data supporting the results in this study are available within the paper and its Supplementary Information. The raw patient data are available from the authors, subject to approval from the Institutional Review Board of the University of the United States.
+
+The data availability statement should also include, where applicable, accession codes, other unique identifiers and associated web links for publicly available datasets, and any conditions for access of non-publicly available datasets. Data deposition is mandatory for protein, DNA and RNA sequences, crystallographic data for small molecules, microarray data, and macromolecular structures.
+
+We encourage deposition of all raw and analysed datasets (including the data underlying the figures and any other data supporting the findings) in a public repository. We recommend that you use a discipline-specific, community-recognized repository (a list of recommended repositories is available) or a generalist repository (such as figshare or Dryad). In this case, a citation to the deposited data should be added at the end of the reference list of the manuscript, and this section should include the following statement:
+
+Source data for the figures in this study are available in [repository name, e.g. figshare] with the identifier(s) [data DOI(s), e.g. doi:10.6084/m9.figshare.xxxxxxx] (ref. X).
+
+The entry in the reference list would then read: Surname, N. et al. Dataset for [Title of the Article]. figshare https://doi.org/10.6084/m9.figshare.xxxxxxx (20XX).
+
+Data deposited in figshare can be made private, and then released publicly at the time of the publication of the Article. See here for how-to information.
+
+
+Code availability [delete this section if the study did not involve any custom code]
+If evidence provided in your manuscript has been generated from custom computer code, please make sure to include a statement about code availability (such as ‘The custom code for [brief description of what the code is for] is available at https://doi.org/10.5281/zenodo.1234567’), indicating how the code or algorithm can be accessed, and any access restrictions. If the code is short (as is typical for MATLAB scripts), it can be included as SI. If the code is not available or available only on request, the statement should clearly specify why. To facilitate code re-use, and the replicability and reproducibility of the study, we strongly recommend that code be made available via a DOI-minting repository such as Zenodo, Gigantum or Code Ocean, and cited in the reference list following these citation examples. We also encourage that the code be released under an open-source license.
+
+
+References
+1. Yu, K.-H., Beam, A. L. & Kohane, I. S. Artificial intelligence in healthcare. Nat. Biomed. Eng. 2, 719–731 (2018).
+2. Saltzman, W. M. Biomedical Engineering: Bridging Medicine and Technology (Cambridge Univ. Press, 2015).
+
+Each reference number should list only one item. Only articles that have been published or accepted by a named publication or recognized preprint server should be in the numbered list. Published conference abstracts, numbered patents and research datasets that have been assigned a digital object identifier may also be included in the reference list. Grant details and acknowledgments are not permitted as numbered references. Footnotes are not allowed.
+
+All authors should be included in reference lists unless there are more than five, in which case only the first author should be given, followed by 'et al.'. Authors should be listed last name first, followed by a comma and initials (followed by full stops) of given names. The first word of the title should be capitalized and the title written exactly as it appears in the study cited, ending with a full stop. Book titles should be given in italics and all words in the title should have initial capitals. Journal names are italicized and abbreviated (with full stops) according to common usage. Volume numbers appear in bold.
+
+
+Acknowledgements
+Acknowledgements should be brief, and name anyone who has contributed to the work yet who does not qualify for authorship, according to our criteria for authorship. This section should also be used to declare relevant funding information (grant numbers can be included).
+
+Acknowledgements should not mention anonymous referees or editors, or include effusive comments.
+
+This section should not be used to declare competing interests, including any competing interests related to funding sources that may gain or lose financially through by the publication of the work. These should be declared separately under the section ‘Competing interests’ below.
+
+Funding. When acknowledging funding, our recommended best practice is that authors acknowledge funders and grants on publications when the activities that contributed to that publication are within scope of the acknowledged grant and arise directly from a specific grant. That is, are the results included in the manuscript original and the direct result of experimentation, materials or analysis supported by the grant? Does the grant financially support publication of the manuscript (for example, through the payment of article processing charges)? If the answer is yes to any of these questions, best practice is to acknowledge the funding source and grant number, if the grant requires it. If the answer to both questions is negative, it is not best practice to acknowledge grant support. In particular, grants that support data generation for distinct studies that are related in topic but that are not relevant for this specific work should not be acknowledged. Please ensure that relevant funding sources are disclosed for all authors. All authors should be aware of any specific acknowledgement requirements from their funders.
+ 
+Please use this style to acknowledgement grant funding: A.B.C. discloses support for the research described in this study from Funder [grant number ####], Funder [grant number ####] and Funder [grant number ####]. D.E.F. discloses support for the publication of this study from Funder [grant number ####], Funder [grant number ####] and Funder [grant number ####].
+
+
+Author contributions
+We require authors to include a statement of their individual contributions to the paper (such as experimental work, project planning or data analysis). The statement should be short, and refer to authors by their initials (such D.M.H or C.R.D.; note that only dots, and no spaces, are used to separate the initials). If two or more co-authors have jointly supervised the work, this can be specifically noted. For specific examples, please check recently published papers. Please make sure that all authors and their contributions are included.
+
+
+Competing interests
+A competing interests statement must be included. If no co-authors have any competing interests (financial and non-financial) to declare, please write ‘The authors declare no competing interests.’; otherwise, please include the details. All authors should be mentioned. Hence, if some co-authors have no competing interests to declare, please end the paragraph with ‘The other authors declare no competing interests’.
+ 
+Figure captions [place each figure and their caption alongside the text, nearer where first cited] Please make sure that all elements in all figures are visible at a magnification comfortable for reading the main text.
+
+Fig. 1 | The figure caption begins with a brief title for the whole figure. a, Short description of this panel and of any symbols, marks and colours used. b–d, Description of the first panel in this set of interrelated panels (b), making sure that all statistical information is provided, such as *P = 0.0025, two-tailed Student’s t-test. Description of the rest of the interrelated panels (b,c). Symbols, medians of 10 biological replicates. Error bars, s.d. d, Representative micrograph, out of 8 images obtained. Scale bar, 25 μm. The additional micrographs are included in Supplementary Fig. 1. VEGF, Vascular endothelial growth factor.
+
+
+Tables [place each table and their caption alongside the text, nearer where first cited]
+
+Table 1 | Brief title for the whole table. Tables should be simple and ideally fit within one page in portrait. House style does not allow for nested tables.
+
+Components	Types*	Functions
+First component	Type 1	One function
+Second component	Type 1	Function one and function 2
+	Type 2	Function list
+	Type 3	Function list
+Third component	Type 1	Function list
+*The possible types are 1–3.

@@ -1,0 +1,64 @@
+\begin{table*}[t]
+    \caption{
+        AUROC from 10 to 90 min after PACU admission for all combinations of EHR, physiological waveforms (WAVE), and thermo-visual imaging (TVI). Values are mean $\pm$ s.d. across seven random seeds.
+    }
+    \label{tab:results_by_time}
+    \centering
+    \footnotesize
+    \setlength{\tabcolsep}{1pt}
+    \renewcommand{\arraystretch}{1}
+    \begin{tabularx}{\textwidth}{l|>{\centering\arraybackslash}X>{\centering\arraybackslash}X>{\centering\arraybackslash}X|>{\centering\arraybackslash}X>{\centering\arraybackslash}X>{\centering\arraybackslash}X>{\centering\arraybackslash}X}
+        
+             & \multicolumn{3}{c|}{\textbf{Without TVI}} & \multicolumn{4}{c}{\textbf{With TVI}} \\
+             \midrule
+            EHR & \cellcolor{EHR_color}EHR  & \cellcolor{EHR_color}EHR  &                              &                              & \cellcolor{EHR_color}EHR  &                              & \cellcolor{EHR_color}EHR  \\
+            WAVE &                              & \cellcolor{WAVE_color}WAVE &  \cellcolor{WAVE_color}WAVE &                              &                              & \cellcolor{WAVE_color}WAVE & \cellcolor{WAVE_color}WAVE \\
+            TVI  &                              &                              &                              & \cellcolor{TVI_color}TVI  & \cellcolor{TVI_color}TVI  & \cellcolor{TVI_color}TVI  & \cellcolor{TVI_color}TVI  \\
+        \midrule
+        10m &
+        \gradient{\getm{Test}{auroc_by_time}{0}{1}{0}{10}}{\getms{Test}{auroc_by_time}{0}{1}{0}{10}}   &
+        \gradient{\getm{Test}{auroc_by_time}{0}{1}{1}{10}}{\getms{Test}{auroc_by_time}{0}{1}{1}{10}}   &
+        \gradient{\getm{Test}{auroc_by_time}{0}{0}{1}{10}}{\getms{Test}{auroc_by_time}{0}{0}{1}{10}}   &
+        \gradient{\getm{Test}{auroc_by_time}{1}{0}{0}{10}}{\getms{Test}{auroc_by_time}{1}{0}{0}{10}}   &
+        \gradient{\getm{Test}{auroc_by_time}{1}{1}{0}{10}}{\getms{Test}{auroc_by_time}{1}{1}{0}{10}}   &
+        \gradient{\getm{Test}{auroc_by_time}{1}{0}{1}{10}}{\getms{Test}{auroc_by_time}{1}{0}{1}{10}}   &
+        \gradient{\getm{Test}{auroc_by_time}{1}{1}{1}{10}}{\getms{Test}{auroc_by_time}{1}{1}{1}{10}}   \\
+
+        20m &
+        \gradient{\getm{Test}{auroc_by_time}{0}{1}{0}{20}}{\getms{Test}{auroc_by_time}{0}{1}{0}{20}}   &
+        \gradient{\getm{Test}{auroc_by_time}{0}{1}{1}{20}}{\getms{Test}{auroc_by_time}{0}{1}{1}{20}}   &
+        \gradient{\getm{Test}{auroc_by_time}{0}{0}{1}{20}}{\getms{Test}{auroc_by_time}{0}{0}{1}{20}}   &
+        \gradient{\getm{Test}{auroc_by_time}{1}{0}{0}{20}}{\getms{Test}{auroc_by_time}{1}{0}{0}{20}}   &
+        \gradient{\getm{Test}{auroc_by_time}{1}{1}{0}{20}}{\getms{Test}{auroc_by_time}{1}{1}{0}{20}}   &
+        \gradient{\getm{Test}{auroc_by_time}{1}{0}{1}{20}}{\getms{Test}{auroc_by_time}{1}{0}{1}{20}}   &
+        \gradient{\getm{Test}{auroc_by_time}{1}{1}{1}{20}}{\getms{Test}{auroc_by_time}{1}{1}{1}{20}}   \\
+
+        30m &
+        \gradient{\getm{Test}{auroc_by_time}{0}{1}{0}{30}}{\getms{Test}{auroc_by_time}{0}{1}{0}{30}}   &
+        \gradient{\getm{Test}{auroc_by_time}{0}{1}{1}{30}}{\getms{Test}{auroc_by_time}{0}{1}{1}{30}}   &
+        \gradient{\getm{Test}{auroc_by_time}{0}{0}{1}{30}}{\getms{Test}{auroc_by_time}{0}{0}{1}{30}}   &
+        \gradient{\getm{Test}{auroc_by_time}{1}{0}{0}{30}}{\getms{Test}{auroc_by_time}{1}{0}{0}{30}}   &
+        \gradient{\getm{Test}{auroc_by_time}{1}{1}{0}{30}}{\getms{Test}{auroc_by_time}{1}{1}{0}{30}}   &
+        \gradient{\getm{Test}{auroc_by_time}{1}{0}{1}{30}}{\getms{Test}{auroc_by_time}{1}{0}{1}{30}}   &
+        \gradient{\getm{Test}{auroc_by_time}{1}{1}{1}{30}}{\getms{Test}{auroc_by_time}{1}{1}{1}{30}}   \\
+
+        60m &
+        \gradient{\getm{Test}{auroc_by_time}{0}{1}{0}{60}}{\getms{Test}{auroc_by_time}{0}{1}{0}{60}}   &
+        \gradient{\getm{Test}{auroc_by_time}{0}{1}{1}{60}}{\getms{Test}{auroc_by_time}{0}{1}{1}{60}}   &
+        \gradient{\getm{Test}{auroc_by_time}{0}{0}{1}{60}}{\getms{Test}{auroc_by_time}{0}{0}{1}{60}}   &
+        \gradient{\getm{Test}{auroc_by_time}{1}{0}{0}{60}}{\getms{Test}{auroc_by_time}{1}{0}{0}{60}}   &
+        \gradient{\getm{Test}{auroc_by_time}{1}{1}{0}{60}}{\getms{Test}{auroc_by_time}{1}{1}{0}{60}}   &
+        \gradient{\getm{Test}{auroc_by_time}{1}{0}{1}{60}}{\getms{Test}{auroc_by_time}{1}{0}{1}{60}}   &
+        \gradient{\getm{Test}{auroc_by_time}{1}{1}{1}{60}}{\getms{Test}{auroc_by_time}{1}{1}{1}{60}}   \\
+
+        90m &
+        \gradient{\getm{Test}{auroc_by_time}{0}{1}{0}{90}}{\getms{Test}{auroc_by_time}{0}{1}{0}{90}}   &
+        \gradient{\getm{Test}{auroc_by_time}{0}{1}{1}{90}}{\getms{Test}{auroc_by_time}{0}{1}{1}{90}}   &
+        \gradient{\getm{Test}{auroc_by_time}{0}{0}{1}{90}}{\getms{Test}{auroc_by_time}{0}{0}{1}{90}}   &
+        \gradient{\getm{Test}{auroc_by_time}{1}{0}{0}{90}}{\getms{Test}{auroc_by_time}{1}{0}{0}{90}}   &
+        \gradient{\getm{Test}{auroc_by_time}{1}{1}{0}{90}}{\getms{Test}{auroc_by_time}{1}{1}{0}{90}}   &
+        \gradient{\getm{Test}{auroc_by_time}{1}{0}{1}{90}}{\getms{Test}{auroc_by_time}{1}{0}{1}{90}}   &
+        \gradient{\getm{Test}{auroc_by_time}{1}{1}{1}{90}}{\getms{Test}{auroc_by_time}{1}{1}{1}{90}}   \\
+        \bottomrule
+    \end{tabularx}
+\end{table*}

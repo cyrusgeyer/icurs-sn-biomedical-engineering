@@ -1,0 +1,34 @@
+\begin{minipage}[t]{0.48\textwidth}
+  \captionof{table}{
+    AUROC from 10 to 90 min after PACU admission comparing our structured VAE against a vanilla VAE for encoding TVI. All three modalities (EHR, WAVE, TVI) are active in both settings. Values are mean $\pm$ s.d. across seven random seeds.
+  }
+  \label{tab:results_comparison_by_time}
+  \centering
+  \footnotesize
+  \setlength{\tabcolsep}{1pt}
+  \renewcommand{\arraystretch}{1}
+  \begin{tabularx}{\linewidth}{l|>{\centering\arraybackslash}X>{\centering\arraybackslash}X}
+    & \textbf{Our} & \textbf{Vanilla VAE} \\
+    \midrule
+    10m &
+    \gradient{\getcm{Test}{auroc_comparison}{Our}{10}}{\getcms{Test}{auroc_comparison}{Our}{10}} &
+    \gradient{\getcm{Test}{auroc_comparison}{Vanilla VAE}{10}}{\getcms{Test}{auroc_comparison}{Vanilla VAE}{10}} \\
+
+    20m &
+    \gradient{\getcm{Test}{auroc_comparison}{Our}{20}}{\getcms{Test}{auroc_comparison}{Our}{20}} &
+    \gradient{\getcm{Test}{auroc_comparison}{Vanilla VAE}{20}}{\getcms{Test}{auroc_comparison}{Vanilla VAE}{20}} \\
+
+    30m &
+    \gradient{\getcm{Test}{auroc_comparison}{Our}{30}}{\getcms{Test}{auroc_comparison}{Our}{30}} &
+    \gradient{\getcm{Test}{auroc_comparison}{Vanilla VAE}{30}}{\getcms{Test}{auroc_comparison}{Vanilla VAE}{30}} \\
+
+    60m &
+    \gradient{\getcm{Test}{auroc_comparison}{Our}{60}}{\getcms{Test}{auroc_comparison}{Our}{60}} &
+    \gradient{\getcm{Test}{auroc_comparison}{Vanilla VAE}{60}}{\getcms{Test}{auroc_comparison}{Vanilla VAE}{60}} \\
+
+    90m &
+    \gradient{\getcm{Test}{auroc_comparison}{Our}{90}}{\getcms{Test}{auroc_comparison}{Our}{90}} &
+    \gradient{\getcm{Test}{auroc_comparison}{Vanilla VAE}{90}}{\getcms{Test}{auroc_comparison}{Vanilla VAE}{90}} \\
+    \bottomrule
+  \end{tabularx}
+\end{minipage}

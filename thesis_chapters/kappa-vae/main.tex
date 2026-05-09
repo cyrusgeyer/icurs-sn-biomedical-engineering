@@ -1,0 +1,455 @@
+\chapter{Variational Bayes and Contrastive Learning}
+\label{ch:kappa-vae}
+
+In this chapter, we propose a unified training objective that integrates the generative capabilities of Variational Autoencoders (VAEs) with the structured latent representations obtained through contrastive learning. Specifically, we introduce the $\kappa$-VAE loss, defined as follows:
+
+\begin{align}
+    \mathcal{L}_{\text{aug}}(\x, \tx, \{\x_i^-\}_{i=1}^M) =
+     & -\gamma \, \E_{\zz \sim q_{\phi}(\cdot \mid \x)}[\ln p_{\theta}(\x \mid \zz)] \\
+     & + (1-\kappa)\,\DKL(q_{\phi}(\zz \mid \x)\,\|\,p(\zz))                         \\
+     & + \kappa\,\mathcal{L}_{c}(\zz, \tzz, \{\zz_{i}^-\}_{i=1}^{M})
+\end{align}
+
+
+where $\gamma > 0$ weights the reconstruction term, and $\kappa \in [0,1]$ balances between KL-divergence and contrastive regularization. When $\kappa = 0$, the objective reduces to the standard VAE loss. Both regularization terms impose distinct structural constraints on the latent space.
+
+To rigorously evaluate this combined approach, we conduct systematic experiments across datasets of varying complexity: MNIST (low-dimensional, simple), CelebA (moderate complexity), and CelebAHQ (high-dimensional, complex). We explore two distinct training paradigms, each differing in the definition of "similar" samples and the operationalization of the contrastive component.
+
+\section{Contrastive Training Paradigms}
+
+\subsection{Augmentation-Based Contrastive Training}
+
+In the first paradigm, we adopt a self-supervised contrastive learning approach, widely used in recent literature. Given an observation $\x$, we generate a positive sample $\tx$ through stochastic data augmentation transformations (e.g., cropping, rotation, color jittering). Negative samples $\{\x_i^-\}_{i=1}^M$ are randomly drawn from the dataset, typically implemented efficiently by leveraging other samples within the same mini-batch. Formally, the positive and negative samples are defined as follows:
+
+\begin{align}
+    \tx                & \sim p_{\text{aug}}(\tx \mid \x), \\
+    \{\x_i^-\}_{i=1}^M & \sim p_{\text{data}}(\x^-),
+\end{align}
+
+where $p_{\text{aug}}(\tx \mid \x)$ denotes the distribution induced by the chosen augmentation strategy, and $p_{\text{data}}(\x^-)$ represents the empirical data distribution.
+
+
+A common concern in contrastive learning is accidentally sampling semantically similar examples as negatives (“false negatives”). Debiasing methods exist \cite{NEURIPS2020_63c3ddcc} but see limited adoption \cite{gui2024survey}. Empirically, mainstream contrastive methods perform well despite occasional false negatives \cite{gui2024survey}.
+
+\subsection{Semantically-Guided Contrastive Training}
+
+The second paradigm leverages additional semantic or structural information, analogous to temporal consistency constraints employed in our thermal imaging application. Here, we explicitly incorporate domain-specific relationships—such as temporal proximity or class labels—to guide the latent space organization.
+
+Formally, given an observation $\x$, we define a conditional distribution $p(\tx \mid \x)$ that captures semantic similarity. For instance, in temporal data, we may define:
+
+\begin{equation}
+    p(\tx \mid \x) \propto \exp(-\lambda \cdot |t_{\tx} - t_{\x}|),
+\end{equation}
+
+where $t_{\x}$ denotes the timestamp associated with observation $\x$, and $\lambda > 0$ controls the temporal decay rate. Negative samples $\{\x_i^-\}_{i=1}^M$ are drawn from distinct time series or temporally distant observations.
+
+For datasets with discrete class labels, semantic proximity is defined based on class membership. The simplest scenario involves sampling positive examples exclusively from the same class and negative examples from different classes:
+
+\begin{align}
+    p(\tx \mid \x)  & = p_{\text{data}}(\tx \mid c_{\tx} = c_{\x}),      \\
+    p(\x^- \mid \x) & = p_{\text{data}}(\x^- \mid c_{\x^-} \neq c_{\x}),
+\end{align}
+
+where $c_{\x}$ denotes the class label of observation $\x$. More sophisticated semantic relationships can be encoded by assigning proximity weights between classes. Given a dataset with $C$ distinct classes $\{C_1, C_2, \dots, C_C\}$, we define a class-conditional sampling distribution based on proximity weights $w_{ij}$ satisfying:
+
+\[
+    w_{ij} \geq 0, \quad \sum_{j=1}^{C} w_{ij} = 1, \quad \forall i,j \in \{1,\dots,C\}.
+\]
+
+Thus, for an observation $\x$ belonging to class $C_i$, the conditional distribution for sampling a positive example $\tx$ is:
+
+\[
+    p(\tx \mid \x) = \sum_{j=1}^{C} w_{ij} \, p_{\text{data}}(\tx \mid c_{\tx} = C_j).
+\]
+
+\section{Experimental Setting}
+
+\subsection{Dynamic Weighting Strategy}
+
+We employ a dynamic weighting strategy for balancing the two regularization terms. Specifically, we initialize with $\kappa = 1$ at the beginning of training, emphasizing the contrastive component. As training progresses, we gradually decrease $\kappa$, increasing the influence of the KL divergence term, until reaching a small final value $\kappa_{end} \ll 1$.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1.0\textwidth]{\dir/figures-kappa-vae/MNIST-latent-spaces-wide.png}
+    \caption{
+        Visualization of 2D latent spaces obtained from three different VAE training approaches on a subset of the MNIST dataset, comprising only the digits 0 through 5. (a) Vanilla VAE, (b) Self-supervised contrastive VAE, and (c) Supervised contrastive VAE. In the latent space of the Vanilla VAE (a), the digits occupy unevenly distributed and fragmented regions. In contrast, the latent spaces produced by the self-supervised (b) and supervised (c) contrastive VAEs exhibit a more balanced and spherical structure, allocating similar amounts of space to each digit class without compromising reconstruction or generative quality. While the self-supervised contrastive VAE (b) positions digit classes freely, the supervised contrastive VAE (c) explicitly incorporates semantic proximity into the contrastive loss. Specifically, digit similarity is defined such that identical digits are closest, followed by numerically adjacent digits (e.g., digit 0 is closest to another 0, then digits 5 and 1, and farthest from digit 3; digit 2 is closest to digits 1 and 3, etc.). This semantic supervision results in a structured latent space where digits are arranged sequentially in an anti-clockwise manner: 0–1–2–3–4–5–0.
+    }
+    \label{fig:MNIST-Latent-space}
+\end{figure}
+
+\subsection{MNIST Experiments}
+To provide visual intuition into the latent space dynamics induced by the proposed $\kappa$-VAE, we conducted experiments on the MNIST dataset using a two-dimensional latent space, facilitating straightforward qualitative evaluation. We implemented both the \textit{augmentation-based} and \textit{semantically-guided} contrastive training paradigms on a subset of MNIST digits. For the encoder and decoder, we employed three-layer convolutional neural networks. Throughout training, we utilized an exponentially decaying schedule for the parameter $\kappa$, gradually converging to a final value of $0.1$.
+
+Specifically, we explored the following contrastive training paradigms:
+\begin{enumerate}
+    \item \textit{Augmentation-based contrastive training:} We applied elastic deformations as proposed by \citet{ronneberger2015u} to generate positive pairs.
+    \item \textit{Semantically-guided contrastive training:} We explicitly encoded semantic proximity based on numerically adjacent digit classes.
+\end{enumerate}
+
+Figure~\ref{fig:MNIST-Latent-space} compares the learned two-dimensional latent spaces of (a) a vanilla VAE, (b) a $\kappa$-VAE trained with augmentation-based contrastive learning, and (c) a $\kappa$-VAE trained with semantically-guided contrastive learning.
+
+The vanilla VAE yields an unstructured latent representation characterized by unevenly sized and fragmented regions corresponding to different digit classes. In contrast, the latent spaces learned by the $\kappa$-VAE exhibit a structured organization, partitioning the latent space into approximately equally-sized spherical regions, each corresponding to a distinct digit class. This structured representation facilitates representative sampling from the latent space, improves linear separability under radial transformations, and enables efficient class-specific sampling when the spherical partitioning is known.
+
+Moreover, the semantically-guided contrastive training paradigm induces meaningful latent trajectories. For instance, spherical interpolation between embeddings of digits $1$ and $3$ naturally traverses through regions corresponding to digit $2$, generating a coherent latent trajectory $1 \rightarrow 2 \rightarrow 3$.
+
+Importantly, the $\kappa$-VAE achieves these structured latent representations without compromising reconstruction or generative performance, underscoring the effectiveness of our proposed approach in balancing representational structure with generative capabilities.
+
+\subsection{CelebA Experiments}
+Having demonstrated the effectiveness of $\kappa$-VAE in structuring latent representations on MNIST, we now turn our attention to a more complex and clinically relevant scenario involving facial images. Although no publicly available datasets of thermal facial distributions currently exist, we posit that visual facial distributions, such as those in the CelebA dataset, provide a suitable proxy for evaluating our method.
+
+In clinical applications involving thermal imaging, a patient's facial orientation may vary over time. Ideally, the latent representation should remain consistent, accurately capturing the underlying facial thermal distribution despite changes in orientation. To simulate this scenario, we evaluate the orthogonality of latent representations learned by $\kappa$-VAE on the CelebA dataset. Specifically, we assess whether facial orientation is disentangled from other facial attributes, enabling smooth interpolation between horizontally flipped versions of the same face without unintended attribute variations.
+
+We employed the \textit{augmentation-based contrastive training} paradigm, utilizing the following data augmentation transformations: (1) horizontal flips, (2) sharpness adjustments, and (3) random cropping of image regions. Analogous to our VAE loss function described in Chapter~\ref{ch:learning-reps}, we applied a reconstruction mask to encourage the model to learn inpainting capabilities.
+
+The encoder-decoder architecture follows the ResNet-based design proposed by \cite{chadebec2022pythae}, with a latent dimensionality of $64$ and a batch size of $264$. The exponential decay schedule for the parameter $\kappa$ remains consistent with our MNIST experiments.
+
+To quantitatively evaluate the orthogonality of the learned latent space, we utilized the CelebA attribute annotations. As summarized in Table~\ref{tab:model_comparison}, the $\kappa$-VAE consistently outperforms an extensive collection of baseline VAE variants \cite{chadebec2022pythae} on the Importance Weighted Orthogonality (IWO) and Importance Weighted Rank (IWR) metrics. Furthermore, our model achieves superior reconstruction quality compared to most baseline methods, highlighting its effectiveness in simultaneously enhancing latent space structure and reconstruction performance.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1.0\textwidth]{\dir/figures-kappa-vae/CelebAHQ-latent-interpolation.png}
+    \caption{
+        Comparison of latent space interpolation between Vanilla VAE and $\kappa$-VAE on CelebAHQ. We interpolate between the mean latent representations $\mu$ and $\tilde{\mu}$ corresponding to an image $\x$ and its horizontally flipped version $\tx$, respectively. The resulting interpolations are decoded back into the image domain. Notably, interpolation in the latent space of the Vanilla VAE traverses regions corresponding to unintended variations in facial attributes—such as hair color, eyebrow shape, smile, and head geometry. In contrast, the $\kappa$-VAE yields interpolations that preserve these key attributes, demonstrating improved isolation of facial orientation from other generative factors.
+    }
+    \label{fig:CelebAHQ-latent-interpolation}
+\end{figure}
+
+\input{\dir/tables/celebA}
+
+\subsection{CelebAHQ Experiments}
+Finally, to qualitatively validate our claims and further illustrate the advantages of our proposed approach, we conducted experiments on the high-resolution CelebAHQ dataset \cite{DBLP:conf/iclr/KarrasALL18}. We employed a ResNet-based architecture \cite{he2016deep} with a latent dimensionality of $1028$ and a batch size of $64$. The exponential decay schedule for the parameter $\kappa$ remained consistent with our previous experiments on MNIST and CelebA. Given the limited variability observed among baseline models in the CelebA experiments, we restricted our analysis on CelebAHQ to a direct comparison between the Vanilla VAE and our proposed $\kappa$-VAE.
+
+We focus our qualitative assessment on two representative downstream tasks: (1) latent space interpolation and (2) generative factor manipulation.
+
+(1) Figure~\ref{fig:CelebAHQ-latent-interpolation} illustrates a comparative analysis of latent space interpolation between Vanilla VAE and $\kappa$-VAE. Specifically, we interpolate between latent representations corresponding to horizontally flipped versions of the same $128 \times 128$ CelebAHQ image. The $\kappa$-VAE demonstrates a clear advantage in preserving key facial attributes—such as hair color, eyebrow shape, smile, and overall facial geometry—while smoothly transitioning the face orientation. In contrast, the Vanilla VAE struggles to maintain consistency across these generative factors, resulting in unintended attribute variations during interpolation.
+
+(2) Figure~\ref{fig:CelebAHQ-Latent-Manipulation} further highlights the improved orthogonality of the $\kappa$-VAE latent space, through targeted latent space manipulations. By modifying latent representations along specific semantic directions—such as adding black hair, introducing bangs, or inducing a smile—the $\kappa$-VAE successfully isolates and alters individual generative factors without affecting unrelated attributes. Conversely, the Vanilla VAE exhibits significant variations among other generative factors. For instance, manipulating the latent vector corresponding to black hair inadvertently alters facial orientation, shape, and expression. This stark contrast underscores the effectiveness of our proposed $\kappa$-VAE in achieving meaningful and interpretable latent structures.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1.0\textwidth]{\dir/figures-kappa-vae/CelebAHQ-Latent-Manipulation.png}
+    \caption{
+        Comparison of latent space manipulations between Vanilla VAE and $\kappa$-VAE on CelebAHQ. For each example, we modify the latent representation along a vector corresponding to a single semantic concept—such as adding black hair (upper left and lower right), adding bangs (lower left), or inducing a smile (upper right). In the Vanilla VAE, attempts to alter one attribute often result in unintended changes to other facial features, indicating entanglement within the latent space. In contrast, the $\kappa$-VAE demonstrates a markedly improved ability to isolate and modify individual attributes, preserving unrelated features.
+    }
+    \label{fig:CelebAHQ-Latent-Manipulation}
+\end{figure}
+
+
+\subsection{Conclusion}
+Our qualitative and quantitative analyses demonstrate that the proposed $\kappa$-VAE consistently learns a more structured and semantically meaningful latent space compared to other evaluated VAE variants. Specifically, the superior performance observed in latent factor manipulation and interpolation tasks aligns closely with the improved orthogonality metric (IWO), underscoring the enhanced utility of the learned representations. Furthermore, unlike alternative methods, the $\kappa$-VAE effectively mitigates the commonly encountered trade-off between latent space structure and reconstruction quality.
+
+Importantly, the exponential decay heuristic employed for the weighting parameter $\kappa$ proved instrumental in achieving these results. Initially emphasizing the contrastive component, this strategy facilitated the formation of a coherent high-level latent structure early in training. Subsequently, as training progressed and the Evidence Lower Bound (ELBO) term gradually gained prominence, the latent space was further refined, ensuring that neither generative nor reconstructive capabilities were compromised.
+
+\section{Theoretical considerations}
+
+The empirical results presented thus far clearly demonstrate the effectiveness of the proposed $\kappa$-VAE in learning structured and semantically meaningful latent representations. However, an intriguing observation emerges from our experiments: the superior latent structure is consistently achieved only when the contrastive loss term initially dominates training, followed by a gradual shift towards KL-divergence regularization. This phenomenon suggests a two-phase training dynamic, reminiscent of the Empirical Risk Minimization and diffusion phases described by \citep{shwartz2017opening} in the context of deep neural network optimization.
+
+To better understand this behavior, it is instructive to adopt a probabilistic perspective and examine the interplay between the contrastive and KL-divergence terms more closely. In the following section, we provide a theoretical analysis that sheds light on why this particular training schedule is crucial for achieving the observed latent space structure.
+
+\subsection{An Extended Evidence Lower Bound}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1.0\textwidth]{\dir/figures/variational-graph.pdf}
+    \caption{Bayesian graph for inference and generation
+    }
+    \label{fig:variational-graph}
+\end{figure}
+
+While the VAE training objective is elegantly formulated as an evidence lower bound (ELBO), the probabilistic interpretation of contrastive objectives is less straightforward. In the following, we demonstrate that under certain assumptions, extending the ELBO formulation to explicitly incorporate pairs of "similar" data points naturally leads to a contrastive learning objective.
+We derive an adapted ELBO tailored to the scenario involving two latent variables, $\zz$ and $\tzz$, which are closely related to each other.
+
+We first revisit the standard ELBO derivation for the simpler case of a single latent variable. Typically, the derivation begins by expressing the evidence as an expectation with respect to an approximate posterior distribution:
+
+\begin{equation}
+    \begin{split}
+        \ln{p(\x)}
+        & =
+        \E_{\zz \sim q_{\phi}(\cdot \mid \x)}
+        \left[
+            \ln p(\x)
+            \right] \\
+    \end{split}
+\end{equation}
+
+To generalize this formulation to scenarios involving multiple latent variables, we introduce an additional latent variable $\tzz$ and apply the law of total expectation. Specifically, we define two approximate posterior distributions for inference: $q_{\phi}(\zz \mid \x)$ and $b_{\phi}(\tzz \mid \x)$. The assumed probabilistic relationships among these variables are illustrated in Figure~\ref{fig:variational-graph}. Importantly, we assume conditional independence between $\zz$ and $\tzz$ given the observation $\x$ during inference.
+
+We begin by expressing the evidence as an expectation with respect to these approximate posterior distributions:
+
+\begin{equation}
+    \ln{p(\x)} = \E_{\zz \sim q_{\phi}(\cdot \mid \x)} \E_{\tzz \sim b_{\phi}(\cdot \mid \x)} [\ln p(\x)].
+\end{equation}
+
+As is standard practice in VAEs, we directly model the posterior distribution $q_{\phi}(\zz \mid \x)$ as a Gaussian distribution, whose parameters are learned by the encoder network. However, the posterior distribution $b_{\phi}(\tzz \mid \x)$ requires a more nuanced treatment. Specifically, we express it as a marginalization over an intermediate augmented observation $\tx$:
+
+\begin{equation}
+    \label{eq:b_phi}
+    b_{\phi}(\tzz \mid \x) = \int q_{\phi}(\tzz \mid \tx) p(\tx \mid \x) d\tx.
+\end{equation}
+
+Although the conditional distribution $p(\tx \mid \x)$ typically lacks a closed-form expression, we can readily sample from it in practice. For instance, in augmentation-based contrastive training, samples $\tx$ are generated via stochastic data augmentation transformations applied to $\x$. Similarly, in temporal contexts, samples can be drawn from temporally adjacent observations. Consequently, sampling from $b_{\phi}(\tzz \mid \x)$ involves a straightforward two-step procedure:
+
+\begin{enumerate}
+    \item Sample an augmented observation: $\tx \sim p(\tx \mid \x)$.
+    \item Sample the latent variable: $\tzz \sim q_{\phi}(\tzz \mid \tx)$.
+\end{enumerate}
+
+This sampling strategy enables efficient approximation of the expectation over posterior distributions $b_{\phi}(\tzz \mid \x)$. Consistent with standard VAE training procedures, we sample from $q_{\phi}$ by using the reparametrization trick. Applying Bayes' theorem, we explicitly expand the evidence in terms of the latent variables $\zz$ and $\tzz$:
+
+% Make more explicit that we use Bayes Theorem. 
+
+\begin{equation}
+    \begin{split}
+        \ln{p(\x)}
+        & =
+        \E_{\zz \sim q_{\phi}(\cdot \mid \x)} \E_{\tzz \sim b_{\phi}(\cdot \mid \x)}
+        \left[
+            \ln \frac{p(\x, \zz, \tzz)}{p(\zz, \tzz \mid \x)}
+            \right] \\
+        & =
+        \E_{\zz \sim q_{\phi}(\cdot \mid \x)} \E_{\tzz \sim b_{\phi}(\cdot \mid \x)}
+        \left[
+            \ln \frac{p_{\theta}(\x \mid \tzz, \zz) p_{\phi}(\tzz \mid \zz) p(\zz)}{p(\tzz \mid \zz, \x) p(\zz \mid \x)}
+            \right].
+    \end{split}
+\end{equation}
+
+% p_{\theta, \psi} Das ist eie Abweichung vom standard model. 
+% Ein echter Bayesianer würde es nicht zulassen.
+
+To derive our extended variational bound, we further expand the logarithm of the evidence:
+
+\begin{equation}
+    \begin{split}
+        \ln{p(\x)}
+        & =
+        \E_{\zz \sim q_{\phi}(\cdot \mid \x)} \E_{\tzz \sim  b_{\phi}(\cdot \mid \x)}
+        \left[
+            \ln
+            \frac
+            {p_{\theta}(\x \mid \tzz, \zz) p_{\phi}(\tzz \mid \zz) p(\zz)}
+            {p(\tzz \mid \zz, \x) p(\zz \mid \x)}
+            \frac
+            {q_{\phi}(\zz \mid \x)}
+            {q_{\phi}(\zz \mid \x)}
+            \frac
+            {b_{\phi}(\tzz \mid \x)}
+            {b_{\phi}(\tzz \mid \x)}
+            \right] \\
+        & =
+        \E_{\zz \sim q_{\phi}(\cdot \mid \x)} \E_{\tzz \sim  b_{\phi}(\cdot \mid \x)}
+        \left[
+            \ln p_{\theta}(\x \mid \tzz, \zz) +
+            \ln \frac{p_{\phi}(\tzz \mid \zz)}{b_{\phi}(\tzz \mid \x)}
+            \right. \\
+            & \quad
+            \left.
+            + \ln \frac{p(\zz)}{q_{\phi}(\zz \mid \x)} +
+            \ln \frac{q_{\phi}(\zz \mid \x)}{p(\zz \mid \x)} +
+            \ln \frac{b_{\phi}(\tzz \mid \x)}{p(\tzz \mid \x, \zz)}
+            \right]
+        \\
+        & =
+        \E_{\zz \sim q_{\phi}(\cdot \mid \x)} \E_{\tzz \sim  b_{\phi}(\cdot \mid \x)}
+        \left[
+            \ln p_{\theta}(\x \mid \tzz, \zz) +
+            \ln \frac{p_{\phi}(\tzz \mid \zz)}{b_{\phi}(\tzz \mid \x)} +
+            \ln \frac{p(\zz)}{q_{\phi}(\zz \mid \x)}
+            \right] \\
+        & \quad
+        + \E_{\zz \sim q_{\phi}(\cdot \mid \x)}
+        \left[
+            +
+            \ln \frac{q_{\phi}(\zz \mid \x)}{p(\zz \mid \x)}
+            \right] +
+        \E_{\zz \sim q_{\phi}(\cdot \mid \x)} \E_{\tzz \sim  b_{\phi}(\cdot \mid \x)}
+        \left[
+            \ln \frac{b_{\phi}(\tzz \mid \x)}{p(\tzz \mid \x, \zz)}
+            \right]
+        \\
+    \end{split}
+\end{equation}
+
+We observe that the last two terms can be expressed as
+Kullback-Leibler divergences. Furthermore, according to our assumed generative model, the likelihood of observation $\x$ is conditionally independent of $\tzz$ given $\zz$, thus allowing us to express $p_{\theta}(\x \mid \tzz, \zz) = p_{\theta}(\x \mid \zz)$.
+
+% p_{\theta, \psi} Das ist eie Abweichung vom standard model. 
+% Ein echter Bayesianer würde es nicht zulassen.
+
+% Normalierwise darcf der Prior nicht von der likelihood und nicht cvom approximate posterior abhängen. 
+
+% Durch approximate inference wird der ELBO nicht tighter – Garatnie dass das Optimierungverfahren funtkioniert. 
+
+% Kann ich 
+% Dadurch dass ich Approximate inference mache, ist der Bayes 
+% Ist die Annahme: 
+
+% Kann ich durch Jensen die Sach abkürzen. 
+
+% q_()
+
+% 5.16
+% z Schlange fehlt. 
+
+% 
+% 
+% 
+
+
+\begin{equation}
+    \begin{split}
+        \ln{p(\x)}
+        & =
+        \E_{\zz \sim q_{\phi}(\cdot \mid \x)} \E_{\tzz \sim  b_{\phi}(\cdot \mid \x)}
+        \left[
+            \ln p_{\theta}(\x \mid \zz) +
+            \ln \frac{p_{\phi}(\tzz \mid \zz)}{b_{\phi}(\tzz \mid \x)} +
+            \ln \frac{p(\zz)}{q_{\phi}(\zz \mid \x)}
+            \right] \\
+        & \quad
+        + \DKL(q_{\phi}(\zz \mid \x), p(\zz \mid \x)) +
+        \E_{\zz \sim q_{\phi}(\cdot \mid \x)}
+        \left[
+            \DKL(b_{\phi}(\tzz \mid \x),p(\tzz \mid \x, \zz))
+            \right]
+        \\
+    \end{split}
+\end{equation}
+
+Since the true posterior distributions $p(\zz \mid \x)$ and $p(\tzz \mid \zz, \x)$ remain analytically intractable, we cannot directly compute these Kullback-Leibler divergence terms. However, by exploiting the non-negativity property of the KL-divergence, we can establish a lower bound on the log-evidence:
+
+\begin{equation}
+    \begin{split}
+        \ln{p(\x)}
+        \geq & \,
+        \E_{\zz \sim q_{\phi}(\cdot \mid \x)} \E_{\tzz \sim  b_{\phi}(\cdot \mid \x)}
+        \left[
+            \ln p_{\theta}(\x \mid \zz) +
+            \ln \frac{p_{\phi}(\tzz \mid \zz)}{b_{\phi}(\tzz \mid \x)} +
+            \ln \frac{p(\zz)}{q_{\phi}(\zz \mid \x)}
+            \right] \\
+        \geq & \,
+        \underbrace{
+            \E_{\zz \sim q_{\phi}(\cdot \mid \x)}
+            \left[
+                \ln p_{\theta}(\x \mid \zz)
+                \right]
+        }_{(I)}
+        -
+        \underbrace{
+            \DKL (q_{\phi}(\zz \mid \x), p(\zz))
+        }_{(II)}
+        \\
+        &
+        -
+        \underbrace{
+            \E_{\zz \sim q_{\phi}(\cdot \mid \x)}
+            \left[
+                \DKL(b_{\phi}(\tzz \mid \x), p_{\phi}(\tzz \mid \zz))
+                \right]
+        }_{(III)}
+        \\
+    \end{split}
+\end{equation}
+Terms (I) and (II) correspond to the standard VAE ELBO. Term (III) is an additional non‑negative Kullback–Leibler divergence; subtracting it yields an \emph{extended}, but strictly \emph{looser}, lower bound than the classic ELBO. Note that the auxiliary variable $\tzz$ can be marginalized out, recovering the original ELBO. Why, then, consider the extended bound?
+Because (III) admits a contrastive surrogate. Under the assumptions in Section~\ref{sec:contr}, (III) can be rewritten (up to an additive constant and in the limit of infinitely many negatives) as a cross‑entropy between the true conditional over positive pairs and a model conditional estimable via a normalized contrastive (InfoNCE‑type) objective. Thus, a contrastive penalty supplies a tractable, low‑variance estimator for (III) while preserving a valid (albeit looser) lower bound on the log‑evidence.
+
+Before detailing the surrogate next, two pragmatic hypotheses explain why optimizing the looser bound helps empirically:
+\begin{itemize}
+    \item Looser–but–smoother landscape. Substituting (III) with a contrastive surrogate front‑loads optimization with a geometrically well‑conditioned signal: enlarge inter‑cluster margins; contract intra‑cluster spread among semantic/augmentation positives. This improves gradient signal‑to‑noise and accelerates convergence to a favorable basin—even though the bound is weaker. Annealing $\kappa$ subsequently restores emphasis on the tighter ELBO terms, refining likelihood calibration and posterior variance.
+    \item Reduced sensitivity to initialization. Early contrastive attraction creates stable macro‑structures (clustering augmentations / semantic neighbors) across random seeds, lowering variance and diminishing reliance on fortuitous “lottery” subnetworks \cite{frankle2018lottery}. Once this scaffold is in place, the KL term can safely inflate uncertainty around a meaningful arrangement without eroding global geometry.
+\end{itemize}
+
+Annealing the contrastive weight (decreasing $\kappa$) therefore effects a controlled transition: an initial geometry‑forming phase dominated by the contrastive surrogate, followed by a refinement phase governed by the classic (tighter) ELBO—retaining variational guarantees while inheriting improved latent organization.
+
+\subsection{Contrastive Learning as an Inversion of the Data Generating Process}
+\label{sec:contr}
+
+To elucidate this connection, we adopt the latent-centric perspective introduced by \cite{Zimmermann2021-ax}. Consider a true underlying latent distribution $\Z_t$ and a generative process $g: \Z_t \rightarrow \X$ mapping true latent variables to observations. Let $f: \X \rightarrow \Z$ denote a learned embedding function from the data space to the learned embedding space $\Z$, and define the composite mapping $h = f \circ g$, such that $\zz = h(\zz_t)$. Crucially, we assume that the mapping $h$ is invertible.
+
+Under these assumptions, \cite{Zimmermann2021-ax} demonstrated that when the ground truth marginal distribution in the latent space is uniform on the hypersphere surface, i.e., $p(\zz_t) = |\Z_t|^{-1}$, and the conditional distribution over positive latent pairs $p(\tzz_t \mid \zz_t)$ follows a von Mises-Fisher distribution, the normalized contrastive loss converges to the expected cross-entropy between the ground truth conditional distribution $p(\tzz_t \mid \zz_t)$ and the modeled conditional distribution $q_h(\tzz_t \mid \zz_t)$ as the number of negative samples $M$ approaches infinity:
+
+\begin{equation}
+    \label{eq:Contr}
+    \lim_{M \rightarrow \infty} \mathcal{L}_{c}(f; M) - \log M + \log |\Z_t| =
+    \E_{\zz_t \sim p(\zz_t)}\left[H\left(p(\cdot \mid \zz_t), q_h(\cdot \mid \zz_t)\right)\right].
+\end{equation}
+
+This result frames contrastive learning as an inversion of the data-generating process.
+
+\subsection{Non-Varying VAE and the Emergence of Contrastive Structure}
+
+The theoretical derivation presented above relies critically on the assumption of invertibility of the mapping from the data space $\X$ to the latent space $\Z$. However, in standard Variational Autoencoders (VAEs), this assumption does not hold, as the encoder maps observations to parameters of a distribution rather than directly to latent representations. Specifically, the encoder is defined as a function $f_{\phi}: \X \rightarrow \Pi$, where $\Pi$ denotes the parameter space of the posterior distribution from which latent variables are sampled. Nevertheless, following the reasoning of \citet{Zimmermann2021-ax}, we can assume that the mapping from observations to distributional parameters is invertible.
+
+Under the assumption that the encoder mapping $f_{\phi}: \X \rightarrow \Pi$ from the data space to the posterior parameter space is invertible, we consider the limiting scenario where the posterior variance (or covariance) approaches zero. Equivalently, if the posterior distribution is characterized by a concentration parameter, we examine the limit as this concentration parameter approaches infinity. In this deterministic limit, the posterior distribution collapses to a single deterministic embedding, effectively rendering the mapping from observations to latent representations invertible.
+
+Formally, we posit the existence of a true underlying latent distribution $\Z_t$ and a corresponding, invertible generative process $g: \Z_t \rightarrow \X$ that maps true latent variables to observations. Additionally, we define a learned embedding function $f: \X \rightarrow \Z$ that maps observations into a learned latent space $\Z$. The composite mapping $h = f \circ g$ thus establishes a direct relationship between the true latent variables $\zz_t$ and the learned latent representations $\zz = h(\zz_t)$. Under the deterministic embedding assumption described above, we further assume that this composite mapping $h$ is invertible.
+
+Following \citet{Zimmermann2021-ax}, we adopt a latent-centric formulation, expressing the posterior distribution as a function of the true latent variables:
+
+\begin{equation}
+    q_{\phi}(\zz \mid \x) = q_{\phi}(\zz \mid \zz_t), \quad \text{since} \quad \x = g(\zz_t) \quad \text{is invertible.}
+\end{equation}
+
+As the posterior variance $\sigma^2$ approaches zero (or equivalently, the concentration parameter $\tau$ approaches infinity), the posterior distribution $q_{\phi}(\zz \mid \zz_t)$ collapses to a Dirac delta function centered at $h(\zz_t)$:
+
+\begin{equation}
+    q_{\phi}(\zz \mid \zz_t) \xrightarrow{\sigma^2 \to 0} \delta(\zz - h(\zz_t)).
+\end{equation}
+
+In this deterministic limit, we revisit the definition of the posterior distribution $b_{\phi}(\tzz \mid \x)$ from equation~\eqref{eq:b_phi}:
+
+\begin{align}
+    b_{\phi}(\tzz \mid \x) & = \int q_{\phi}(\tzz \mid \tx) p(\tx \mid \x) d\tx                                                   \\
+                           & = \int q_{\phi}(\tzz \mid \tzz_t) p(\tzz_t \mid \zz_t) d\tzz_t \quad (\text{since } \tx = g(\tzz_t)) \\
+                           & = \int \delta(\tzz - h(\tzz_t)) p(\tzz_t \mid \zz_t) d\tzz_t                                         \\
+                           & = p(h^{-1}(\tzz) \mid \zz_t).
+\end{align}
+
+\citep{Zimmermann2021-ax} demonstrated that under suitable assumptions, the Jacobian $J_h$ of the mapping $h$ is constant and orthogonal. Consequently, the change-of-variables formula simplifies, allowing us to equate the distributions directly:
+
+\begin{equation}
+    p(h^{-1}(\tzz) \mid \zz_t) = p(\tzz_t \mid \zz_t).
+\end{equation}
+
+Thus, in the deterministic limit, term $(III)$ simplifies to:
+
+\begin{align}
+    \lim_{\sigma^2 \to 0} (III) & = -  \DKL(b_{\phi}(\tzz \mid \zz_t), p_{\phi}(\tzz \mid \zz))                       \\
+                                & = - \DKL(p(\tzz_t \mid \zz_t), p_{\phi}(h(\tzz_t) \mid h(\zz_t)))                   \\
+                                & \quad \text{since} \quad J_h \quad \text{constant and orthogonal:}                  \\
+                                & = - \DKL(p(\tzz_t \mid \zz_t), p_{\phi}(\tzz_t \mid \zz_t))                         \\
+                                & = - H(p(\tzz_t \mid \zz_t), p_{\phi}(\tzz_t \mid \zz_t)) + H(p(\tzz_t \mid \zz_t)).
+\end{align}
+
+While the entropy term $H(p(\tzz_t \mid \zz_t))$ is fixed and independent of the learned embedding, the cross-entropy term $H(p(\tzz_t \mid \zz_t), p_{\phi}(\tzz_t \mid \zz_t))$ can be minimized through contrastive learning. Indeed, as shown in equation~\eqref{eq:Contr}, under certain additional assumptions, the contrastive loss precisely minimizes this cross-entropy term, thereby aligning the learned conditional distribution $p_{\phi}(\tzz_t \mid \zz_t)$ with the true conditional distribution $p(\tzz_t \mid \zz_t)$.
+
+\subsubsection{Compatibility of VAEs with Contrastive Assumptions}
+
+The theoretical derivation of the contrastive objective by \citet{Zimmermann2021-ax} relies on several key assumptions:
+
+\begin{enumerate}
+    \item The latent marginal distribution $p(\zz)$ is uniform on the hypersphere.
+    \item The conditional distribution $p_{\phi}(\tzz \mid \zz)$ is von Mises-Fisher (vMF) distributed.
+    \item The mapping from data space $\X$ to latent space $\Z$ is injective.
+\end{enumerate}
+
+We now examine the extent to which these assumptions hold for two common VAE architectures: the hyperspherical VAE and the vanilla Gaussian VAE.
+
+\paragraph{Hyperspherical VAE:} In hyperspherical VAEs, the prior distribution $p(\zz)$ is explicitly defined as uniform on the hypersphere, directly satisfying assumption (1). Furthermore, the posterior distribution $q_{\phi}(\zz \mid \x)$ is modeled as a vMF distribution, naturally aligning with assumption (2). Under the limiting scenario of high concentration ($\tau \to \infty$), the posterior collapses to a deterministic embedding, effectively ensuring injectivity of the mapping $\X \rightarrow \Z$ and thus satisfying assumption (3). Consequently, hyperspherical VAEs inherently fulfill all theoretical prerequisites for the contrastive learning framework.
+
+\paragraph{Vanilla Gaussian VAE:} In contrast, vanilla VAEs employ a Gaussian prior $\mathcal{N}(0, I)$, which does not explicitly satisfy assumption (1). However, it is well-known from high-dimensional geometry that Gaussian distributions exhibit the "soap bubble" phenomenon, wherein most probability mass concentrates around a thin hyperspherical shell of radius $\sqrt{D}$ in a $D$-dimensional latent space. Moreover, projecting a high-dimensional Gaussian distribution onto a hypersphere yields a uniform distribution on its surface. By explicitly scaling latent embeddings to lie on this hyperspherical shell during contrastive training, we effectively approximate a uniform prior on the hypersphere, thereby satisfying assumption (1) in practice.
+
+The high-concentration limit ($\sigma^2 \to 0$) again ensures deterministic embeddings, effectively approximating injectivity (assumption 3). Although the Gaussian posterior does not strictly match the vMF distribution required by assumption (2) empirically, we observed that this approximation is sufficient to yield structured latent representations, validating the practical applicability of the theoretical framework.
+
+\subsubsection{Empirical Validation of the Two-Phase Training Dynamics}
+
+This theoretical insight provides a compelling explanation for the empirical observations made in our experiments. Specifically, we observed that a two-phase training dynamic was suitable. Initially the contrastive loss dominates, effectively driving the latent representations towards deterministic embeddings. During this initial phase, the latent space structure is shaped by explicitly positioning similar data points close together, thereby establishing a meaningful macro-structure. This deterministic embedding phase aligns closely with the Empirical Risk Minimization (ERM) phase described by \cite{shwartz2017opening}, where neural networks rapidly reduce training error by fitting structured representations to the data.
+
+Once this structured latent representation is established, the second phase of training emerges. Here, the KL-divergence term $(II)$ gradually gains prominence, encouraging the posterior distributions to expand their variance and thus diffuse around the previously established deterministic embeddings. This diffusion phase, again consistent with the theoretical framework of \cite{shwartz2017opening}, is instrumental in ensuring robust generative capabilities. By increasing posterior variance, the model learns to generalize beyond the training data, enabling smooth interpolation and meaningful sampling from the latent space.
+
+Our theoretical analysis provides a clear rationale for the empirically observed two-phase training dynamics. Conversely, training schedules that prematurely emphasized KL-divergence regularization failed to establish meaningful latent structures, underscoring the critical importance of the initial deterministic embedding phase.
+
+Furthermore, \cite{Zimmermann2021-ax} demonstrates that the contrastive objective effectively minimizes the cross-entropy between the learned and ground-truth conditional distributions, up to an orthogonal transformation. This insight aligns closely with our earlier discussion in Chapter~\ref{ch:measuring-rep-utility}, where we argued that orthogonality—rather than disentanglement—is the more appropriate metric for evaluating latent representations. Indeed, while a disentangled latent space can become arbitrarily entangled under an orthogonal transformation, an orthogonal latent space inherently preserves its structure under such transformations.
+
+In summary, our theoretical analysis not only elucidates the underlying mechanisms driving the observed empirical phenomena but also provides clear guidelines for designing effective training schedules. By explicitly leveraging the deterministic embedding phase induced by contrastive learning and subsequently transitioning to a diffusion phase guided by KL-divergence regularization, we achieve structured, semantically meaningful, and generatively robust latent representations.
