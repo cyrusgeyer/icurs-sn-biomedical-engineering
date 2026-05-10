@@ -26,43 +26,55 @@
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0.6em}
 
+\usepackage{titlesec}
+
+% Section: bold, less spacing below
+\titleformat{\section}[hang]
+{\normalfont\large\bfseries}{\thesection}{1em}{}
+\titlespacing*{\section}{0pt}{3.25ex plus 1ex minus .2ex}{0.8ex plus .2ex}
+
+% Subsection: run-in (part of the paragraph), bold
+\titleformat{\subsection}[runin]
+{\normalfont\normalsize\bfseries}{\thesubsection}{1em}{}
+\titlespacing*{\subsection}{0pt}{3.25ex plus 1ex minus .2ex}{1em}
+
 \begin{document}
 
-\begin{center}
-  {\bfseries\Large Bedside multimodal sensing for early neurological risk assessment after cardiac surgery}
+{\bfseries\Large Facial thermal gradients for early neurological risk stratification after cardiac surgery}
 
-  \bigskip
+\bigskip
 
-  Robin C.~Geyer\textsuperscript{1,2,*},
-  Pia Lanmueller\textsuperscript{3},
-  Svea Wilkending\textsuperscript{1},
-  Maximilian Sch\"{o}ls\textsuperscript{4},
-  Tobias R\"{o}schl\textsuperscript{3},
-  Julian Madrid\textsuperscript{3},
-  Matthias Hommel\textsuperscript{3},
-  Benjamin O'Brien\textsuperscript{5},
-  Julia Vogt\textsuperscript{2},
-  Volkmar Falk\textsuperscript{3},
-  Joachim M.~Buhmann\textsuperscript{2},
-  Alexander Meyer\textsuperscript{1,3}
+Robin C.~Geyer\textsuperscript{1,2,*},
+Pia Lanmueller\textsuperscript{1,3,4,*},
+Svea Wilkending\textsuperscript{1},
+Tobias R\"{o}schl\textsuperscript{1,3,4},
+Julian Madrid\textsuperscript{1,3,4},
+Maximilian Sch\"{o}ls\textsuperscript{5},
+Matthias Hommel\textsuperscript{3,4},
+Benjamin O'Brien\textsuperscript{6,4},
+Julia Vogt\textsuperscript{2},
+Volkmar Falk\textsuperscript{3,4},
+Joachim M.~Buhmann\textsuperscript{2},
+Alexander Meyer\textsuperscript{1,3,4,7,*}
 
-  \bigskip
+\bigskip
 
-  \begin{minipage}{0.92\textwidth}\small\raggedright
-    \textsuperscript{1}Institute for Artificial Intelligence in Medicine, Charit\'{e} Universit\"atsmedizin Berlin, Berlin, Germany\\
-    \textsuperscript{2}Institute for Machine Learning, ETH Zurich, Zurich, Switzerland\\
-    \textsuperscript{3}Department of Cardiothoracic and Vascular Surgery, Deutsches Herzzentrum der Charit\'{e}, Charit\'{e} Universit\"atsmedizin Berlin, Berlin, Germany\\
-    \textsuperscript{4}Clinic for Neurology with Experimental Neurology, Charit\'{e} Universit\"atsmedizin Berlin, Berlin, Germany\\
-    \textsuperscript{5}Department of Cardiac Anesthesiology and Intensive Care Medicine, Deutsches Herzzentrum der Charit\'{e}, Charit\'{e} Universit\"atsmedizin Berlin, Berlin, Germany\\[0.4em]
-    \textsuperscript{*}Corresponding author. robin.geyer@charite.de,
-  \end{minipage}
-\end{center}
+\textsuperscript{1}Charité -- Universitätsmedizin Berlin, corporate member of Freie Universität Berlin and Humboldt-
+Universität zu Berlin, Institute for Artificial Intelligence in Medicine, Invalidenstraße 120, 10115 Berlin, Germany\\
+\textsuperscript{2}Institute for Machine Learning, ETH Zurich, 8092 Zurich, Switzerland\\
+\textsuperscript{3}Deutsches Herzzentrum der Charité, Department of Cardiothoracic and Vascular Surgery, Augustenburger Platz 1, 13353 Berlin, Germany\\
+\textsuperscript{4}Charité -- Universitätsmedizin Berlin, corporate member of Freie Universität Berlin and Humboldt-Universität zu Berlin, Charitéplatz 1, 10117 Berlin, Germany\\
+\textsuperscript{5}Charité -- Universitätsmedizin Berlin, corporate member of Freie Universität Berlin and Humboldt-
+Universität zu Berlin, Department of Neurology with Experimental Neurology, Charit\'{e}platz 1, 10117 Berlin, Germany\\
+\textsuperscript{6}Deutsches Herzzentrum der Charité, Department of Cardiac Anesthesiology and Intensive Care Medicine, Augustenburger Platz 1, 13353 Berlin, Germany\\
+\textsuperscript{7}Berlin Institute for the Foundations of Learning and Data -- TU Berlin, Berlin, Germany \\
 
-\begin{center}
-  \begin{minipage}{0.92\textwidth}
-    \textbf{Abstract.} Neurological complications pose a high risk after cardiac surgery. Early detection is crucial for intervention, but the immediate postoperative period is clinically silent: patients remain sedated, and established risk-stratification methods are lacking. Standard electronic health record data are insufficient. A candidate biomarker for early risk is autonomic dysfunction with sympathetic predominance. Two modalities are assesed to capture this state independently of patient wakefulness: physiological waveforms for beat-to-beat cardiovascular dynamics, and thermo-visual imaging using peripheral vasoconstriction as a proxy for sympathetic predominance. Here, we report a multimodal bedside setup acquiring these signals alongside conventional clinical data. In 154 postoperative patients (12 with neurological complications), facial thermal gradients were significantly elevated in complication cases, whereas electronic health record and waveform features lacked discriminatory power. Temporal transformer models incorporating thermo-visual imaging discriminated complications within 10 minutes of admission (area under the receiver operating characteristic curve 0.73 $\pm$ 0.04), reaching 0.79 $\pm$ 0.03 at 90 minutes. Early facial peripheral cooling associates with postoperative neurological risk, highlighting the potential of non-contact multimodal monitoring during this vulnerable window.
-  \end{minipage}
-\end{center}
+\textsuperscript{*}Corresponding authors, robin.geyer@charite.de, pia.lanmueller@dhzc-charite.de,\\
+alexander.meyer@dhzc-charite.de
+
+\bigskip
+
+\textbf{Neurological complications pose a high risk after cardiac surgery. Early detection is crucial for intervention, but the immediate postoperative period is clinically silent: patients remain sedated, and established risk-stratification methods are lacking. Standard electronic health record data are insufficient. A candidate biomarker for early risk is autonomic dysfunction with sympathetic predominance. Two modalities are assesed to capture this state independently of patient wakefulness: physiological waveforms for beat-to-beat cardiovascular dynamics, and thermo-visual imaging using peripheral vasoconstriction as a proxy for sympathetic predominance. Here, we report a multimodal bedside setup acquiring these signals alongside conventional clinical data. In 154 postoperative patients (12 with neurological complications), facial thermal gradients were significantly elevated in complication cases, whereas electronic health record and waveform features lacked discriminatory power. Temporal transformer models incorporating thermo-visual imaging discriminated complications within 10 minutes of admission (area under the receiver operating characteristic curve 0.73 $\pm$ 0.04), reaching 0.79 $\pm$ 0.03 at 90 minutes. Early facial peripheral cooling associates with postoperative neurological risk, highlighting the potential of non-contact multimodal monitoring during this vulnerable window.}
 
 \vspace{1ex}
 
@@ -100,7 +112,6 @@ Raw thermal video is high dimensional and affected by patient motion, occlusions
   \label{fig:thermal-pipeline}
 \end{figure*}
 
-
 The analysis included 154 postoperative cardiac surgery patients, of whom 12 developed postoperative neurological complications. The events comprised focal neurological deficits, seizures, delirium and radiologically confirmed cerebral ischaemia or haemorrhage (case summaries are provided in the Supplementary Information). Baseline age, sex, body mass index, cardiopulmonary bypass use and surgical procedure type did not differ statistically between patients with and without neurological complications (Table~\ref{tab:cohort_biomarkers}). Patients with neurological complications had longer intensive care unit and hospital stays, consistent with the clinical severity of the endpoint.
 
 \subsection*{Thermal gradients distinguish complication cases}
@@ -110,14 +121,15 @@ In contrast, UV-standardised facial thermal gradients were statistically higher 
 
 The core--peripheral temperature gradient was 3.39\,K [2.77, 4.31] in patients without neurological complications and 4.95\,K [4.55, 6.73] in patients with complications ($p<0.001$). The canthal--peripheral gradient was 2.77\,K [2.28, 3.25] versus 3.76\,K [3.38, 4.15] ($p=0.003$). These results indicate that facial thermal contrast, rather than routine haemodynamic or laboratory measurements, carried the strongest univariate signal in this cohort.
 
-\begin{table*}[t]
+\begin{table}[t]
+  \centering
   \caption{Selected cohort characteristics and postoperative biomarkers. Continuous variables are reported as median [interquartile range] and binary variables as $n$ (\%). P-values are from two-sided Mann--Whitney U tests for continuous variables, Fisher's exact tests for binary variables and chi-square tests for categorical variables with more than two levels. P-values are provided for descriptive purposes to highlight baseline imbalances, not for formal hypothesis testing, and are unadjusted.}
   \label{tab:cohort_biomarkers}
   \centering
   \scriptsize
   \setlength{\tabcolsep}{2pt}
   \renewcommand{\arraystretch}{1.15}
-  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.5cm}>{\centering\arraybackslash}p{4.0cm}>{\centering\arraybackslash}p{4.0cm}>{\centering\arraybackslash}p{1.2cm}@{}}
+  \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{4.2cm}>{\centering\arraybackslash}X>{\centering\arraybackslash}X>{\centering\arraybackslash}p{1.2cm}@{}}
     \toprule
     \textbf{Variable} & \makecell{\textbf{No complication}\\(n=142)} & \makecell{\textbf{Neurological}\\\textbf{complication}\\(n=12)} & \textbf{p} \\
     \midrule
@@ -141,14 +153,14 @@ The core--peripheral temperature gradient was 3.39\,K [2.77, 4.31] in patients w
     Vasoactive-inotropic score & 6.00 [4.00, 12.00] & 8.00 [7.75, 13.25] & 0.141 \\
     Norepinephrine, \textmu g/kg/min & 0.06 [0.04, 0.10] & 0.08 [0.07, 0.09] & 0.188 \\
     \bottomrule
-  \end{tabular}
-\end{table*}
+  \end{tabularx}
+\end{table}
 
 \clearpage
 
 \subsection*{Thermo-visual imaging improves early risk stratification}
 
-To evaluate the predictive value of multimodal sensing, transformer-based classifiers were trained on all seven modality combinations using 12-fold cross-validation across seven random seeds, with each fold containing one neurological complication case. Each modality was projected through learned embedding layers into a shared latent space. The transformer processed sequential samples from admission up to the prediction time to output a binary neurological risk prediction. Data splits for the thermo-visual variational autoencoder were strictly matched across all modality combinations.
+To evaluate the predictive value of the individual modalities and their fusions, transformer-based classifiers were trained on all seven modality combinations using 12-fold cross-validation across seven random seeds, with each fold containing one neurological complication case. Each modality was projected through learned embedding layers into a shared latent space. The transformer processed sequential samples from admission up to the prediction time to output a binary neurological risk prediction. The cross-validation splits of the transformer training were strictly aligned with those of the VAE training.
 
 Model discrimination was assessed using the area under the receiver operating characteristic curve (AUROC), a robust primary metric for strongly imbalanced cohorts~\citep{mcdermott2024closer, richardson2024receiver}. Models relying solely on EHR, PWF, or their combination (EHR+PWF) yielded near-chance AUROC values across the early observation window (Table~\ref{tab:results_by_time}). Conversely, every modality combination incorporating TVI achieved higher discrimination. At 10\,min after PACU admission, the trimodal model reached an AUROC of 0.73 $\pm$ 0.04, compared with 0.55 $\pm$ 0.03 for EHR, 0.51 $\pm$ 0.03 for PWF and 0.70 $\pm$ 0.03 for TVI alone. At 90\,min, the trimodal model reached an AUROC of 0.79 $\pm$ 0.03, while TVI alone achieved 0.77 $\pm$ 0.02. Across the observation window, AUROC trajectories and ROC curves demonstrated consistent performance separation between models with and without TVI (Fig.~\ref{fig:auroc-roc}).
 
@@ -348,7 +360,7 @@ where $\mathcal{M}$ is the set of active modalities, $\mathbf{p}_{\mathrm{abs}}$
 
 \subsection*{Cross-validation and evaluation}
 
-All seven combinations $\mathcal{M}\subseteq\{\mathrm{EHR},\mathrm{PWF},\mathrm{TVI}\}\setminus\emptyset$ were evaluated: EHR only, PWF only, EHR+PWF, TVI only, TVI+EHR, TVI+PWF and TVI+EHR+PWF. Models were trained with 12-fold cross-validation such that each fold held out exactly one patient with a neurological complication; the 142 controls were distributed across folds. Training was repeated across seven random seeds, yielding 84 trained models per modality combination. VAE training splits were matched across modality combinations so that no UV map of a held-out test patient appeared during representation learning. Performance was summarised by AUROC at predefined times after PACU admission and by the relative risk rank assigned to each complication case at 90\,min.
+All seven combinations $\mathcal{M}\subseteq\{\mathrm{EHR},\mathrm{PWF},\mathrm{TVI}\}\setminus\emptyset$ were evaluated: EHR only, PWF only, EHR+PWF, TVI only, TVI+EHR, TVI+PWF and TVI+EHR+PWF. Models were trained with 12-fold cross-validation such that each fold held out exactly one patient with a neurological complication; the 142 controls were distributed across folds. Training was repeated across seven random seeds, yielding 84 trained models per modality combination. The cross-validation splits of the transformer training were aligned with the VAE training splits so that no UV map of a held-out test patient appeared during representation learning. Performance was summarised by AUROC at predefined times after PACU admission and by the relative risk rank assigned to each complication case at 90\,min.
 
 \subsection*{Statistical analyses}
 
@@ -366,338 +378,388 @@ The processed data supporting the main results are included in the manuscript an
 
 Custom code was used for data acquisition, thermal preprocessing, representation learning, model training and statistical analysis. The analysis code required to reproduce the reported aggregate results will be made available in a DOI-minting repository before publication. Components that interface with hospital information systems or contain security-sensitive acquisition details are available from the corresponding authors on reasonable request, subject to institutional approval.
 
-\begin{thebibliography}{99}
-  \providecommand{\natexlab}[1]{#1}
-  \providecommand{\url}[1]{{#1}}
-  \providecommand{\urlprefix}{URL }
-  \providecommand{\doi}[1]{\url{https://doi.org/#1}}
+\begin{thebibliography}{10}
+  \expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{\burl{#1}}\fi
+  \expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+  \providecommand{\bibinfo}[2]{#2}
   \providecommand{\eprint}[2][]{\url{#2}}
+  \providecommand{\doi}[1]{\url{https://doi.org/#1}}
   \providecommand{\bibcommenthead}{}
+  \bibcommenthead
 
-  \bibitem[{Aaslid et~al.(1989)Aaslid, Lindegaard, Sorteberg, and
-  Nornes}]{aaslid1989cerebral}
-  Aaslid R, Lindegaard KF, Sorteberg W, et~al (1989) Cerebral autoregulation
-  dynamics in humans. Stroke 20(1):45--52
+  \bibitem{arrowsmith2000central}
+  \bibinfo{author}{Arrowsmith, J.}, \bibinfo{author}{Grocott, H.},
+  \bibinfo{author}{Reves, J.} \& \bibinfo{author}{Newman, M.}
+  \newblock \bibinfo{title}{Central nervous system complications of cardiac
+  surgery.}
+  \newblock \emph{\bibinfo{journal}{British journal of anaesthesia}}
+  \textbf{\bibinfo{volume}{84}}, \bibinfo{pages}{378--393}
+  (\bibinfo{year}{2000}).
 
-  \bibitem[{Adam et~al.(2023)Adam, Rupprecht, K{\"u}nstler, and
-  Hoyer}]{adam2023heart}
-  Adam J, Rupprecht S, K{\"u}nstler EC, et~al (2023) Heart rate variability as a
-  marker and predictor of inflammation, nosocomial infection, and sepsis--a
-  systematic review. Autonomic Neuroscience 249:103116
+  \bibitem{saver2006time}
+  \bibinfo{author}{Saver, J.~L.}
+  \newblock \bibinfo{title}{Time is brain—quantified}.
+  \newblock \emph{\bibinfo{journal}{Stroke}} \textbf{\bibinfo{volume}{37}},
+  \bibinfo{pages}{263--266} (\bibinfo{year}{2006}).
 
-  \bibitem[{Amar et~al.(1998)Amar, Fleisher, Pantuck, Shamoon, Zhang, Roistacher,
-  Leung, Ginsburg, and Smiley}]{amar1998persistent}
-  Amar D, Fleisher M, Pantuck CB, et~al (1998) Persistent alterations of the
-  autonomic nervous system after noncardiac surgery. Anesthesiology
-  89(1):30--42
+  \bibitem{saver2016time}
+  \bibinfo{author}{Saver, J.~L.} \emph{et~al.}
+  \newblock \bibinfo{title}{Time to treatment with endovascular thrombectomy and
+  outcomes from ischemic stroke: a meta-analysis}.
+  \newblock \emph{\bibinfo{journal}{Jama}} \textbf{\bibinfo{volume}{316}},
+  \bibinfo{pages}{1279--1288} (\bibinfo{year}{2016}).
 
-  \bibitem[{Amundson et~al.(2020)Amundson, Hormes, Katema, Rathakrishnan,
-      Edwards, Esper, Binongo, Lasanajak, Keeling, Halkos
-  et~al.}]{amundson2020timing}
-  Amundson B, Hormes J, Katema A, et~al (2020) Timing of recognition for
-  perioperative strokes following cardiac surgery. Journal of Stroke and
-  Cerebrovascular Diseases 29(12):105336
+  \bibitem{selim2007perioperative}
+  \bibinfo{author}{Selim, M.}
+  \newblock \bibinfo{title}{Perioperative stroke}.
+  \newblock \emph{\bibinfo{journal}{New England journal of medicine}}
+  \textbf{\bibinfo{volume}{356}}, \bibinfo{pages}{706--713}
+  (\bibinfo{year}{2007}).
 
-  \bibitem[{Arrowsmith et~al.(2000)Arrowsmith, Grocott, Reves, and
-  Newman}]{arrowsmith2000central}
-  Arrowsmith J, Grocott H, Reves J, et~al (2000) Central nervous system
-  complications of cardiac surgery. British journal of anaesthesia
-  84(3):378--393
+  \bibitem{salazar2001stroke}
+  \bibinfo{author}{Salazar, J.~D.} \emph{et~al.}
+  \newblock \bibinfo{title}{Stroke after cardiac surgery: short-and long-term
+  outcomes}.
+  \newblock \emph{\bibinfo{journal}{The Annals of thoracic surgery}}
+  \textbf{\bibinfo{volume}{72}}, \bibinfo{pages}{1195--1201}
+  (\bibinfo{year}{2001}).
 
-  \bibitem[{Bauernschmitt et~al.(2004)Bauernschmitt, Malberg, Wessel, Kopp,
-  Schirmbeck, and Lange}]{bauernschmitt2004impairment}
-  Bauernschmitt R, Malberg H, Wessel N, et~al (2004) Impairment of cardiovascular
-  autonomic control in patients early after cardiac surgery. European journal
-  of cardio-thoracic surgery 25(3):320--326
-
-  \bibitem[{Chen et~al.(2021)Chen, Pan, Huang, Huang, Tan, Chen, Hsu, and
-  Chuang}]{chen2021autonomic}
-  Chen SF, Pan HY, Huang CR, et~al (2021) Autonomic dysfunction contributes to
-  impairment of cerebral autoregulation in patients with epilepsy. Journal of
-  Personalized Medicine 11(4):313
-
-  \bibitem[{Colombo et~al.(2015)Colombo, Marchi, Borghi, Fossali, Rech, Castelli,
-  Corona, Guzzetti, and Raimondi}]{colombo2015pulse}
-  Colombo R, Marchi A, Borghi B, et~al (2015) Pulse photoplethysmographic
-  analysis estimates the sympathetic activity directed to heart and vessels.
-  Anesthesiology 123(2):336--345
-
-  \bibitem[{Deng et~al.(2020)Deng, Guo, Ververas, Kotsia, and
-  Zafeiriou}]{Deng_2020_CVPR}
-  Deng J, Guo J, Ververas E, et~al (2020) Retinaface: Single-shot multi-level
-  face localisation in the wild. In: Proceedings of the IEEE/CVF Conference on
-  Computer Vision and Pattern Recognition (CVPR)
-
-  \bibitem[{Feng et~al.(2018)Feng, Wu, Shao, Wang, and Zhou}]{feng2018joint}
-  Feng Y, Wu F, Shao X, et~al (2018) Joint 3d face reconstruction and dense
-  alignment with position map regression network. In: Proceedings of the
-  European Conference on Computer Vision (ECCV), pp 534--551
-
-  \bibitem[{Guo et~al.(2020)Guo, Zhu, Yang, Yang, Lei, and Li}]{guo2020towards}
-  Guo J, Zhu X, Yang Y, et~al (2020) Towards fast, accurate and stable 3d dense
-  face alignment. In: European Conference on Computer Vision, Springer, pp
-  152--168
-
-  \bibitem[{Guyenet(2006)}]{guyenet2006sympathetic}
-  Guyenet PG (2006) The sympathetic control of blood pressure. Nature Reviews
-  Neuroscience 7(5):335--346
-
-  \bibitem[{Hansen et~al.(2025)Hansen, Knopp, Esselmann, Celano, Derad, Asendorf,
-  Chebbok, Heinemann, Malik, Morgado et~al.}]{hansen2025prediction}
-  Hansen N, Knopp CM, Esselmann H, et~al (2025) Prediction of postoperative
-  delirium after cardiac surgery by the interplay between preoperative plasma
-  p-tau181 and il-6 and heart-brain axis related factors: results from the
-  prospective observational study finderi. Molecular Psychiatry pp 1--11
-
-  \bibitem[{Hogue~Jr et~al.(1994)Hogue~Jr, Stein, Apostolidou, Lappas, and
-  Kleiger}]{hogue1994alterations}
-  Hogue~Jr CW, Stein PK, Apostolidou I, et~al (1994) Alterations in temporal
-  patterns of heart rate variability after coronary artery bypass graft
-  surgery. Anesthesiology 81(6):1356--1364
-
-  \bibitem[{Jimenez-Ruiz et~al.(2021)Jimenez-Ruiz, Racosta, Kimpinski, Hilz, and
-  Sposato}]{jimenez2021cardiovascular}
-  Jimenez-Ruiz A, Racosta JM, Kimpinski K, et~al (2021) Cardiovascular autonomic
-  dysfunction after stroke. Neurological Sciences 42(5):1751--1758
-
-  \bibitem[{Jorge et~al.(2021)Jorge, Harford, Villarroel, Chaichulee, Davidson,
-  Finnegan, Clark, Young, Watkinson, and Tarassenko}]{jorge_non-contact_2021}
-  Jorge J, Harford M, Villarroel M, et~al (2021) Non-{Contact} {Assessment} of
-  {Peripheral} {Artery} {Haemodynamics} {Using} {Infrared} {Video}
-  {Thermography}. IEEE Transactions on Biomedical Engineering 68(1):276--288.
-  \doi{10.1109/TBME.2020.2999539},
-  \urlprefix\url{https://ieeexplore.ieee.org/document/9109260}, conference
-  Name: IEEE Transactions on Biomedical Engineering
-
-  \bibitem[{Kingma et~al.(2013)Kingma, Welling et~al.}]{kingma2013auto}
-  Kingma DP, Welling M, et~al (2013) Auto-encoding variational bayes
-
-  \bibitem[{Lee et~al.(2019)Lee, Wood, Maslove, Muscedere, and
-  Boyd}]{lee2019dysfunctional}
-  Lee KF, Wood MD, Maslove DM, et~al (2019) Dysfunctional cerebral autoregulation
-  is associated with delirium in critically ill adults. Journal of Cerebral
-  Blood Flow \& Metabolism 39(12):2512--2520
-
-  \bibitem[{Liu et~al.(2022)Liu, Huang, Guo, Sun, Chen, Zhai, Jin, Zhu, Li, and
-  Yu}]{liu2022recent}
-  Liu B, Huang D, Guo Y, et~al (2022) Recent advances and perspectives of
-  postoperative neurological disorders in the elderly surgical patients. CNS
-  neuroscience \& therapeutics 28(4):470--483
-
-  \bibitem[{Longhitano et~al.(2021)Longhitano, Iannuzzi, Bonatti, Zanza, Messina,
-  Godoy, Dabrowski, Xiuyun, Czosnyka, Pelosi et~al.}]{longhitano2021cerebral}
-  Longhitano Y, Iannuzzi F, Bonatti G, et~al (2021) Cerebral autoregulation in
-  non-brain injured patients: a systematic review. Frontiers in Neurology
-  12:732176
-
-  \bibitem[{Mankoo et~al.(2023)Mankoo, Roy, Davies, Panerai, Robinson, Brassard,
-  Beishon, and Minhas}]{mankoo2023role}
-  Mankoo A, Roy S, Davies A, et~al (2023) The role of the autonomic nervous
-  system in cerebral blood flow regulation in stroke: A review. Autonomic
-  Neuroscience 246:103082
-
-  \bibitem[{Mattimore et~al.(2023)Mattimore, Fischl, Christophides, Cuenca,
-  Davidson, Jin, and Bergese}]{mattimore2023delirium}
-  Mattimore D, Fischl A, Christophides A, et~al (2023) Delirium after cardiac
-  surgery—a narrative review. Brain sciences 13(12):1682
-
-  \bibitem[{Nagori et~al.(2019)Nagori, Dhingra, Bhatnagar, Lodha, and
-  Sethi}]{predicting_shock_from_thermal_images}
-  Nagori A, Dhingra LS, Bhatnagar A, et~al (2019) Predicting hemodynamic shock
-  from thermal images using machine learning. Scientific reports 9(1):1--9
-
-  \bibitem[{Olivieri et~al.(2024)Olivieri, Biscetti, Pimpini, Pelliccioni,
-  Sabbatinelli, and Giunta}]{olivieri2024heart}
-  Olivieri F, Biscetti L, Pimpini L, et~al (2024) Heart rate variability and
-  autonomic nervous system imbalance: Potential biomarkers and detectable
-  hallmarks of aging and inflammaging. Ageing Research Reviews 101:102521
-
-  \bibitem[{van~den Oord et~al.(2018)van~den Oord, Li, and
-  Vinyals}]{oord2018representation}
-  van~den Oord A, Li Y, Vinyals O (2018) Representation learning with
-  contrastive predictive coding. arXiv preprint arXiv:180703748
-
-  \bibitem[{Pan et~al.(2025)Pan, Ji, Ma, and Yang}]{pan2025effect}
-  Pan WT, Ji Mh, Ma D, et~al (2025) Effect of perioperative autonomic nervous
-  system imbalance on surgical outcomes: a systematic literature review.
-  British Journal of Anaesthesia
-
-  \bibitem[{Patel et~al.(2022)Patel, Weber, Gourine, and
-  Ackland}]{patel2022potential}
-  Patel AB, Weber V, Gourine AV, et~al (2022) The potential for autonomic
-  neuromodulation to reduce perioperative complications and pain: a systematic
-  review and meta-analysis. British Journal of Anaesthesia 128(1):135--149
-
-  \bibitem[{Podlasek et~al.(2025)Podlasek, Petrov, Stankov, Snyder, Alvarez,
-  Musialek, and Grunwald}]{podlasek2025thermography}
-  Podlasek A, Petrov I, Stankov Z, et~al (2025) Thermography in stroke—a
-  systematic review. Medicina 61(5):854
-
-  \bibitem[{Pongratz and Straub(2014)}]{pongratz2014sympathetic}
-  Pongratz G, Straub RH (2014) The sympathetic nervous response in inflammation.
-  Arthritis research \& therapy 16(6):504
-
-  \bibitem[{Poredos and Komadina(2025)}]{poredos2025inflammation}
-  Poredos P, Komadina R (2025) Inflammation and perioperative cardiovascular
-  events. Cells 14(17):1362
-
-  \bibitem[{Qian et~al.(2021)Qian, Meng, Gong, Yang, Wang, Belongie, and
-  Cui}]{qian2021spatiotemporal}
-  Qian R, Meng T, Gong B, et~al (2021) Spatiotemporal contrastive video
-  representation learning. In: Proceedings of the IEEE/CVF conference on
-  computer vision and pattern recognition, pp 6964--6974
-
-  \bibitem[{Ronneberger et~al.(2015)Ronneberger, Fischer, and
-  Brox}]{ronneberger2015u}
-  Ronneberger O, Fischer P, Brox T (2015) U-net: Convolutional networks for
-  biomedical image segmentation. In: Medical image computing and
-  computer-assisted intervention--MICCAI 2015: 18th international conference,
-  Munich, Germany, October 5-9, 2015, proceedings, part III 18, Springer, pp
-  234--241
-
-  \bibitem[{Salazar et~al.(2001)Salazar, Wityk, Grega, Borowicz, Doty, Petrofski,
-  and Baumgartner}]{salazar2001stroke}
-  Salazar JD, Wityk RJ, Grega MA, et~al (2001) Stroke after cardiac surgery:
-  short-and long-term outcomes. The Annals of thoracic surgery 72(4):1195--1201
-
-  \bibitem[{Saver(2006)}]{saver2006time}
-  Saver JL (2006) Time is brain—quantified. Stroke 37(1):263--266
-
-  \bibitem[{Saver et~al.(2016)Saver, Goyal, Van~der Lugt, Menon, Majoie, Dippel,
-  Campbell, Nogueira, Demchuk, Tomasello et~al.}]{saver2016time}
-  Saver JL, Goyal M, Van~der Lugt A, et~al (2016) Time to treatment with
-  endovascular thrombectomy and outcomes from ischemic stroke: a meta-analysis.
-  Jama 316(12):1279--1288
-
-  \bibitem[{Schramm et~al.(2012)Schramm, Klein, Falkenberg, Berres, Closhen,
-  Werhahn, David, Werner, and Engelhard}]{schramm2012impaired}
-  Schramm P, Klein KU, Falkenberg L, et~al (2012) Impaired cerebrovascular
-  autoregulation in patients with severe sepsis and sepsis-associated delirium.
-  Critical care 16(5):R181
-
-  \bibitem[{Selim(2007)}]{selim2007perioperative}
-  Selim M (2007) Perioperative stroke. New England journal of medicine
-  356(7):706--713
-
-  \bibitem[{Seravalle et~al.(2013)Seravalle, Dimitriadis, Dell’Oro, and
-  Grassi}]{seravalle2013assess}
-  Seravalle G, Dimitriadis K, Dell’Oro R, et~al (2013) How to assess
-  sympathetic nervous system activity in clinical practice. Current Clinical
-  Pharmacology 8(3):182--188
-
-  \bibitem[{Sheng and Zhu(2018)}]{sheng2018crosstalk}
-  Sheng Y, Zhu L (2018) The crosstalk between autonomic nervous system and blood
-  vessels. International journal of physiology, pathophysiology and
-  pharmacology 10(1):17
-
-  \bibitem[{Sposato et~al.(2020)Sposato, Hilz, Aspberg, Murthy, Bahit, Hsieh,
-  Sheppard, Scheitz, and Force}]{sposato2020post}
-  Sposato LA, Hilz MJ, Aspberg S, et~al (2020) Post-stroke cardiovascular
-  complications and neurogenic cardiac injury: Jacc state-of-the-art review.
-  Journal of the American College of Cardiology 76(23):2768--2785
-
-  \bibitem[{Staicu et~al.(2025)Staicu, Vernic, Ciurescu, Lascu, Aburel, Deutsch,
-  and Rosca}]{staicu2025postoperative}
-  Staicu RE, Vernic C, Ciurescu S, et~al (2025) Postoperative delirium and
-  cognitive dysfunction after cardiac surgery: the role of inflammation and
-  clinical risk factors. Diagnostics 15(7):844
-
-  \bibitem[{Valenza et~al.(2018)Valenza, Citi, Saul, and
-  Barbieri}]{valenza2018ecg}
-  Valenza G, Citi L, Saul JP, et~al (2018) Ecg-derived sympathetic and
-  parasympathetic nervous system dynamics: A congestive heart failure study.
-  In: 2018 Computing in Cardiology Conference (CinC), IEEE, pp 1--4
+  \bibitem{liu2022recent}
+  \bibinfo{author}{Liu, B.} \emph{et~al.}
+  \newblock \bibinfo{title}{Recent advances and perspectives of postoperative
+  neurological disorders in the elderly surgical patients}.
+  \newblock \emph{\bibinfo{journal}{CNS neuroscience \& therapeutics}}
+  \textbf{\bibinfo{volume}{28}}, \bibinfo{pages}{470--483}
+  (\bibinfo{year}{2022}).
 
   \bibitem{euroscore2}
-  Nashef SAM, Roques F, Sharples LD, et~al (2012) EuroSCORE II.
-  European Journal of Cardio-Thoracic Surgery 41(4):734--745
+  \bibinfo{author}{Nashef, S. A.~M.} \emph{et~al.}
+  \newblock \bibinfo{title}{{EuroSCORE} {II}}.
+  \newblock \emph{\bibinfo{journal}{European journal of cardio-thoracic surgery}}
+  \textbf{\bibinfo{volume}{41}}, \bibinfo{pages}{734--745}
+  (\bibinfo{year}{2012}).
 
   \bibitem{sts2018}
-  Shahian DM, Jacobs JP, Badhwar V, et~al (2018) The Society of Thoracic Surgeons
-  2018 Adult Cardiac Surgery Risk Models. The Annals of Thoracic Surgery
-  105(5):1411--1418
+  \bibinfo{author}{Shahian, D.~M.} \emph{et~al.}
+  \newblock \bibinfo{title}{The {Society} of {Thoracic} {Surgeons} 2018 adult
+    cardiac surgery risk models: part 1—background, design considerations, and
+  model development}.
+  \newblock \emph{\bibinfo{journal}{The Annals of thoracic surgery}}
+  \textbf{\bibinfo{volume}{105}}, \bibinfo{pages}{1411--1418}
+  (\bibinfo{year}{2018}).
 
   \bibitem{ely2001camicu}
-  Ely EW, Inouye SK, Bernard GR, et~al (2001) Delirium in mechanically ventilated
-  patients: validity and reliability of the confusion assessment method for the
-  intensive care unit (CAM-ICU). JAMA 286(21):2703--2710
+  \bibinfo{author}{Ely, E.~W.} \emph{et~al.}
+  \newblock \bibinfo{title}{Delirium in mechanically ventilated patients:
+    validity and reliability of the confusion assessment method for the intensive
+  care unit ({CAM-ICU})}.
+  \newblock \emph{\bibinfo{journal}{Jama}} \textbf{\bibinfo{volume}{286}},
+  \bibinfo{pages}{2703--2710} (\bibinfo{year}{2001}).
 
   \bibitem{nudesc}
-  Gaudreau JD, Gagnon P, Harel F, et~al (2005) Fast, systematic, and continuous
-  delirium assessment in hospitalized patients: the Nursing Delirium Screening
-  Scale. Journal of Pain and Symptom Management 29(4):368--375
+  \bibinfo{author}{Gaudreau, J.-D.}, \bibinfo{author}{Gagnon, P.},
+  \bibinfo{author}{Harel, F.}, \bibinfo{author}{Tremblay, A.} \&
+  \bibinfo{author}{Roy, M.-A.}
+  \newblock \bibinfo{title}{Fast, systematic, and continuous delirium assessment
+  in hospitalized patients: the nursing delirium screening scale}.
+  \newblock \emph{\bibinfo{journal}{Journal of pain and symptom management}}
+  \textbf{\bibinfo{volume}{29}}, \bibinfo{pages}{368--375}
+  (\bibinfo{year}{2005}).
 
-  \bibitem{meyer2018machine}
-  Meyer A, Zverinski D, Pfahringer B, et~al (2018) Machine learning for real-time
-  prediction of complications in critical care: a retrospective study. The
-  Lancet Respiratory Medicine 6(12):905--914
-
-  \bibitem{hyland2020early}
-  Hyland SL, Faltys M, Hueser M, et~al (2020) Early prediction of circulatory
-  failure in the intensive care unit using machine learning. Nature Medicine
-  26(3):364--373
-
-  \bibitem{hirid2021}
-  Yeche H, Kuznetsova R, Mollaysa A, et~al (2021) HiRID-ICU-Benchmark: a
-  comprehensive machine learning benchmark on high-resolution ICU data.
-  Advances in Neural Information Processing Systems 34:24586--24597
-
-  \bibitem{kendall2017uncertainties}
-  Kendall A, Gal Y (2017) What uncertainties do we need in Bayesian deep learning
-  for computer vision? Advances in Neural Information Processing Systems
-  30:5574--5584
-
-  \bibitem{higgins2017beta}
-  Higgins I, Matthey L, Pal A, et~al (2017) beta-VAE: learning basic visual
-  concepts with a constrained variational framework. International Conference
-  on Learning Representations
-
-  \bibitem{locatello2019challenging}
-  Locatello F, Bauer S, Lucic M, et~al (2019) Challenging common assumptions in
-  the unsupervised learning of disentangled representations. Proceedings of the
-  36th International Conference on Machine Learning, PMLR 97:4114--4124
-
-  \bibitem{vaswani2017attention}
-  Vaswani A, Shazeer N, Parmar N, et~al (2017) Attention is all you need.
-  Advances in Neural Information Processing Systems 30:5998--6008
-
-  \bibitem{song2018attend}
-  Song H, Rajan D, Thiagarajan JJ, Spanias A (2018) Attend and diagnose: clinical
-  time series analysis using attention models. Proceedings of the AAAI
-  Conference on Artificial Intelligence 32(1):4091--4098
-
-  \bibitem{ronneberger2015miccai}
-  Ronneberger O, Fischer P, Brox T (2015) U-Net: convolutional networks for
-  biomedical image segmentation. In: Medical Image Computing and
-  Computer-Assisted Intervention, Springer, pp 234--241
-
-  \bibitem{chen2020simclr}
-  Chen T, Kornblith S, Norouzi M, Hinton G (2020) A simple framework for
-  contrastive learning of visual representations. Proceedings of the 37th
-  International Conference on Machine Learning, PMLR 119:1597--1607
-
-  \bibitem{mcdermott2024closer}
-  McDermott MB, Zhang H, Hansen LH, Angelotti G, Gallifant J (2024) A closer
-  look at AUROC and AUPRC under class imbalance. Advances in Neural
-  Information Processing Systems 37:44102--44163
-
-  \bibitem{de2015autonomic}
-  De Raedt S, De Vos A, De Keyser J (2015) Autonomic dysfunction in acute ischemic stroke: an underexplored therapeutic area? Journal of the neurological sciences 348(1-2):24--34
+  \bibitem{amundson2020timing}
+  \bibinfo{author}{Amundson, B.} \emph{et~al.}
+  \newblock \bibinfo{title}{Timing of recognition for perioperative strokes
+  following cardiac surgery}.
+  \newblock \emph{\bibinfo{journal}{Journal of Stroke and Cerebrovascular
+  Diseases}} \textbf{\bibinfo{volume}{29}}, \bibinfo{pages}{105336}
+  (\bibinfo{year}{2020}).
 
   \bibitem{wehrwein2016overview}
-  Wehrwein EA, Orer HS, Barman SM (2016) Overview of the anatomy, physiology, and pharmacology of the autonomic nervous system. Comprehensive physiology 6(3):1239--1278
+  \bibinfo{author}{Wehrwein, E.~A.}, \bibinfo{author}{Orer, H.~S.} \&
+  \bibinfo{author}{Barman, S.~M.}
+  \newblock \bibinfo{title}{Overview of the anatomy, physiology, and pharmacology
+  of the autonomic nervous system}.
+  \newblock \emph{\bibinfo{journal}{Comprehensive Physiology}}
+  \textbf{\bibinfo{volume}{6}}, \bibinfo{pages}{1239--1278}
+  (\bibinfo{year}{2016}).
+
+  \bibitem{hogue1994alterations}
+  \bibinfo{author}{Hogue~Jr, C.~W.}, \bibinfo{author}{Stein, P.~K.},
+  \bibinfo{author}{Apostolidou, I.}, \bibinfo{author}{Lappas, D.~G.} \&
+  \bibinfo{author}{Kleiger, R.~E.}
+  \newblock \bibinfo{title}{Alterations in temporal patterns of heart rate
+  variability after coronary artery bypass graft surgery.}
+  \newblock \emph{\bibinfo{journal}{Anesthesiology}}
+  \textbf{\bibinfo{volume}{81}}, \bibinfo{pages}{1356--1364}
+  (\bibinfo{year}{1994}).
+
+  \bibitem{bauernschmitt2004impairment}
+  \bibinfo{author}{Bauernschmitt, R.} \emph{et~al.}
+  \newblock \bibinfo{title}{Impairment of cardiovascular autonomic control in
+  patients early after cardiac surgery}.
+  \newblock \emph{\bibinfo{journal}{European journal of cardio-thoracic surgery}}
+  \textbf{\bibinfo{volume}{25}}, \bibinfo{pages}{320--326}
+  (\bibinfo{year}{2004}).
+
+  \bibitem{jimenez2021cardiovascular}
+  \bibinfo{author}{Jimenez-Ruiz, A.}, \bibinfo{author}{Racosta, J.~M.},
+  \bibinfo{author}{Kimpinski, K.}, \bibinfo{author}{Hilz, M.~J.} \&
+  \bibinfo{author}{Sposato, L.~A.}
+  \newblock \bibinfo{title}{Cardiovascular autonomic dysfunction after stroke}.
+  \newblock \emph{\bibinfo{journal}{Neurological Sciences}}
+  \textbf{\bibinfo{volume}{42}}, \bibinfo{pages}{1751--1758}
+  (\bibinfo{year}{2021}).
+
+  \bibitem{sposato2020post}
+  \bibinfo{author}{Sposato, L.~A.} \emph{et~al.}
+  \newblock \bibinfo{title}{Post-stroke cardiovascular complications and
+  neurogenic cardiac injury: {JACC} state-of-the-art review}.
+  \newblock \emph{\bibinfo{journal}{Journal of the American College of
+  Cardiology}} \textbf{\bibinfo{volume}{76}}, \bibinfo{pages}{2768--2785}
+  (\bibinfo{year}{2020}).
+
+  \bibitem{de2015autonomic}
+  \bibinfo{author}{De~Raedt, S.}, \bibinfo{author}{De~Vos, A.} \&
+  \bibinfo{author}{De~Keyser, J.}
+  \newblock \bibinfo{title}{Autonomic dysfunction in acute ischemic stroke: an
+  underexplored therapeutic area?}
+  \newblock \emph{\bibinfo{journal}{Journal of the Neurological Sciences}}
+  \textbf{\bibinfo{volume}{348}}, \bibinfo{pages}{24--34}
+  (\bibinfo{year}{2015}).
+
+  \bibitem{chen2021autonomic}
+  \bibinfo{author}{Chen, S.-F.} \emph{et~al.}
+  \newblock \bibinfo{title}{Autonomic dysfunction contributes to impairment of
+  cerebral autoregulation in patients with epilepsy}.
+  \newblock \emph{\bibinfo{journal}{Journal of Personalized Medicine}}
+  \textbf{\bibinfo{volume}{11}}, \bibinfo{pages}{313} (\bibinfo{year}{2021}).
+
+  \bibitem{mankoo2023role}
+  \bibinfo{author}{Mankoo, A.} \emph{et~al.}
+  \newblock \bibinfo{title}{The role of the autonomic nervous system in cerebral
+  blood flow regulation in stroke: A review}.
+  \newblock \emph{\bibinfo{journal}{Autonomic Neuroscience}}
+  \textbf{\bibinfo{volume}{246}}, \bibinfo{pages}{103082}
+  (\bibinfo{year}{2023}).
+
+  \bibitem{aaslid1989cerebral}
+  \bibinfo{author}{Aaslid, R.}, \bibinfo{author}{Lindegaard, K.-F.},
+  \bibinfo{author}{Sorteberg, W.} \& \bibinfo{author}{Nornes, H.}
+  \newblock \bibinfo{title}{Cerebral autoregulation dynamics in humans.}
+  \newblock \emph{\bibinfo{journal}{Stroke}} \textbf{\bibinfo{volume}{20}},
+  \bibinfo{pages}{45--52} (\bibinfo{year}{1989}).
+
+  \bibitem{lee2019dysfunctional}
+  \bibinfo{author}{Lee, K.~F.}, \bibinfo{author}{Wood, M.~D.},
+  \bibinfo{author}{Maslove, D.~M.}, \bibinfo{author}{Muscedere, J.~G.} \&
+  \bibinfo{author}{Boyd, J.~G.}
+  \newblock \bibinfo{title}{Dysfunctional cerebral autoregulation is associated
+  with delirium in critically ill adults}.
+  \newblock \emph{\bibinfo{journal}{Journal of Cerebral Blood Flow \&
+  Metabolism}} \textbf{\bibinfo{volume}{39}}, \bibinfo{pages}{2512--2520}
+  (\bibinfo{year}{2019}).
+
+  \bibitem{schramm2012impaired}
+  \bibinfo{author}{Schramm, P.} \emph{et~al.}
+  \newblock \bibinfo{title}{Impaired cerebrovascular autoregulation in patients
+  with severe sepsis and sepsis-associated delirium}.
+  \newblock \emph{\bibinfo{journal}{Critical care}}
+  \textbf{\bibinfo{volume}{16}}, \bibinfo{pages}{R181} (\bibinfo{year}{2012}).
+
+  \bibitem{longhitano2021cerebral}
+  \bibinfo{author}{Longhitano, Y.} \emph{et~al.}
+  \newblock \bibinfo{title}{Cerebral autoregulation in non-brain injured
+  patients: a systematic review}.
+  \newblock \emph{\bibinfo{journal}{Frontiers in Neurology}}
+  \textbf{\bibinfo{volume}{12}}, \bibinfo{pages}{732176}
+  (\bibinfo{year}{2021}).
+
+  \bibitem{mattimore2023delirium}
+  \bibinfo{author}{Mattimore, D.} \emph{et~al.}
+  \newblock \bibinfo{title}{Delirium after cardiac surgery—a narrative review}.
+  \newblock \emph{\bibinfo{journal}{Brain sciences}}
+  \textbf{\bibinfo{volume}{13}}, \bibinfo{pages}{1682} (\bibinfo{year}{2023}).
+
+  \bibitem{staicu2025postoperative}
+  \bibinfo{author}{Staicu, R.-E.} \emph{et~al.}
+  \newblock \bibinfo{title}{Postoperative delirium and cognitive dysfunction
+  after cardiac surgery: the role of inflammation and clinical risk factors}.
+  \newblock \emph{\bibinfo{journal}{Diagnostics}} \textbf{\bibinfo{volume}{15}},
+  \bibinfo{pages}{844} (\bibinfo{year}{2025}).
+
+  \bibitem{hansen2025prediction}
+  \bibinfo{author}{Hansen, N.} \emph{et~al.}
+  \newblock \bibinfo{title}{Prediction of postoperative delirium after cardiac
+    surgery by the interplay between preoperative plasma {p-tau181} and {IL-6}
+    and heart-brain axis related factors: results from the prospective
+  observational study {FINDERI}}.
+  \newblock \emph{\bibinfo{journal}{Molecular Psychiatry}} \bibinfo{pages}{1--11}
+  (\bibinfo{year}{2025}).
+
+  \bibitem{pongratz2014sympathetic}
+  \bibinfo{author}{Pongratz, G.} \& \bibinfo{author}{Straub, R.~H.}
+  \newblock \bibinfo{title}{The sympathetic nervous response in inflammation}.
+  \newblock \emph{\bibinfo{journal}{Arthritis research \& therapy}}
+  \textbf{\bibinfo{volume}{16}}, \bibinfo{pages}{504} (\bibinfo{year}{2014}).
+
+  \bibitem{poredos2025inflammation}
+  \bibinfo{author}{Poredos, P.} \& \bibinfo{author}{Komadina, R.}
+  \newblock \bibinfo{title}{Inflammation and perioperative cardiovascular
+  events}.
+  \newblock \emph{\bibinfo{journal}{Cells}} \textbf{\bibinfo{volume}{14}},
+  \bibinfo{pages}{1362} (\bibinfo{year}{2025}).
 
   \bibitem{zygmunt2010methods}
-  Zygmunt A, Stanczyk J (2010) Methods of evaluation of autonomic nervous system function. Archives of Medical Science 6(1):11--18
+  \bibinfo{author}{Zygmunt, A.} \& \bibinfo{author}{Stanczyk, J.}
+  \newblock \bibinfo{title}{Methods of evaluation of autonomic nervous system
+  function}.
+  \newblock \emph{\bibinfo{journal}{Archives of Medical Science}}
+  \textbf{\bibinfo{volume}{6}}, \bibinfo{pages}{11--18} (\bibinfo{year}{2010}).
+
+  \bibitem{seravalle2013assess}
+  \bibinfo{author}{Seravalle, G.}, \bibinfo{author}{Dimitriadis, K.},
+  \bibinfo{author}{Dell’Oro, R.} \& \bibinfo{author}{Grassi, G.}
+  \newblock \bibinfo{title}{How to assess sympathetic nervous system activity in
+  clinical practice}.
+  \newblock \emph{\bibinfo{journal}{Current Clinical Pharmacology}}
+  \textbf{\bibinfo{volume}{8}}, \bibinfo{pages}{182--188}
+  (\bibinfo{year}{2013}).
+
+  \bibitem{colombo2015pulse}
+  \bibinfo{author}{Colombo, R.} \emph{et~al.}
+  \newblock \bibinfo{title}{Pulse photoplethysmographic analysis estimates the
+  sympathetic activity directed to heart and vessels}.
+  \newblock \emph{\bibinfo{journal}{Anesthesiology}}
+  \textbf{\bibinfo{volume}{123}}, \bibinfo{pages}{336--345}
+  (\bibinfo{year}{2015}).
+
+  \bibitem{valenza2018ecg}
+  \bibinfo{author}{Valenza, G.}, \bibinfo{author}{Citi, L.},
+  \bibinfo{author}{Saul, J.~P.} \& \bibinfo{author}{Barbieri, R.}
+  \newblock \emph{\bibinfo{title}{{ECG}-derived sympathetic and parasympathetic
+  nervous system dynamics: A congestive heart failure study}},
+  Vol.~\bibinfo{volume}{45}, \bibinfo{pages}{1--4}
+  (\bibinfo{organization}{IEEE}, \bibinfo{year}{2018}).
 
   \bibitem{budidha2019photoplethysmography}
-  Budidha K, Kyriacou PA (2019) Photoplethysmography for quantitative assessment of sympathetic nerve activity (SNA) during cold stress. Frontiers in Physiology 9:1863
+  \bibinfo{author}{Budidha, K.} \& \bibinfo{author}{Kyriacou, P.~A.}
+  \newblock \bibinfo{title}{Photoplethysmography for quantitative assessment of
+  sympathetic nerve activity ({SNA}) during cold stress}.
+  \newblock \emph{\bibinfo{journal}{Frontiers in Physiology}}
+  \textbf{\bibinfo{volume}{9}}, \bibinfo{pages}{1863} (\bibinfo{year}{2019}).
 
   \bibitem{ackermann2021commentary}
-  Ackermann S, Laborde S, Borges U, Mosley E (2021) Commentary: Photoplethysmography for quantitative assessment of sympathetic nerve activity (SNA) during cold stress. Frontiers in Physiology 12:602745
+  \bibinfo{author}{Ackermann, S.}, \bibinfo{author}{Laborde, S.},
+  \bibinfo{author}{Borges, U.} \& \bibinfo{author}{Mosley, E.}
+  \newblock \bibinfo{title}{Commentary: Photoplethysmography for quantitative
+  assessment of sympathetic nerve activity ({SNA}) during cold stress}.
+  \newblock \emph{\bibinfo{journal}{Frontiers in Physiology}}
+  \textbf{\bibinfo{volume}{12}}, \bibinfo{pages}{602745}
+  (\bibinfo{year}{2021}).
+
+  \bibitem{guyenet2006sympathetic}
+  \bibinfo{author}{Guyenet, P.~G.}
+  \newblock \bibinfo{title}{The sympathetic control of blood pressure}.
+  \newblock \emph{\bibinfo{journal}{Nature Reviews Neuroscience}}
+  \textbf{\bibinfo{volume}{7}}, \bibinfo{pages}{335--346}
+  (\bibinfo{year}{2006}).
+
+  \bibitem{sheng2018crosstalk}
+  \bibinfo{author}{Sheng, Y.} \& \bibinfo{author}{Zhu, L.}
+  \newblock \bibinfo{title}{The crosstalk between autonomic nervous system and
+  blood vessels}.
+  \newblock \emph{\bibinfo{journal}{International journal of physiology,
+  pathophysiology and pharmacology}} \textbf{\bibinfo{volume}{10}},
+  \bibinfo{pages}{17} (\bibinfo{year}{2018}).
+
+  \bibitem{jorge_non-contact_2021}
+  \bibinfo{author}{Jorge, J.} \emph{et~al.}
+  \newblock \bibinfo{title}{Non-{Contact} {Assessment} of {Peripheral} {Artery}
+  {Haemodynamics} {Using} {Infrared} {Video} {Thermography}}.
+  \newblock \emph{\bibinfo{journal}{IEEE Transactions on Biomedical Engineering}}
+  \textbf{\bibinfo{volume}{68}}, \bibinfo{pages}{276--288}
+  (\bibinfo{year}{2021}).
+  \newblock \urlprefix\url{https://ieeexplore.ieee.org/document/9109260}.
+  \newblock \bibinfo{note}{Conference Name: IEEE Transactions on Biomedical
+  Engineering}.
+
+  \bibitem{predicting_shock_from_thermal_images}
+  \bibinfo{author}{Nagori, A.}, \bibinfo{author}{Dhingra, L.~S.},
+  \bibinfo{author}{Bhatnagar, A.}, \bibinfo{author}{Lodha, R.} \&
+  \bibinfo{author}{Sethi, T.}
+  \newblock \bibinfo{title}{Predicting hemodynamic shock from thermal images
+  using machine learning}.
+  \newblock \emph{\bibinfo{journal}{Scientific reports}}
+  \textbf{\bibinfo{volume}{9}}, \bibinfo{pages}{1--9} (\bibinfo{year}{2019}).
+
+  \bibitem{podlasek2025thermography}
+  \bibinfo{author}{Podlasek, A.} \emph{et~al.}
+  \newblock \bibinfo{title}{Thermography in stroke—a systematic review}.
+  \newblock \emph{\bibinfo{journal}{Medicina}} \textbf{\bibinfo{volume}{61}},
+  \bibinfo{pages}{854} (\bibinfo{year}{2025}).
+
+  \bibitem{kingma2013auto}
+  \bibinfo{author}{Kingma, D.~P.}, \bibinfo{author}{Welling, M.} \emph{et~al.}
+  \newblock \bibinfo{title}{Auto-encoding variational bayes}
+  (\bibinfo{year}{2013}).
+
+  \bibitem{mcdermott2024closer}
+  \bibinfo{author}{McDermott, M. B.~A.}, \bibinfo{author}{Zhang, H.},
+  \bibinfo{author}{Hansen, L.~H.}, \bibinfo{author}{Angelotti, G.} \&
+  \bibinfo{author}{Gallifant, J.}
+  \newblock \bibinfo{title}{A closer look at {AUROC} and {AUPRC} under class
+  imbalance}.
+  \newblock \emph{\bibinfo{journal}{Advances in Neural Information Processing
+  Systems}} \textbf{\bibinfo{volume}{37}}, \bibinfo{pages}{44102--44163}
+  (\bibinfo{year}{2024}).
 
   \bibitem{richardson2024receiver}
-  Richardson E, Trevizani R, Greenbaum JA, et~al (2024) The receiver operating characteristic curve accurately assesses imbalanced datasets. Patterns 5(6)
+  \bibinfo{author}{Richardson, E.} \emph{et~al.}
+  \newblock \bibinfo{title}{The receiver operating characteristic curve
+  accurately assesses imbalanced datasets}.
+  \newblock \emph{\bibinfo{journal}{Patterns}} \textbf{\bibinfo{volume}{5}}
+  (\bibinfo{year}{2024}).
+
+  \bibitem{feng2018joint}
+  \bibinfo{author}{Feng, Y.}, \bibinfo{author}{Wu, F.}, \bibinfo{author}{Shao,
+  X.}, \bibinfo{author}{Wang, Y.} \& \bibinfo{author}{Zhou, X.}
+  \newblock \emph{\bibinfo{title}{Joint {3D} face reconstruction and dense
+  alignment with position map regression network}}, \bibinfo{pages}{534--551}
+  (\bibinfo{year}{2018}).
+
+  \bibitem{Deng_2020_CVPR}
+  \bibinfo{author}{Deng, J.}, \bibinfo{author}{Guo, J.},
+  \bibinfo{author}{Ververas, E.}, \bibinfo{author}{Kotsia, I.} \&
+  \bibinfo{author}{Zafeiriou, S.}
+  \newblock \emph{\bibinfo{title}{{RetinaFace}: Single-shot multi-level face
+  localisation in the wild}} (\bibinfo{year}{2020}).
+
+  \bibitem{guo2020towards}
+  \bibinfo{author}{Guo, J.} \emph{et~al.}
+  \newblock \emph{\bibinfo{title}{Towards fast, accurate and stable {3D} dense
+  face alignment}}, \bibinfo{pages}{152--168}
+  (\bibinfo{organization}{Springer}, \bibinfo{year}{2020}).
+
+  \bibitem{oord2018representation}
+  \bibinfo{author}{van~den Oord, A.}, \bibinfo{author}{Li, Y.} \&
+  \bibinfo{author}{Vinyals, O.}
+  \newblock \bibinfo{title}{Representation learning with contrastive predictive
+  coding}.
+  \newblock \emph{\bibinfo{journal}{arXiv preprint arXiv:1807.03748}}
+  (\bibinfo{year}{2018}).
+
+  \bibitem{qian2021spatiotemporal}
+  \bibinfo{author}{Qian, R.} \emph{et~al.}
+  \newblock \emph{\bibinfo{title}{Spatiotemporal contrastive video representation
+  learning}}, \bibinfo{pages}{6964--6974} (\bibinfo{year}{2021}).
+
+  \bibitem{ronneberger2015u}
+  \bibinfo{author}{Ronneberger, O.}, \bibinfo{author}{Fischer, P.} \&
+  \bibinfo{author}{Brox, T.}
+  \newblock \emph{\bibinfo{title}{{U-Net}: Convolutional networks for biomedical
+  image segmentation}}, \bibinfo{pages}{234--241}
+  (\bibinfo{organization}{Springer}, \bibinfo{year}{2015}).
 
 \end{thebibliography}
 
@@ -766,7 +828,6 @@ This UV representation also reduced identifiability of the stored thermal data. 
 \subsection*{Thermal representation learning}
 
 For representation learning, the visible face was represented as a $64\times64$ UV temperature map $\mathbf{x}$ and a corresponding binary visibility mask $\mathbf{m}$. These maps were encoded by the structured variational autoencoder described in Methods, with separate physiological and nuisance latent subspaces. The physiological subspace captured reproducible facial thermal structure, whereas the nuisance subspace modelled variation from occlusions, tubes, adhesive material, facial hair and motion-related artefacts. The posterior mean and scale vectors of each subspace were 50-dimensional. Only the posterior parameters of the physiological subspace were propagated to the prediction model, giving $\mathbf{c}_{\mathrm{TVI}}=\left[\bm{\mu}_{x}^{\top},\bm{\sigma}_{x}^{\top}\right]^{\top}\in\mathbb{R}^{100}$ (Figure~\ref{fig:thermal-pipeline-vae}).
-
 
 \begin{figure*}[htbp]
   \centering
@@ -905,7 +966,6 @@ The GE Carescape B650 monitors did not synchronise their internal clocks over th
 \subsection*{Electronic health record extraction}
 
 EHR data were extracted from the local mlife and medfolio clinical information systems. Database access used read-only connections through SQLAlchemy within the secure hospital network, with permissions restricted to the variables required for the study. The two systems stored complementary clinical information with different schemas and temporal resolutions; extracted records were therefore harmonised into a common patient-level timeline before feature construction. Time-stamped EHR observations were aligned to the same NTP-synchronised acquisition clock as the imaging and waveform streams, and the downstream EHR feature processing described in Methods was applied only after this harmonisation step.
-
 
 \begingroup
 \scriptsize
