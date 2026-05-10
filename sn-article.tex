@@ -101,45 +101,45 @@ Raw thermal video is high dimensional and affected by patient motion, occlusions
 \end{figure*}
 
 
-The analysis included 154 postoperative cardiac surgery patients, of whom 12 developed postoperative neurological complications. The events comprised focal neurological deficits, seizures, delirium and radiologically confirmed cerebral ischaemia or haemorrhage (case summaries are provided in the Supplementary Information). Baseline age, sex, body mass index, cardiopulmonary bypass use and surgical procedure type did not differ statistically between patients with and without neurological complications after false-discovery-rate correction (Table~\ref{tab:cohort_biomarkers}). Patients with neurological complications had longer intensive care unit and hospital stays, consistent with the clinical severity of the endpoint.
+The analysis included 154 postoperative cardiac surgery patients, of whom 12 developed postoperative neurological complications. The events comprised focal neurological deficits, seizures, delirium and radiologically confirmed cerebral ischaemia or haemorrhage (case summaries are provided in the Supplementary Information). Baseline age, sex, body mass index, cardiopulmonary bypass use and surgical procedure type did not differ statistically between patients with and without neurological complications (Table~\ref{tab:cohort_biomarkers}). Patients with neurological complications had longer intensive care unit and hospital stays, consistent with the clinical severity of the endpoint.
 
 \subsection*{Thermal gradients distinguish complication cases}
-EHR variables and waveform-derived haemodynamic features showed no statistically significant differences between groups after false-discovery-rate correction. Mean arterial pressure, pulse pressure and mean arterial blood pressure were similar between groups, and EHR variables including lactate, arterial blood gases, haemoglobin, creatinine, vasoactive-inotropic score, catecholamine doses and transfusion variables did not provide a corrected univariate signal (Table~\ref{tab:cohort_biomarkers}).
+EHR variables and waveform-derived haemodynamic features largely showed no statistically significant differences between groups. While haemoglobin was marginally lower in the complication group ($p=0.047$), this effect does not survive adjustment for the multiple testing across all EHR parameters. Mean arterial pressure, pulse pressure and mean arterial blood pressure were similar between groups, and EHR variables including lactate, arterial blood gases, creatinine, vasoactive-inotropic score, catecholamine doses and transfusion variables did not provide a robust univariate signal (Table~\ref{tab:cohort_biomarkers}).
 
 In contrast, UV-standardised facial thermal gradients were statistically higher in patients with neurological complications. These gradients serve as a proxy for peripheral vasoconstriction by contrasting well-perfused reference regions (bladder or inner canthi) with acral areas (nose or cheeks). The core--peripheral temperature gradient is defined as the difference between the bladder-derived core temperature (recorded in the EHR) and the minimum temperature of the nose or cheeks. The canthal--peripheral gradient is the difference between the mean temperature of the inner canthi of the eyes and the minimum temperature of the nose or cheeks. The anatomical regions of interest can be automatically extracted because the UV mapping aligns them to fixed coordinates across all patients. Notably, the canthal--peripheral gradient can be computed entirely from the thermal image, providing a highly robust measurement that relies only on relative temperature differences rather than absolute calibration.
 
-The core--peripheral temperature gradient was 3.39\,K [2.77, 4.31] in patients without neurological complications and 4.95\,K [4.55, 6.73] in patients with complications ($p<0.001$, $q<0.001$). The canthal--peripheral gradient was 2.77\,K [2.28, 3.25] versus 3.76\,K [3.38, 4.15] ($p=0.003$, $q=0.003$). These results indicate that facial thermal contrast, rather than routine haemodynamic or laboratory measurements, carried the strongest univariate signal in this cohort.
+The core--peripheral temperature gradient was 3.39\,K [2.77, 4.31] in patients without neurological complications and 4.95\,K [4.55, 6.73] in patients with complications ($p<0.001$). The canthal--peripheral gradient was 2.77\,K [2.28, 3.25] versus 3.76\,K [3.38, 4.15] ($p=0.003$). These results indicate that facial thermal contrast, rather than routine haemodynamic or laboratory measurements, carried the strongest univariate signal in this cohort.
 
 \begin{table*}[t]
-  \caption{Selected cohort characteristics and postoperative biomarkers. Continuous variables are reported as median [interquartile range] and binary variables as $n$ (\%). P-values are from two-sided Mann--Whitney U tests for continuous variables, Fisher's exact tests for binary variables and chi-square tests for categorical variables with more than two levels. Q-values are Benjamini--Hochberg false-discovery-rate-adjusted p-values.}
+  \caption{Selected cohort characteristics and postoperative biomarkers. Continuous variables are reported as median [interquartile range] and binary variables as $n$ (\%). P-values are from two-sided Mann--Whitney U tests for continuous variables, Fisher's exact tests for binary variables and chi-square tests for categorical variables with more than two levels. P-values are provided for descriptive purposes to highlight baseline imbalances, not for formal hypothesis testing, and are unadjusted.}
   \label{tab:cohort_biomarkers}
   \centering
   \scriptsize
   \setlength{\tabcolsep}{2pt}
   \renewcommand{\arraystretch}{1.15}
-  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.0cm}>{\centering\arraybackslash}p{3.9cm}>{\centering\arraybackslash}p{3.9cm}>{\centering\arraybackslash}p{0.85cm}>{\centering\arraybackslash}p{0.85cm}@{}}
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.5cm}>{\centering\arraybackslash}p{4.0cm}>{\centering\arraybackslash}p{4.0cm}>{\centering\arraybackslash}p{1.2cm}@{}}
     \toprule
-    \textbf{Variable} & \makecell{\textbf{No complication}\\(n=142)} & \makecell{\textbf{Neurological}\\\textbf{complication}\\(n=12)} & \textbf{p} & \textbf{q} \\
+    \textbf{Variable} & \makecell{\textbf{No complication}\\(n=142)} & \makecell{\textbf{Neurological}\\\textbf{complication}\\(n=12)} & \textbf{p} \\
     \midrule
-    \multicolumn{5}{l}{\textbf{Baseline and course}} \\
-    Age, years & 64.00 [54.25, 72.00] & 72.00 [65.00, 74.75] & 0.097 & 0.243 \\
-    Male sex & 101 (71.1\%) & 7 (58.3\%) & 0.344 & 0.574 \\
-    ICU stay, days & 1.00 [1.00, 2.00] & 5.00 [2.75, 9.00] & <0.001 & <0.001 \\
-    Hospital stay, days & 8.00 [6.00, 11.00] & 13.00 [10.00, 15.50] & 0.003 & 0.013 \\
+    \multicolumn{4}{l}{\textbf{Baseline and course}} \\
+    Age, years & 64.00 [54.25, 72.00] & 72.00 [65.00, 74.75] & 0.097 \\
+    Male sex & 101 (71.1\%) & 7 (58.3\%) & 0.344 \\
+    ICU stay, days & 1.00 [1.00, 2.00] & 5.00 [2.75, 9.00] & <0.001 \\
+    Hospital stay, days & 8.00 [6.00, 11.00] & 13.00 [10.00, 15.50] & 0.003 \\
     \midrule
-    \multicolumn{5}{l}{\textbf{TVI biomarkers}} \\
-    Core--peripheral gradient, K & 3.39 [2.77, 4.31] & 4.95 [4.55, 6.73] & <0.001 & <0.001 \\
-    Canthal--peripheral gradient, K & 2.77 [2.28, 3.25] & 3.76 [3.38, 4.15] & 0.003 & 0.003 \\
+    \multicolumn{4}{l}{\textbf{TVI biomarkers}} \\
+    Core--peripheral gradient, K & 3.39 [2.77, 4.31] & 4.95 [4.55, 6.73] & <0.001 \\
+    Canthal--peripheral gradient, K & 2.77 [2.28, 3.25] & 3.76 [3.38, 4.15] & 0.003 \\
     \midrule
-    \multicolumn{5}{l}{\textbf{PWF biomarkers}} \\
-    MAP variability, mmHg & 1.71 [1.23, 2.46] & 2.11 [1.62, 2.43] & 0.266 & 0.799 \\
-    Pulse pressure, mmHg & 48.62 [40.17, 60.89] & 48.62 [42.83, 56.38] & 0.891 & 0.891 \\
+    \multicolumn{4}{l}{\textbf{PWF biomarkers}} \\
+    MAP variability, mmHg & 1.71 [1.23, 2.46] & 2.11 [1.62, 2.43] & 0.266 \\
+    Pulse pressure, mmHg & 48.62 [40.17, 60.89] & 48.62 [42.83, 56.38] & 0.891 \\
     \midrule
-    \multicolumn{5}{l}{\textbf{Selected EHR biomarkers}} \\
-    Lactate, mmol/l & 7.00 [6.00, 11.00] & 7.00 [6.00, 10.25] & 0.752 & 0.799 \\
-    Haemoglobin, g/dl & 11.40 [10.30, 12.40] & 10.70 [9.88, 11.30] & 0.047 & 0.664 \\
-    Vasoactive-inotropic score & 6.00 [4.00, 12.00] & 8.00 [7.75, 13.25] & 0.141 & 0.664 \\
-    Norepinephrine, \textmu g/kg/min & 0.06 [0.04, 0.10] & 0.08 [0.07, 0.09] & 0.188 & 0.664 \\
+    \multicolumn{4}{l}{\textbf{Selected EHR biomarkers}} \\
+    Lactate, mmol/l & 7.00 [6.00, 11.00] & 7.00 [6.00, 10.25] & 0.752 \\
+    Haemoglobin, g/dl & 11.40 [10.30, 12.40] & 10.70 [9.88, 11.30] & 0.047 \\
+    Vasoactive-inotropic score & 6.00 [4.00, 12.00] & 8.00 [7.75, 13.25] & 0.141 \\
+    Norepinephrine, \textmu g/kg/min & 0.06 [0.04, 0.10] & 0.08 [0.07, 0.09] & 0.188 \\
     \bottomrule
   \end{tabular}
 \end{table*}
@@ -242,7 +242,7 @@ To estimate practical utility for early warning, we evaluated the models at a fi
 
 UV-standardised thermal maps showed lower peripheral facial temperatures in patients with neurological complications, particularly over the nose and cheeks, while bladder-derived core temperature followed a similar warming trajectory in both groups (Fig.~\ref{fig:neuro-temp}). The preserved core-temperature pattern argues against systemic hypothermia as the sole explanation and is compatible with altered peripheral facial perfusion.
 
-The patients with neurological complications were not enriched for higher vasoactive-inotropic score, catecholamine dose or transfusion exposure after correction for multiple comparisons (Table~\ref{tab:cohort_biomarkers}). These descriptive analyses do not establish a causal mechanism, but they suggest that the TVI signal was not simply a surrogate for routinely documented haemodynamic support intensity.
+The patients with neurological complications were not enriched for higher vasoactive-inotropic score, catecholamine dose or transfusion exposure (Table~\ref{tab:cohort_biomarkers}). These descriptive analyses do not establish a causal mechanism, but they suggest that the TVI signal was not simply a surrogate for routinely documented haemodynamic support intensity.
 
 \begin{figure*}[htbp]
   \centering
@@ -253,7 +253,7 @@ The patients with neurological complications were not enriched for higher vasoac
 
 \section*{Discussion}
 
-This study associates early postoperative facial thermal patterns with neurological complications after cardiac surgery. In a cohort of 154 patients, TVI-derived facial temperature gradients differed between patients with and without neurological complications, whereas routine EHR variables and waveform-derived haemodynamic features did not show corrected univariate differences. In temporal prediction models, modality combinations containing TVI discriminated neurological complications from the first 10\,min after PACU admission and ranked complication cases higher than models trained only on EHR or PWF data.
+This study associates early postoperative facial thermal patterns with neurological complications after cardiac surgery. In a cohort of 154 patients, TVI-derived facial temperature gradients differed between patients with and without neurological complications, whereas routine EHR variables and waveform-derived haemodynamic features did not show robust univariate differences. In temporal prediction models, modality combinations containing TVI discriminated neurological complications from the first 10\,min after PACU admission and ranked complication cases higher than models trained only on EHR or PWF data.
 
 The main physiological observation was a pattern of peripheral facial cooling with preserved core temperature. Because sedated and mechanically ventilated patients cannot be examined neurologically, this interval is clinically important: risk information that is available before emergence from anaesthesia could support closer monitoring and prioritization for neurological assessment. The present data do not show that thermal imaging diagnoses neurological injury, nor do they define an intervention threshold. Rather, they indicate that non-contact facial thermometry contains information associated with neurological risk that is not captured by the routine variables evaluated here.
 
@@ -352,7 +352,7 @@ All seven combinations $\mathcal{M}\subseteq\{\mathrm{EHR},\mathrm{PWF},\mathrm{
 
 \subsection*{Statistical analyses}
 
-Continuous variables are reported as medians with interquartile ranges, and binary variables as counts and percentages. Between-group comparisons used two-sided Mann--Whitney U tests for continuous variables, Fisher's exact tests for binary variables and chi-square tests for categorical variables with more than two levels. P-values were adjusted within sections or modality groups using the Benjamini--Hochberg false-discovery-rate procedure and are reported descriptively. AUROC values and risk ranks are reported as mean $\pm$ s.d. across random seeds.
+Continuous variables are reported as medians with interquartile ranges, and binary variables as counts and percentages. Between-group comparisons used two-sided Mann--Whitney U tests for continuous variables, Fisher's exact tests for binary variables and chi-square tests for categorical variables with more than two levels. P-values are reported for descriptive purposes to highlight baseline imbalances, not for formal hypothesis testing, and are unadjusted for multiple comparisons. AUROC values and risk ranks are reported as mean $\pm$ s.d. across random seeds.
 
 \subsection*{Reporting Summary}
 
@@ -910,34 +910,34 @@ EHR data were extracted from the local mlife and medfolio clinical information s
 \begingroup
 \scriptsize
 \setlength{\tabcolsep}{3pt}
-\begin{longtable}{>{\raggedright\arraybackslash}p{3.55cm} >{\raggedright\arraybackslash}p{3.5cm} >{\raggedright\arraybackslash}p{3.5cm} >{\centering\arraybackslash}p{0.8cm} >{\centering\arraybackslash}p{0.8cm}}
-  \caption{Baseline characteristics stratified by the presence of a neurological complication. Continuous variables are reported as median [IQR] and binary variables as n (\%). P-values are from two-sided Mann--Whitney U tests (continuous), Fisher's exact tests (binary), and chi-square tests of independence (categorical, >2 levels). Q-values denote Benjamini--Hochberg FDR-adjusted p-values computed within each section. Analyses are performed on complete cases for each variable. P-values and q-values are reported for descriptive purposes.
+\begin{longtable}{>{\raggedright\arraybackslash}p{4.0cm} >{\raggedright\arraybackslash}p{3.8cm} >{\raggedright\arraybackslash}p{3.8cm} >{\centering\arraybackslash}p{1.2cm}}
+  \caption{Baseline characteristics stratified by the presence of a neurological complication. Continuous variables are reported as median [IQR] and binary variables as n (\%). P-values are from two-sided Mann--Whitney U tests (continuous), Fisher's exact tests (binary), and chi-square tests of independence (categorical, >2 levels). Analyses are performed on complete cases for each variable. P-values are reported for descriptive purposes to highlight baseline imbalances, not for formal hypothesis testing, and are unadjusted for multiple comparisons.
   } \label{tab:table_1} \\
   \toprule
-  Variable & No neurological complication (n=142) & Neurological complication (n=12) & p & q \\
+  Variable & No neurological complication (n=142) & Neurological complication (n=12) & p \\
   \midrule
   \endfirsthead
-  \multicolumn{5}{l}{\textit{Table \thetable{} continued.}} \\
+  \multicolumn{4}{l}{\textit{Table \thetable{} continued.}} \\
   \toprule
-  Variable & No neurological complication (n=142) & Neurological complication (n=12) & p & q \\
+  Variable & No neurological complication (n=142) & Neurological complication (n=12) & p \\
   \midrule
   \endhead
   \midrule
-  \multicolumn{5}{r}{Continued on next page} \\
+  \multicolumn{4}{r}{Continued on next page} \\
   \midrule
   \endfoot
   \bottomrule
   \endlastfoot
-  Age, years & 64.00 [54.25, 72.00] & 72.00 [65.00, 74.75] & 0.097 & 0.243 \\
-  Body mass index, kg/m² & 25.75 [22.85, 29.45] & 26.00 [24.05, 28.30] & 0.774 & 0.968 \\
-  Male sex & 101 (71.1\%) & 7 (58.3\%) & 0.344 & 0.574 \\
-  ICU length of stay, days & 1.00 [1.00, 2.00] & 5.00 [2.75, 9.00] & <0.001 & <0.001 \\
-  Hospital length of stay, days & 8.00 [6.00, 11.00] & 13.00 [10.00, 15.50] & 0.003 & 0.013 \\
-  In-hospital mortality & 0 (0.0\%) & 1 (8.3\%) & 0.078 & 0.243 \\
-  Cardiopulmonary bypass used & 114 (80.3\%) & 11 (91.7\%) & 0.466 & 0.665 \\
-  Aortic valve surgery & 44 (31.0\%) & 6 (50.0\%) & 0.205 & 0.411 \\
-  Mitral valve surgery & 60 (42.3\%) & 5 (41.7\%) & 1.000 & 1.000 \\
-  Tricuspid valve surgery & 3 (2.1\%) & 0 (0.0\%) & 1.000 & 1.000 \\
+  Age, years & 64.00 [54.25, 72.00] & 72.00 [65.00, 74.75] & 0.097 \\
+  Body mass index, kg/m² & 25.75 [22.85, 29.45] & 26.00 [24.05, 28.30] & 0.774 \\
+  Male sex & 101 (71.1\%) & 7 (58.3\%) & 0.344 \\
+  ICU length of stay, days & 1.00 [1.00, 2.00] & 5.00 [2.75, 9.00] & <0.001 \\
+  Hospital length of stay, days & 8.00 [6.00, 11.00] & 13.00 [10.00, 15.50] & 0.003 \\
+  In-hospital mortality & 0 (0.0\%) & 1 (8.3\%) & 0.078 \\
+  Cardiopulmonary bypass used & 114 (80.3\%) & 11 (91.7\%) & 0.466 \\
+  Aortic valve surgery & 44 (31.0\%) & 6 (50.0\%) & 0.205 \\
+  Mitral valve surgery & 60 (42.3\%) & 5 (41.7\%) & 1.000 \\
+  Tricuspid valve surgery & 3 (2.1\%) & 0 (0.0\%) & 1.000 \\
 \end{longtable}
 \endgroup
 
@@ -945,60 +945,60 @@ EHR data were extracted from the local mlife and medfolio clinical information s
 \begingroup
 \scriptsize
 \setlength{\tabcolsep}{3pt}
-\begin{longtable}{>{\raggedright\arraybackslash}p{3.55cm} >{\raggedright\arraybackslash}p{3.5cm} >{\raggedright\arraybackslash}p{3.5cm} >{\centering\arraybackslash}p{0.8cm} >{\centering\arraybackslash}p{0.8cm}}
-  \caption{Extended baseline, operative, and early postoperative characteristics stratified by the presence of a neurological complication. Continuous variables are reported as median [IQR] and binary variables as n (\%). P-values are from two-sided Mann--Whitney U tests (continuous), Fisher's exact tests (binary), and chi-square tests of independence (categorical, >2 levels). Q-values denote Benjamini--Hochberg FDR-adjusted p-values computed within each section. Analyses are performed on complete cases for each variable. P-values and q-values are reported for descriptive purposes.
+\begin{longtable}{>{\raggedright\arraybackslash}p{4.0cm} >{\raggedright\arraybackslash}p{3.8cm} >{\raggedright\arraybackslash}p{3.8cm} >{\centering\arraybackslash}p{1.2cm}}
+  \caption{Extended baseline, operative, and early postoperative characteristics stratified by the presence of a neurological complication. Continuous variables are reported as median [IQR] and binary variables as n (\%). P-values are from two-sided Mann--Whitney U tests (continuous), Fisher's exact tests (binary), and chi-square tests of independence (categorical, >2 levels). Analyses are performed on complete cases for each variable. P-values are reported for descriptive purposes to highlight baseline imbalances, not for formal hypothesis testing, and are unadjusted for multiple comparisons.
   } \label{tab:table_1_cont} \\
   \toprule
-  Variable & No neurological complication (n=142) & Neurological complication (n=12) & p & q \\
+  Variable & No neurological complication (n=142) & Neurological complication (n=12) & p \\
   \midrule
   \endfirsthead
-  \multicolumn{5}{l}{\textit{Table \thetable{} continued.}} \\
+  \multicolumn{4}{l}{\textit{Table \thetable{} continued.}} \\
   \toprule
-  Variable & No neurological complication (n=142) & Neurological complication (n=12) & p & q \\
+  Variable & No neurological complication (n=142) & Neurological complication (n=12) & p \\
   \midrule
   \endhead
   \midrule
-  \multicolumn{5}{r}{Continued on next page} \\
+  \multicolumn{4}{r}{Continued on next page} \\
   \midrule
   \endfoot
   \bottomrule
   \endlastfoot
   \addlinespace[0.2ex]
   \midrule
-  \multicolumn{5}{l}{\textbf{Extended baseline, operative, and early postoperative characteristics}} \\
+  \multicolumn{4}{l}{\textbf{Extended baseline, operative, and early postoperative characteristics}} \\
   \midrule
   \addlinespace[0.2ex]
-  Chronic kidney disease & 25 (17.6\%) & 4 (33.3\%) & 0.241 & 0.533 \\
-  Diabetes mellitus & 19 (13.4\%) & 3 (25.0\%) & 0.381 & 0.533 \\
-  Chronic obstructive pulmonary disease & 12 (8.5\%) & 2 (16.7\%) & 0.299 & 0.533 \\
-  History of myocardial infarction & 8 (5.6\%) & 2 (16.7\%) & 0.176 & 0.533 \\
-  Atrial fibrillation & 19 (13.4\%) & 0 (0.0\%) & 0.363 & 0.533 \\
-  Third-degree AV block & 9 (6.3\%) & 1 (8.3\%) & 0.567 & 0.662 \\
-  Cardiac implantable electronic device & 3 (2.1\%) & 0 (0.0\%) & 1.000 & 1.000 \\
-  &  &  &  &  \\
+  Chronic kidney disease & 25 (17.6\%) & 4 (33.3\%) & 0.241 \\
+  Diabetes mellitus & 19 (13.4\%) & 3 (25.0\%) & 0.381 \\
+  Chronic obstructive pulmonary disease & 12 (8.5\%) & 2 (16.7\%) & 0.299 \\
+  History of myocardial infarction & 8 (5.6\%) & 2 (16.7\%) & 0.176 \\
+  Atrial fibrillation & 19 (13.4\%) & 0 (0.0\%) & 0.363 \\
+  Third-degree AV block & 9 (6.3\%) & 1 (8.3\%) & 0.567 \\
+  Cardiac implantable electronic device & 3 (2.1\%) & 0 (0.0\%) & 1.000 \\
+  &  &  & \\
   \addlinespace[0.2ex]
   \midrule
-  \multicolumn{5}{l}{\textbf{Intraoperative characteristics}} \\
+  \multicolumn{4}{l}{\textbf{Intraoperative characteristics}} \\
   \midrule
   \addlinespace[0.2ex]
-  Aortic cross-clamp time, min & 64.50 [50.00, 83.25] & 78.00 [65.50, 91.00] & 0.096 & 0.392 \\
-  Cardiopulmonary bypass time, min & 95.00 [71.25, 119.50] & 107.00 [100.00, 124.00] & 0.157 & 0.392 \\
-  Platelet concentrates, units & 0.00 [0.00, 0.00] & 0.00 [0.00, 0.00] & 0.854 & 0.854 \\
-  Red blood cell units, units & 0.00 [0.00, 0.00] & 0.00 [0.00, 0.00] & 0.356 & 0.593 \\
-  Fresh frozen plasma, units & 0.00 [0.00, 0.00] & 0.00 [0.00, 0.00] & 0.517 & 0.647 \\
-  &  &  &  &  \\
+  Aortic cross-clamp time, min & 64.50 [50.00, 83.25] & 78.00 [65.50, 91.00] & 0.096 \\
+  Cardiopulmonary bypass time, min & 95.00 [71.25, 119.50] & 107.00 [100.00, 124.00] & 0.157 \\
+  Platelet concentrates, units & 0.00 [0.00, 0.00] & 0.00 [0.00, 0.00] & 0.854 \\
+  Red blood cell units, units & 0.00 [0.00, 0.00] & 0.00 [0.00, 0.00] & 0.356 \\
+  Fresh frozen plasma, units & 0.00 [0.00, 0.00] & 0.00 [0.00, 0.00] & 0.517 \\
+  &  &  & \\
   \addlinespace[0.2ex]
   \midrule
-  \multicolumn{5}{l}{\textbf{Postoperative course and complications}} \\
+  \multicolumn{4}{l}{\textbf{Postoperative course and complications}} \\
   \midrule
   \addlinespace[0.2ex]
-  Platelet concentrates within 24 h, units & 0.00 [0.00, 0.00] & 0.00 [0.00, 0.00] & 0.405 & 1.000 \\
-  Red blood cell units within 24 h, units & 0.00 [0.00, 0.00] & 0.00 [0.00, 0.00] & 0.575 & 1.000 \\
-  Fresh frozen plasma within 24 h, units & 0.00 [0.00, 0.00] & 0.00 [0.00, 0.00] & 0.693 & 1.000 \\
-  Hemorrhagic complication & 4 (2.8\%) & 1 (8.3\%) & 0.337 & 1.000 \\
-  Cardiac tamponade & 1 (0.7\%) & 0 (0.0\%) & 1.000 & 1.000 \\
-  Cardiac arrest & 0 (0.0\%) & 0 (0.0\%) & 1.000 & 1.000 \\
-  &  &  &  &  \\
+  Platelet concentrates within 24 h, units & 0.00 [0.00, 0.00] & 0.00 [0.00, 0.00] & 0.405 \\
+  Red blood cell units within 24 h, units & 0.00 [0.00, 0.00] & 0.00 [0.00, 0.00] & 0.575 \\
+  Fresh frozen plasma within 24 h, units & 0.00 [0.00, 0.00] & 0.00 [0.00, 0.00] & 0.693 \\
+  Hemorrhagic complication & 4 (2.8\%) & 1 (8.3\%) & 0.337 \\
+  Cardiac tamponade & 1 (0.7\%) & 0 (0.0\%) & 1.000 \\
+  Cardiac arrest & 0 (0.0\%) & 0 (0.0\%) & 1.000 \\
+  &  &  & \\
 \end{longtable}
 \endgroup
 
@@ -1006,77 +1006,77 @@ EHR data were extracted from the local mlife and medfolio clinical information s
 \begingroup
 \scriptsize
 \setlength{\tabcolsep}{3pt}
-\begin{longtable}{>{\raggedright\arraybackslash}p{3.55cm} >{\raggedright\arraybackslash}p{3.5cm} >{\raggedright\arraybackslash}p{3.5cm} >{\centering\arraybackslash}p{0.8cm} >{\centering\arraybackslash}p{0.8cm}}
-  \caption{Postoperative biomarkers stratified by the presence of a neurological complication and grouped by source modality. Continuous variables are reported as median [IQR] and binary variables as n (\%). P-values are from two-sided Mann--Whitney U tests (continuous), Fisher's exact tests (binary), and chi-square tests of independence (categorical, >2 levels). Q-values denote Benjamini--Hochberg FDR-adjusted p-values computed within each group.
+\begin{longtable}{>{\raggedright\arraybackslash}p{4.0cm} >{\raggedright\arraybackslash}p{3.8cm} >{\raggedright\arraybackslash}p{3.8cm} >{\centering\arraybackslash}p{1.2cm}}
+  \caption{Postoperative biomarkers stratified by the presence of a neurological complication and grouped by source modality. Continuous variables are reported as median [IQR] and binary variables as n (\%). P-values are from two-sided Mann--Whitney U tests (continuous), Fisher's exact tests (binary), and chi-square tests of independence (categorical, >2 levels). P-values are reported for descriptive purposes to highlight baseline imbalances, not for formal hypothesis testing, and are unadjusted for multiple comparisons.
   } \label{tab:table_2} \\
   \toprule
-  Variable & No neurological complication (n=142) & Neurological complication (n=12) & p & q \\
+  Variable & No neurological complication (n=142) & Neurological complication (n=12) & p \\
   \midrule
   \endfirsthead
-  \multicolumn{5}{l}{\textit{Table \thetable{} continued.}} \\
+  \multicolumn{4}{l}{\textit{Table \thetable{} continued.}} \\
   \toprule
-  Variable & No neurological complication (n=142) & Neurological complication (n=12) & p & q \\
+  Variable & No neurological complication (n=142) & Neurological complication (n=12) & p \\
   \midrule
   \endhead
   \midrule
-  \multicolumn{5}{r}{Continued on next page} \\
+  \multicolumn{4}{r}{Continued on next page} \\
   \midrule
   \endfoot
   \bottomrule
   \endlastfoot
   \addlinespace[0.2ex]
   \midrule
-  \multicolumn{5}{l}{\textbf{(TVI) Biomarkers derived from thermal imaging}} \\
+  \multicolumn{4}{l}{\textbf{(TVI) Biomarkers derived from thermal imaging}} \\
   \midrule
   \addlinespace[0.2ex]
-  Core--peripheral temperature gradient, K & 3.39 [2.77, 4.31] & 4.95 [4.55, 6.73] & <0.001 & <0.001 \\
-  Canthal--peripheral temperature gradient, K & 2.77 [2.28, 3.25] & 3.76 [3.38, 4.15] & 0.003 & 0.003 \\
-  &  &  &  &  \\
+  Core--peripheral temperature gradient, K & 3.39 [2.77, 4.31] & 4.95 [4.55, 6.73] & <0.001 \\
+  Canthal--peripheral temperature gradient, K & 2.77 [2.28, 3.25] & 3.76 [3.38, 4.15] & 0.003 \\
+  &  &  & \\
   \addlinespace[0.2ex]
   \midrule
-  \multicolumn{5}{l}{\textbf{(PWF) Biomarkers derived from physiological waveforms}} \\
+  \multicolumn{4}{l}{\textbf{(PWF) Biomarkers derived from physiological waveforms}} \\
   \midrule
   \addlinespace[0.2ex]
-  Average Real MAP Variability, mmHg & 1.71 [1.23, 2.46] & 2.11 [1.62, 2.43] & 0.266 & 0.799 \\
-  Mean Pulse Pressure, mmHg & 48.62 [40.17, 60.89] & 48.62 [42.83, 56.38] & 0.891 & 0.891 \\
-  Mean Atrial Blood Pressure, mmHg & 74.66 [67.01, 84.44] & 71.53 [68.04, 77.84] & 0.818 & 0.891 \\
-  &  &  &  &  \\
+  Average Real MAP Variability, mmHg & 1.71 [1.23, 2.46] & 2.11 [1.62, 2.43] & 0.266 \\
+  Mean Pulse Pressure, mmHg & 48.62 [40.17, 60.89] & 48.62 [42.83, 56.38] & 0.891 \\
+  Mean Atrial Blood Pressure, mmHg & 74.66 [67.01, 84.44] & 71.53 [68.04, 77.84] & 0.818 \\
+  &  &  & \\
   \addlinespace[0.2ex]
   \midrule
-  \multicolumn{5}{l}{\textbf{(EHR) Early physiology, laboratory values, and hemodynamics}} \\
+  \multicolumn{4}{l}{\textbf{(EHR) Early physiology, laboratory values, and hemodynamics}} \\
   \midrule
   \addlinespace[0.2ex]
-  Arterial pO$_2$, mmHg & 168.00 [114.00, 237.00] & 149.00 [126.50, 227.50] & 0.960 & 0.960 \\
-  Arterial pCO$_2$, mmHg & 40.50 [36.52, 44.98] & 42.20 [37.88, 45.62] & 0.647 & 0.799 \\
-  Arterial pH & 7.39 [7.34, 7.43] & 7.36 [7.34, 7.36] & 0.185 & 0.664 \\
-  Lactate, mmol/L & 7.00 [6.00, 11.00] & 7.00 [6.00, 10.25] & 0.752 & 0.799 \\
-  White blood cells, K/µL & 13.55 [10.22, 16.90] & 16.25 [11.43, 19.18] & 0.315 & 0.716 \\
-  Hemoglobin, g/dL & 11.40 [10.30, 12.40] & 10.70 [9.88, 11.30] & 0.047 & 0.664 \\
-  Platelets, K/µL & 172.00 [136.25, 198.00] & 182.00 [163.00, 194.75] & 0.356 & 0.730 \\
-  aPTT, s & 40.25 [37.12, 44.58] & 41.00 [39.70, 47.67] & 0.224 & 0.664 \\
-  INR & 1.40 [1.30, 1.50] & 1.30 [1.18, 1.70] & 0.649 & 0.799 \\
-  Creatine kinase, U/L & 337.00 [210.00, 537.75] & 361.00 [240.25, 622.75] & 0.708 & 0.799 \\
-  CK-MB, U/L & 43.00 [29.00, 60.00] & 56.50 [48.75, 71.50] & 0.057 & 0.664 \\
-  AST, U/L & 39.50 [29.12, 62.65] & 47.10 [41.40, 80.00] & 0.209 & 0.664 \\
-  LDH, U/L & 261.50 [196.25, 375.25] & 336.00 [270.75, 374.00] & 0.135 & 0.664 \\
-  Creatinine, mg/dL & 0.85 [0.75, 1.00] & 0.86 [0.72, 1.15] & 0.767 & 0.799 \\
-  Heart rate, beats/min & 74.50 [62.00, 85.00] & 80.00 [70.50, 90.75] & 0.266 & 0.664 \\
-  Systolic blood pressure, mmHg & 121.00 [105.25, 138.75] & 115.50 [96.00, 126.25] & 0.256 & 0.664 \\
-  Diastolic blood pressure, mmHg & 62.00 [55.00, 71.75] & 59.00 [55.00, 66.50] & 0.544 & 0.799 \\
-  Central venous pressure, mmHg & 9.00 [6.00, 11.00] & 11.00 [7.00, 13.00] & 0.409 & 0.730 \\
-  Vasoactive-inotropic score & 6.00 [4.00, 12.00] & 8.00 [7.75, 13.25] & 0.141 & 0.664 \\
-  Norepinephrine, µg/kg/min & 0.06 [0.04, 0.10] & 0.08 [0.07, 0.09] & 0.188 & 0.664 \\
-  Epinephrine, µg/kg/min & 0.05 [0.02, 0.08] & 0.05 [0.05, 0.06] & 0.730 & 0.799 \\
-  Dobutamine, µg/kg/min & 2.03 [2.03, 2.03] &  &  &  \\
-  Milrinone, µg/kg/min & 0.10 [0.10, 0.10] &  &  &  \\
-  Vasopressin, IU/h & 2.00 [1.75, 2.25] &  &  &  \\
-  Platelet concentrates within 24 h, units & 0.00 [0.00, 0.00] & 0.00 [0.00, 0.00] & 0.405 & 0.730 \\
-  Red blood cell units within 24 h, units & 0.00 [0.00, 0.00] & 0.00 [0.00, 0.00] & 0.575 & 0.799 \\
-  Fresh frozen plasma within 24 h, units & 0.00 [0.00, 0.00] & 0.00 [0.00, 0.00] & 0.693 & 0.799 \\
-  Catecholamine trend: Decreasing & 123 (86.6\%) & 10 (83.3\%) & 0.576 & 0.799 \\
-  Catecholamine trend: Increasing & 4 (2.8\%) & 1 (8.3\%) &  &  \\
-  Catecholamine trend: Unchanged & 15 (10.6\%) & 1 (8.3\%) &  &  \\
-  &  &  &  &  \\
+  Arterial pO$_2$, mmHg & 168.00 [114.00, 237.00] & 149.00 [126.50, 227.50] & 0.960 \\
+  Arterial pCO$_2$, mmHg & 40.50 [36.52, 44.98] & 42.20 [37.88, 45.62] & 0.647 \\
+  Arterial pH & 7.39 [7.34, 7.43] & 7.36 [7.34, 7.36] & 0.185 \\
+  Lactate, mmol/L & 7.00 [6.00, 11.00] & 7.00 [6.00, 10.25] & 0.752 \\
+  White blood cells, K/µL & 13.55 [10.22, 16.90] & 16.25 [11.43, 19.18] & 0.315 \\
+  Hemoglobin, g/dL & 11.40 [10.30, 12.40] & 10.70 [9.88, 11.30] & 0.047 \\
+  Platelets, K/µL & 172.00 [136.25, 198.00] & 182.00 [163.00, 194.75] & 0.356 \\
+  aPTT, s & 40.25 [37.12, 44.58] & 41.00 [39.70, 47.67] & 0.224 \\
+  INR & 1.40 [1.30, 1.50] & 1.30 [1.18, 1.70] & 0.649 \\
+  Creatine kinase, U/L & 337.00 [210.00, 537.75] & 361.00 [240.25, 622.75] & 0.708 \\
+  CK-MB, U/L & 43.00 [29.00, 60.00] & 56.50 [48.75, 71.50] & 0.057 \\
+  AST, U/L & 39.50 [29.12, 62.65] & 47.10 [41.40, 80.00] & 0.209 \\
+  LDH, U/L & 261.50 [196.25, 375.25] & 336.00 [270.75, 374.00] & 0.135 \\
+  Creatinine, mg/dL & 0.85 [0.75, 1.00] & 0.86 [0.72, 1.15] & 0.767 \\
+  Heart rate, beats/min & 74.50 [62.00, 85.00] & 80.00 [70.50, 90.75] & 0.266 \\
+  Systolic blood pressure, mmHg & 121.00 [105.25, 138.75] & 115.50 [96.00, 126.25] & 0.256 \\
+  Diastolic blood pressure, mmHg & 62.00 [55.00, 71.75] & 59.00 [55.00, 66.50] & 0.544 \\
+  Central venous pressure, mmHg & 9.00 [6.00, 11.00] & 11.00 [7.00, 13.00] & 0.409 \\
+  Vasoactive-inotropic score & 6.00 [4.00, 12.00] & 8.00 [7.75, 13.25] & 0.141 \\
+  Norepinephrine, µg/kg/min & 0.06 [0.04, 0.10] & 0.08 [0.07, 0.09] & 0.188 \\
+  Epinephrine, µg/kg/min & 0.05 [0.02, 0.08] & 0.05 [0.05, 0.06] & 0.730 \\
+  Dobutamine, µg/kg/min & 2.03 [2.03, 2.03] &  & \\
+  Milrinone, µg/kg/min & 0.10 [0.10, 0.10] &  & \\
+  Vasopressin, IU/h & 2.00 [1.75, 2.25] &  & \\
+  Platelet concentrates within 24 h, units & 0.00 [0.00, 0.00] & 0.00 [0.00, 0.00] & 0.405 \\
+  Red blood cell units within 24 h, units & 0.00 [0.00, 0.00] & 0.00 [0.00, 0.00] & 0.575 \\
+  Fresh frozen plasma within 24 h, units & 0.00 [0.00, 0.00] & 0.00 [0.00, 0.00] & 0.693 \\
+  Catecholamine trend: Decreasing & 123 (86.6\%) & 10 (83.3\%) & 0.576 \\
+  Catecholamine trend: Increasing & 4 (2.8\%) & 1 (8.3\%) & \\
+  Catecholamine trend: Unchanged & 15 (10.6\%) & 1 (8.3\%) & \\
+  &  &  & \\
 \end{longtable}
 \endgroup
 
