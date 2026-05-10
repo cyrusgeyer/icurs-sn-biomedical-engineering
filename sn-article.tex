@@ -33,8 +33,8 @@
 
   \bigskip
 
-  Robin C.~Geyer\textsuperscript{1,2,\&,*},
-  Pia Lanmueller\textsuperscript{3,\&},
+  Robin C.~Geyer\textsuperscript{1,2,*},
+  Pia Lanmueller\textsuperscript{3},
   Svea Wilkending\textsuperscript{1},
   Maximilian Sch\"{o}ls\textsuperscript{4},
   Tobias R\"{o}schl\textsuperscript{3},
@@ -44,7 +44,7 @@
   Julia Vogt\textsuperscript{2},
   Volkmar Falk\textsuperscript{3},
   Joachim M.~Buhmann\textsuperscript{2},
-  Alexander Meyer\textsuperscript{1,3,*}
+  Alexander Meyer\textsuperscript{1,3}
 
   \bigskip
 
@@ -54,14 +54,13 @@
     \textsuperscript{3}Department of Cardiothoracic and Vascular Surgery, Deutsches Herzzentrum der Charit\'{e}, Charit\'{e} Universit\"atsmedizin Berlin, Berlin, Germany\\
     \textsuperscript{4}Clinic for Neurology with Experimental Neurology, Charit\'{e} Universit\"atsmedizin Berlin, Berlin, Germany\\
     \textsuperscript{5}Department of Cardiac Anesthesiology and Intensive Care Medicine, Deutsches Herzzentrum der Charit\'{e}, Charit\'{e} Universit\"atsmedizin Berlin, Berlin, Germany\\[0.4em]
-    \textsuperscript{\&}These authors contributed equally.\\
-    \textsuperscript{*}Corresponding authors. \TODO{add corresponding-author email addresses}
+    \textsuperscript{*}Corresponding author. robin.geyer@charite.de,
   \end{minipage}
 \end{center}
 
 \begin{center}
   \begin{minipage}{0.92\textwidth}
-    \textbf{Abstract.} Neurological complications pose a high risk after cardiac surgery. Early detection is crucial for intervention, but the immediate postoperative period is clinically silent: patients remain sedated, and established risk-stratification methods are lacking. Standard electronic health record data are insufficient. A candidate biomarker for early risk is vago-sympathetic imbalance with sympathetic predominance. Two modalities capture this state independently of patient wakefulness: physiological waveforms for beat-to-beat cardiovascular dynamics, and thermo-visual imaging using peripheral vasoconstriction as a proxy. Here, we report a multimodal bedside setup acquiring these signals alongside conventional clinical data. In 154 postoperative patients (12 with neurological complications), facial thermal gradients were significantly elevated in complication cases, whereas electronic health record and waveform features lacked discriminatory power. Temporal transformer models incorporating thermo-visual imaging discriminated complications within 10 minutes of admission (area under the receiver operating characteristic curve 0.73 $\pm$ 0.04), reaching 0.79 $\pm$ 0.03 at 90 minutes. Early facial peripheral cooling associates with postoperative neurological risk, highlighting the potential of non-contact multimodal monitoring during this vulnerable window.
+    \textbf{Abstract.} Neurological complications pose a high risk after cardiac surgery. Early detection is crucial for intervention, but the immediate postoperative period is clinically silent: patients remain sedated, and established risk-stratification methods are lacking. Standard electronic health record data are insufficient. A candidate biomarker for early risk is autonomic dysfunction with sympathetic predominance. Two modalities are assesed to capture this state independently of patient wakefulness: physiological waveforms for beat-to-beat cardiovascular dynamics, and thermo-visual imaging using peripheral vasoconstriction as a proxy for sympathetic predominance. Here, we report a multimodal bedside setup acquiring these signals alongside conventional clinical data. In 154 postoperative patients (12 with neurological complications), facial thermal gradients were significantly elevated in complication cases, whereas electronic health record and waveform features lacked discriminatory power. Temporal transformer models incorporating thermo-visual imaging discriminated complications within 10 minutes of admission (area under the receiver operating characteristic curve 0.73 $\pm$ 0.04), reaching 0.79 $\pm$ 0.03 at 90 minutes. Early facial peripheral cooling associates with postoperative neurological risk, highlighting the potential of non-contact multimodal monitoring during this vulnerable window.
   \end{minipage}
 \end{center}
 
@@ -75,12 +74,9 @@
 Neurological complications after cardiac surgery are associated with increased mortality, morbidity and healthcare use~\citep{arrowsmith2000central}. Early detection is crucial, as treatment-sensitive time windows narrow rapidly~\citep{saver2006time, saver2016time, selim2007perioperative}. In the immediate postoperative period, however, patients in the post-anaesthesia care unit (PACU) are typically sedated and mechanically ventilated. This creates a clinically silent window that limits neurological examination~\citep{salazar2001stroke, liu2022recent}. Deficits such as hemiparesis, seizures or delirium often only become apparent after emergence from anaesthesia. Established preoperative risk scores~\citep{euroscore2,sts2018} and bedside delirium screens~\citep{ely2001camicu,nudesc} do not provide continuous, real-time risk stratification during this interval~\citep{amundson2020timing}.
 
 % Introduce Sympathetic predominance as a marker that might me accesbale earlier (no interaction with a at least partially awake patient is needed – AND is indicative of neuro complications! So that is a great biomarker, one that might be accesbale way before emergence from anesthesia and which might correlate with neurological compolications.
-A candidate marker for early perioperative risk is sympathetic predominance. Elevated sympathetic activity occurs after cardiac surgery~\citep{hogue1994alterations, bauernschmitt2004impairment} and is linked to neurological injury, reflecting catecholamine release after cerebral ischaemia~\citep{jimenez2021cardiovascular, sposato2020post, de2015autonomic}, impaired cerebral autoregulation~\citep{chen2021autonomic, mankoo2023role, aaslid1989cerebral, lee2019dysfunctional, schramm2012impaired, longhitano2021cerebral} and inflammatory activation~\citep{mattimore2023delirium, staicu2025postoperative, hansen2025prediction, pongratz2014sympathetic, poredos2025inflammation}.
+Autonomic dysfunction is a signature of many neurological disorders or diseases~\citep{wehrwein2016overview}. Elevated sympathetic activity occurs after cardiac surgery~\citep{hogue1994alterations, bauernschmitt2004impairment} and is linked to neurological injury, reflecting catecholamine release after cerebral ischaemia~\citep{jimenez2021cardiovascular, sposato2020post, de2015autonomic}, impaired cerebral autoregulation~\citep{chen2021autonomic, mankoo2023role, aaslid1989cerebral, lee2019dysfunctional, schramm2012impaired, longhitano2021cerebral} and inflammatory activation~\citep{mattimore2023delirium, staicu2025postoperative, hansen2025prediction, pongratz2014sympathetic, poredos2025inflammation}.
 
-% This would have to be supported by a citation:
-%Crucially, autonomic dysregulation manifests independently of the patient's wakefulness, making it a viable target for continuous monitoring during the silent PACU window.
-
-Routine electronic health record (EHR) data do not reliably capture this dysregulation~\citep{seravalle2013assess}. To address this, we evaluated two complementary sensing modalities. First, physiological waveform data (PWF), including electrocardiography, arterial blood pressure and photoplethysmography, capturing beat-to-beat cardiovascular dynamics to estimate sympathovagal balance~\citep{colombo2015pulse, valenza2018ecg}. Second, thermo-visual imaging (TVI), capturing spatial skin-temperature gradients as a non-contact proxy for peripheral vasoconstriction and altered perfusion induced by sympathetic activation~\citep{guyenet2006sympathetic, sheng2018crosstalk}. TVI has previously shown promise in assessing peripheral haemodynamics and shock~\citep{jorge_non-contact_2021, predicting_shock_from_thermal_images, podlasek2025thermography}.
+Routine electronic health record (EHR) data do not reliably capture this dysregulation~\citep{zygmunt2010methods, seravalle2013assess}. No single method can entirely capture autonomic nervous system function and most tests require a fully awake patient~\citep{zygmunt2010methods}. Here we evaluate two complementary sensing modalities that do not require the patient to be awake. First, physiological waveform data (PWF), including electrocardiography, arterial blood pressure and photoplethysmography, capturing beat-to-beat cardiovascular dynamics to estimate sympathovagal balance~\citep{colombo2015pulse, valenza2018ecg, budidha2019photoplethysmography}, despite acknowledged limitations~\citep{zygmunt2010methods, ackermann2021commentary}. Second, thermo-visual imaging (TVI), capturing spatial skin-temperature gradients as a non-contact proxy for peripheral vasoconstriction and altered perfusion induced by sympathetic activation~\citep{guyenet2006sympathetic, sheng2018crosstalk}. TVI has previously shown promise in assessing peripheral haemodynamics and shock~\citep{jorge_non-contact_2021, predicting_shock_from_thermal_images, podlasek2025thermography}.
 Here we systematically assess the value of these modalities for early postoperative neurological risk stratification.
 
 \section*{Results}
@@ -95,13 +91,13 @@ EHR data provided low-frequency clinical measurements, laboratory values and tre
   \label{fig:overview}
 \end{figure*}
 
-Raw thermal video is high dimensional and affected by patient motion, occlusions and bedside equipment. To reduce these sources of variation, synchronised visual frames were used for three-dimensional face reconstruction, registration to the thermal frame and unwrapping into an anatomically standardised two-dimensional UV map (Fig.~\ref{fig:thermal-pipeline-vae}B). The resulting maps were encoded by a structured variational autoencoder (VAE). This isolates confounding variables such as tubes, fills in occlusions, and is trained without diagnostic labels (Fig.~\ref{fig:thermal-pipeline-vae}C,D).
+Raw thermal video is high dimensional and affected by patient motion, occlusions and bedside equipment. To reduce these sources of variation, synchronised visual frames were used for three-dimensional face reconstruction, registration to the thermal frame and unwrapping into an anatomically standardised two-dimensional UV map (Fig.~\ref{fig:thermal-pipeline}). The resulting maps were encoded using a heteroscedastic variational autoencoder (VAE) \cite{kingma2013auto}. This process isolated confounders such as medical tubes or facial hair and filled in occlusions (Fig.~\ref{fig:thermal-pipeline-vae}).
 
 \begin{figure*}[htbp!]
   \centering
   \includegraphics[width=0.5\textwidth]{figs/Thermal_pipeline.png}
-  \caption{lolo}
-  \label{fig:overview}
+  \caption{\textbf{Thermal processing pipeline:} Visual data was used for 3D face reconstruction, which was registered to the thermal stream. The 3D geometry was unwrapped into 2D UV-maps and encoded into a latent space via a pretrained VAE encoder.}
+  \label{fig:thermal-pipeline}
 \end{figure*}
 
 
@@ -110,9 +106,9 @@ The analysis included 154 postoperative cardiac surgery patients, of whom 12 dev
 \subsection*{Thermal gradients distinguish complication cases}
 EHR variables and waveform-derived haemodynamic features showed no statistically significant differences between groups after false-discovery-rate correction. Mean arterial pressure, pulse pressure and mean arterial blood pressure were similar between groups, and EHR variables including lactate, arterial blood gases, haemoglobin, creatinine, vasoactive-inotropic score, catecholamine doses and transfusion variables did not provide a corrected univariate signal (Table~\ref{tab:cohort_biomarkers}).
 
-% I think we need to intorduce these gradients here. What is core-peripheral, and what is the other other?
+In contrast, UV-standardised facial thermal gradients were statistically higher in patients with neurological complications. These gradients serve as a proxy for peripheral vasoconstriction by contrasting well-perfused reference regions (bladder or inner canthi) with acral areas (nose or cheeks). The core--peripheral temperature gradient is defined as the difference between the bladder-derived core temperature (recorded in the EHR) and the minimum temperature of the nose or cheeks. The canthal--peripheral gradient is the difference between the mean temperature of the inner canthi of the eyes and the minimum temperature of the nose or cheeks. The anatomical regions of interest can be automatically extracted because the UV mapping aligns them to fixed coordinates across all patients. Notably, the canthal--peripheral gradient can be computed entirely from the thermal image, providing a highly robust measurement that relies only on relative temperature differences rather than absolute calibration.
 
-In contrast, UV-standardised facial thermal gradients were statistically higher in patients with neurological complications. The core--peripheral temperature gradient was 3.39\,K [2.77, 4.31] in patients without neurological complications and 4.95\,K [4.55, 6.73] in patients with complications ($p<0.001$, $q<0.001$). The canthal--peripheral gradient was 2.77\,K [2.28, 3.25] versus 3.76\,K [3.38, 4.15] ($p=0.003$, $q=0.003$). These results indicate that facial thermal contrast, rather than routine haemodynamic or laboratory measurements, carried the strongest univariate signal in this cohort.
+The core--peripheral temperature gradient was 3.39\,K [2.77, 4.31] in patients without neurological complications and 4.95\,K [4.55, 6.73] in patients with complications ($p<0.001$, $q<0.001$). The canthal--peripheral gradient was 2.77\,K [2.28, 3.25] versus 3.76\,K [3.38, 4.15] ($p=0.003$, $q=0.003$). These results indicate that facial thermal contrast, rather than routine haemodynamic or laboratory measurements, carried the strongest univariate signal in this cohort.
 
 \begin{table*}[t]
   \caption{Selected cohort characteristics and postoperative biomarkers. Continuous variables are reported as median [interquartile range] and binary variables as $n$ (\%). P-values are from two-sided Mann--Whitney U tests for continuous variables, Fisher's exact tests for binary variables and chi-square tests for categorical variables with more than two levels. Q-values are Benjamini--Hochberg false-discovery-rate-adjusted p-values.}
@@ -154,7 +150,7 @@ In contrast, UV-standardised facial thermal gradients were statistically higher 
 
 To evaluate the predictive value of multimodal sensing, transformer-based classifiers were trained on all seven modality combinations using 12-fold cross-validation across seven random seeds, with each fold containing one neurological complication case. Each modality was projected through learned embedding layers into a shared latent space. The transformer processed sequential samples from admission up to the prediction time to output a binary neurological risk prediction. Data splits for the thermo-visual variational autoencoder were strictly matched across all modality combinations.
 
-Model discrimination was assessed using the area under the receiver operating characteristic curve (AUROC), a robust primary metric for strongly imbalanced cohorts~\citep{mcdermott2024closer}. Models relying solely on EHR, PWF, or their combination (EHR+PWF) yielded near-chance AUROC values across the early observation window (Table~\ref{tab:results_by_time}). Conversely, every modality combination incorporating TVI achieved higher discrimination. At 10\,min after PACU admission, the trimodal model reached an AUROC of 0.73 $\pm$ 0.04, compared with 0.55 $\pm$ 0.03 for EHR, 0.51 $\pm$ 0.03 for PWF and 0.70 $\pm$ 0.03 for TVI alone. At 90\,min, the trimodal model reached an AUROC of 0.79 $\pm$ 0.03, while TVI alone achieved 0.77 $\pm$ 0.02. Across the observation window, AUROC trajectories and ROC curves demonstrated consistent performance separation between models with and without TVI (Fig.~\ref{fig:auroc-roc}).
+Model discrimination was assessed using the area under the receiver operating characteristic curve (AUROC), a robust primary metric for strongly imbalanced cohorts~\citep{mcdermott2024closer, richardson2024receiver}. Models relying solely on EHR, PWF, or their combination (EHR+PWF) yielded near-chance AUROC values across the early observation window (Table~\ref{tab:results_by_time}). Conversely, every modality combination incorporating TVI achieved higher discrimination. At 10\,min after PACU admission, the trimodal model reached an AUROC of 0.73 $\pm$ 0.04, compared with 0.55 $\pm$ 0.03 for EHR, 0.51 $\pm$ 0.03 for PWF and 0.70 $\pm$ 0.03 for TVI alone. At 90\,min, the trimodal model reached an AUROC of 0.79 $\pm$ 0.03, while TVI alone achieved 0.77 $\pm$ 0.02. Across the observation window, AUROC trajectories and ROC curves demonstrated consistent performance separation between models with and without TVI (Fig.~\ref{fig:auroc-roc}).
 
 \begin{table*}[t]
   \caption{
@@ -289,136 +285,6 @@ Thermal camera values were converted to temperature using camera-specific calibr
 
 Visual frames were processed with three-dimensional face reconstruction to estimate facial geometry and pose~\citep{feng2018joint, Deng_2020_CVPR, guo2020towards}. The facial mesh was registered to the thermal image, and visible facial regions were unwrapped to a common UV coordinate system. Visibility masks indicated which UV pixels contained valid thermal measurements at each timepoint. This standardisation allowed facial regions to be compared across patients while reducing variation from head pose and camera position.
 
-\begin{figure*}[htbp]
-  \centering
-  \begin{tikzpicture}[
-      x=0.49cm,
-      y=0.45cm,
-      font=\normalfont\normalsize,
-      line cap=round,
-      line join=round,
-      every node/.style={align=center}
-    ]
-    \definecolor{panelgray}{RGB}{242,242,242}
-    \definecolor{arrowgray}{RGB}{191,191,191}
-    \definecolor{latentpink}{RGB}{241,218,234}
-    \definecolor{latentviolet}{RGB}{226,226,245}
-
-    \fill[panelgray] (0.00,0.00) rectangle (7.60,11.00);
-    \fill[panelgray] (8.15,0.00) rectangle (13.15,11.00);
-    \fill[panelgray] (13.70,0.00) rectangle (19.70,11.00);
-    \fill[panelgray] (20.25,0.00) rectangle (25.25,11.00);
-
-    \tikzset{panelletter/.style={font=\bfseries\small, anchor=north west, inner sep=0pt}}
-    \node[panelletter] at (0.25,10.75) {A};
-    \node[panelletter] at (8.40,10.75) {B};
-    \node[panelletter] at (13.95,10.75) {C};
-    \node[panelletter] at (20.50,10.75) {D};
-
-    \draw[line width=0.8pt, fill=white] (0.60,5.80) rectangle (6.40,10.10);
-    \draw[line width=0.8pt, fill=white] (0.60,1.10) rectangle (6.40,5.40);
-    \node at (3.50,7.95) {Visual};
-    \node at (3.50,3.25) {Thermal};
-
-    \path[fill=arrowgray, draw=none]
-    (6.80,1.20) -- (8.90,2.70) -- (8.90,8.50) -- (6.80,10.00) -- cycle;
-    \node[rotate=90] at (7.85,5.60) {Preprocessing};
-
-    \draw[line width=0.8pt, fill=white] (9.10,6.00) rectangle (12.20,9.10);
-    \draw[line width=0.8pt, fill=white] (9.10,2.10) rectangle (12.20,5.20);
-    \node[font=\bfseries] at (10.65,7.55) {$\mathbf{m}$};
-    \node[font=\bfseries] at (10.65,3.65) {$\mathbf{x}$};
-
-    \path[fill=arrowgray, draw=none]
-    (12.50,9.10) -- (14.40,8.00) -- (14.40,3.20) -- (12.50,2.10) -- cycle;
-    \node at (13.35,5.60) {$f_{\phi}$};
-
-    \draw[dashed, line width=0.8pt, dash pattern=on 4pt off 2pt, rounded corners=3pt]
-    (14.78,3.35) rectangle (15.64,5.55);
-    \fill[latentviolet] (14.98,6.85) rectangle (15.42,7.70);
-    \fill[latentviolet] (14.98,5.80) rectangle (15.42,6.65);
-    \fill[latentpink] (14.98,4.55) rectangle (15.42,5.40);
-    \fill[latentpink] (14.98,3.50) rectangle (15.42,4.35);
-    \draw[line width=0.8pt] (14.98,6.85) rectangle (15.42,7.70);
-    \draw[line width=0.8pt] (14.98,5.80) rectangle (15.42,6.65);
-    \draw[line width=0.8pt] (14.98,4.55) rectangle (15.42,5.40);
-    \draw[line width=0.8pt] (14.98,3.50) rectangle (15.42,4.35);
-
-    \node[anchor=west] at (15.65,7.28) {$\bm{\mu}_{v}$};
-    \node[anchor=west] at (15.65,6.23) {$\bm{\sigma}_{v}$};
-    \node[anchor=west] at (15.65,4.98) {$\bm{\mu}_{x}$};
-    \node[anchor=west] at (15.65,3.93) {$\bm{\sigma}_{x}$};
-    \node at (15.66,2.90) {$\mathbf{c}_{\mathrm{TVI}}$};
-
-    \draw[decorate, decoration={brace, amplitude=4pt}, line width=0.8pt]
-    (16.85,7.70) -- (16.85,5.80);
-    \draw[decorate, decoration={brace, amplitude=4pt}, line width=0.8pt]
-    (16.85,5.40) -- (16.85,3.50);
-
-    \node at (17.72,6.75) {$\mathbf{z}_{v}$};
-    \node at (17.72,4.45) {$\mathbf{z}_{x}$};
-
-    \draw[line width=0.8pt, fill=white] (18.00,6.30) rectangle (18.42,7.20);
-    \draw[line width=0.8pt, fill=white] (18.00,4.00) rectangle (18.42,4.90);
-
-    \path[fill=arrowgray, draw=none]
-    (20.80,6.00) -- (18.72,6.30) -- (18.72,7.20) -- (20.80,9.10) -- cycle;
-    \path[fill=arrowgray, draw=none]
-    (20.80,2.10) -- (18.72,4.00) -- (18.72,4.90) -- (20.80,5.20) -- cycle;
-
-    \node at (19.82,7.15) {$d_{\gamma}^{v}$};
-    \node at (19.82,4.05) {$d_{\theta}^{x}$};
-
-    \draw[line width=0.8pt, fill=white] (21.10,6.00) rectangle (24.20,9.10);
-    \draw[line width=0.8pt, fill=white] (21.10,2.10) rectangle (24.20,5.20);
-    \node[font=\bfseries] at (22.65,7.55) {$\mathbf{v}$};
-    \node[font=\bfseries] at (22.65,3.65) {$\hat{\mathbf{x}}$};
-
-    \def\meshimage#1{\includegraphics[width=1.64cm,height=1.64cm,keepaspectratio]{plot_components/230921128/5/mesh/#1}}
-    \tikzset{
-      meshcallout/.style={inner sep=0pt, outer sep=0pt},
-      meshprojectarrow/.style={fill=black!55, draw=white, line width=0.45pt}
-    }
-
-    \node[meshcallout, anchor=south] at (10.65,9.62) {\meshimage{visibility.png}};
-    \node[meshcallout, anchor=north] at (10.65,1.58) {\meshimage{original.png}};
-    \node[meshcallout, anchor=south] at (22.65,9.62) {\meshimage{variance2.png}};
-    \node[meshcallout, anchor=north] at (22.65,1.58) {\meshimage{our_vae.png}};
-    \path[meshprojectarrow]
-    (10.40,9.13) -- (10.90,9.13) -- (10.90,9.39) -- (11.08,9.39) --
-    (10.65,9.60) -- (10.22,9.39) -- (10.40,9.39) -- cycle;
-    \path[meshprojectarrow]
-    (10.40,2.07) -- (10.90,2.07) -- (10.90,1.81) -- (11.08,1.81) --
-    (10.65,1.60) -- (10.22,1.81) -- (10.40,1.81) -- cycle;
-    \path[meshprojectarrow]
-    (22.40,9.13) -- (22.90,9.13) -- (22.90,9.39) -- (23.08,9.39) --
-    (22.65,9.60) -- (22.22,9.39) -- (22.40,9.39) -- cycle;
-    \path[meshprojectarrow]
-    (22.40,2.07) -- (22.90,2.07) -- (22.90,1.81) -- (23.08,1.81) --
-    (22.65,1.60) -- (22.22,1.81) -- (22.40,1.81) -- cycle;
-  \end{tikzpicture}%
-  \caption{Thermo-visual standardisation and structured representation learning.
-    \textbf{A,} Synchronised visual and thermal video streams are acquired at
-    the bedside. \textbf{B,} Visual face reconstruction is registered to the
-    thermal frame and used to unwrap visible facial temperature measurements
-    into a thermal UV map $\mathbf{x}$, together with a visibility mask
-    $\mathbf{m}$. \textbf{C,} A
-    structured variational autoencoder maps the UV inputs to complementary
-    latent subspaces that separate nuisance variation from physiological
-    thermal structure; the TVI descriptor is formed from the physiological
-    posterior. \textbf{D,} The variance decoder outputs the UV map
-    $\mathbf{v}$, and the mean decoder outputs the reconstructed thermal UV map
-    $\hat{\mathbf{x}}$. Adjacent rendered meshes illustrate representative
-    reprojections of the actual data: the input thermal distribution shows a
-    partly occluded face with the head tilted to the right and tube or tape
-    artefacts near the patient's right lower mouth corner, whereas the mean
-    decoder reconstructs an occlusion- and confounder-free facial temperature
-    distribution and the variance map captures the confounding tube.
-    Acquisition encodings and representation dimensions are provided in
-  Supplementary Note~2.}
-  \label{fig:thermal-pipeline-vae}
-\end{figure*}
-
 \subsection*{Structured thermal representation learning}
 
 Thermal UV maps were encoded with a structured variational autoencoder (VAE)~\citep{kingma2013auto}. Let $\mathbf{x}\in\mathbb{R}^{D}$ denote the vectorised UV temperature map of a single frame, with $D$ the number of UV pixels, and let $\mathbf{m}\in\{0,1\}^{D}$ denote the associated binary visibility mask, where $m_d=1$ indicates that UV pixel $d$ contained a valid thermal measurement and $m_d=0$ otherwise. The encoder $f_{\phi}$ with parameters $\phi$ mapped each input to two Gaussian posteriors,
@@ -492,11 +358,11 @@ Continuous variables are reported as medians with interquartile ranges, and bina
 
 Further information on research design is available in the Nature Portfolio Reporting Summary linked to this article. \TODO{complete and submit the Reporting Summary form}
 
-\section**{Data availability}
+\section*{Data availability}
 
 The processed data supporting the main results are included in the manuscript and Supplementary Information. Source data for the figures and tables will be provided with the paper. Raw patient video, waveform and EHR data are not publicly available because they contain sensitive health information and identifiable imaging data. Access for research purposes may be requested from the corresponding authors and is subject to institutional review, ethics approval and data-use agreements.
 
-\section**{Code availability}
+\section*{Code availability}
 
 Custom code was used for data acquisition, thermal preprocessing, representation learning, model training and statistical analysis. The analysis code required to reproduce the reported aggregate results will be made available in a DOI-minting repository before publication. Components that interface with hospital information systems or contain security-sensitive acquisition details are available from the corresponding authors on reasonable request, subject to institutional approval.
 
@@ -818,42 +684,228 @@ Custom code was used for data acquisition, thermal preprocessing, representation
   \bibitem{de2015autonomic}
   De Raedt S, De Vos A, De Keyser J (2015) Autonomic dysfunction in acute ischemic stroke: an underexplored therapeutic area? Journal of the neurological sciences 348(1-2):24--34
 
+  \bibitem{wehrwein2016overview}
+  Wehrwein EA, Orer HS, Barman SM (2016) Overview of the anatomy, physiology, and pharmacology of the autonomic nervous system. Comprehensive physiology 6(3):1239--1278
+
+  \bibitem{zygmunt2010methods}
+  Zygmunt A, Stanczyk J (2010) Methods of evaluation of autonomic nervous system function. Archives of Medical Science 6(1):11--18
+
+  \bibitem{budidha2019photoplethysmography}
+  Budidha K, Kyriacou PA (2019) Photoplethysmography for quantitative assessment of sympathetic nerve activity (SNA) during cold stress. Frontiers in Physiology 9:1863
+
+  \bibitem{ackermann2021commentary}
+  Ackermann S, Laborde S, Borges U, Mosley E (2021) Commentary: Photoplethysmography for quantitative assessment of sympathetic nerve activity (SNA) during cold stress. Frontiers in Physiology 12:602745
+
+  \bibitem{richardson2024receiver}
+  Richardson E, Trevizani R, Greenbaum JA, et~al (2024) The receiver operating characteristic curve accurately assesses imbalanced datasets. Patterns 5(6)
+
 \end{thebibliography}
 
-\section**{Acknowledgements}
+\section*{Acknowledgements}
 
 The authors thank the clinical, nursing, medical technology and information technology teams at the Deutsches Herzzentrum der Charit\'{e} for supporting bedside data acquisition. \TODO{add funding statements and grant numbers according to funder requirements}
 
-\section**{Author contributions}
+\section*{Author contributions}
 
 R.C.G., P.L. and A.M. conceived the study. R.C.G. developed the acquisition and analysis pipeline, performed machine-learning analyses and drafted the manuscript. P.L., M.S., T.R., J.M., M.H., B.O., V.F. and A.M. contributed to clinical study design, data acquisition and clinical interpretation. S.W. contributed to data processing and analysis. J.V. and J.M.B. contributed to machine-learning methodology and supervision. R.C.G., P.L. and A.M. interpreted the results. All authors reviewed and approved the manuscript. \TODO{confirm author contributions before submission}
 
-\section**{Competing interests}
+\section*{Competing interests}
 
 The authors declare no competing interests. \TODO{confirm competing interest statement with all authors}
 
-\section**{Additional information}
+\section*{Additional information}
 
 Supplementary information is available for this paper. Correspondence and requests for materials should be addressed to R.C.G. and A.M. \TODO{add corresponding author email addresses in the submission system or manuscript metadata}
 
 \clearpage
-\section**{Supplementary Information}
+\section*{Supplementary Information}
 
-\subsection**{Supplementary Note 1: Thermal calibration}
+\subsection*{Bedside acquisition system}
 
-The thermal camera recorded raw emissive-power values, which were converted to temperature before facial UV mapping. Camera-specific calibration coefficients were extracted from the thermal stream. Within each calibration segment, temperature $T$ and raw power $P$ were related by
+The multimodal acquisition platform used a compact bedside computing unit (Zotac Z-box) as the local integration node for thermo-visual imaging (TVI), physiological waveform data (PWF) and electronic health record (EHR) extraction. The unit was equipped with an NVIDIA RTX 2070 GPU, 32 GB RAM and an Intel Core i9 processor, and ran a Linux-based acquisition environment. It operated within the secure internal hospital network without external internet access and was synchronised to the hospital's Network Time Protocol (NTP) server. This NTP-synchronised system clock provided the shared time base for the three data streams.
+
+The computer, display, imaging hardware and cabling were mounted on a mobile camera arm designed for space-constrained PACU use. The arm provided an approximate 2\,m reach and positioned the imaging sensors above the patient bed at approximately 2.2\,m height, allowing non-contact facial imaging while reducing bedside cable clutter. A monitor attached to the acquisition unit provided the graphical interface for starting and stopping recordings and for displaying acquisition status. Remote access within the hospital network was used for maintenance and troubleshooting.
+
+Waveform acquisition used GE Carescape B650 bedside monitors and VSCapture, an open-source waveform export tool. The monitor export interface required a USB-to-serial adapter recognised by the monitor (ATEN UC-232A). The exported waveforms were timestamped on the bedside unit rather than with the monitor clock, as described below.
+
+\subsection*{Thermo-visual acquisition, calibration and storage}
+
+Thermal imaging was performed with a FLUKE thermal imaging system (\TODO{insert exact thermal camera model}) connected to the bedside acquisition unit by Ethernet. The thermal stream was acquired at $640\times480$ pixels with 16-bit grayscale depth. A paired visual stream was acquired at 1080p resolution as YUV422 8-bit raw frames.
+
+The thermal camera recorded a raw emissive-power surrogate rather than temperature directly. Camera-specific calibration information was embedded in the thermal stream and extracted at the start of each acquisition session. Within each calibration segment, temperature $T$ and raw power $P$ were related by
 \[
   P(T) = u_0 + u_1T + u_2T^2,
 \]
-and the corresponding temperature was obtained by inverting this quadratic relation. Thermal measurements were then corrected using standard radiative-transfer terms for skin emissivity, ambient radiation and atmospheric transmission. Human skin was modelled as an opaque diffuse surface with emissivity close to 0.98. The camera-to-face path length was approximately 1\,m, and the controlled clinical environment was assumed to have stable ambient temperature. These corrections were applied before extracting facial temperature gradients and before training the thermal representation model.
+and temperature was obtained by inverting the quadratic relation,
+\[
+  T = \frac{-u_1 + \sqrt{u_1^2 - 4u_2u_0 + 4u_2P}}{2u_2}.
+\]
+The segment-specific coefficients $u_0$, $u_1$ and $u_2$ were selected according to the power interval containing the measured value.
 
-\subsection**{Supplementary Note 2: Acquisition encodings and representation dimensions}
+Because the calibration reference differs from clinical facial imaging, the raw thermal measurements were corrected for skin emissivity, reflected ambient radiation and atmospheric transmission. Human skin was modelled as an opaque diffuse surface with emissivity close to 0.98. The observed power was represented as
+\[
+  P_{\mathrm{obs}} = (1-\tau_{\mathrm{air}})P_{\mathrm{air}} +
+  \tau_{\mathrm{air}}\left[(1-\varepsilon_{\mathrm{skin}})P_{\mathrm{bkgd}} +
+  \varepsilon_{\mathrm{skin}}P_{\mathrm{skin}}\right],
+\]
+where $\tau_{\mathrm{air}}$ denotes air transmissivity, $P_{\mathrm{air}}$ thermal emission from the intervening air, $P_{\mathrm{bkgd}}$ reflected background radiation and $P_{\mathrm{skin}}$ the blackbody-equivalent skin power. Solving for $P_{\mathrm{skin}}$ gave the corrected power used for temperature conversion. The controlled clinical environment was assumed to have stable ambient temperature of approximately $24\,^\circ\mathrm{C}$ and relative humidity of approximately 50\%, and the camera-to-face path length was estimated from the face-tracking pipeline. In a preliminary check with adhesive skin-temperature sensors in one patient, corrected thermal measurements were within approximately 1\,K of the sensor readings, whereas uncorrected measurements differed by approximately 2--3\,K.
 
-Visual frames are used to register a three-dimensional facial mesh to the thermal video and unwrap each frame to an anatomically standardised two-dimensional UV temperature map. Each UV map is encoded by a structured variational autoencoder with one encoder and two decoders that disentangles physiological thermal structure from confounders such as adhesive tape, oxygen tubing and partial occlusions, building on heteroscedastic uncertainty modelling~\citep{kendall2017uncertainties} and inductive-bias-driven disentanglement~\citep{higgins2017beta,locatello2019challenging}. Temporal structure of the physiological subspace is encouraged by a contrastive objective~\citep{oord2018representation} that uses earlier UV maps from the same patient as positives~\citep{qian2021spatiotemporal}. Modality-specific feature vectors are then projected through embedding layers into a shared transformer encoder~\citep{vaswani2017attention,song2018attend} that returns a continuously updated binary neurological-risk prediction. We evaluate this pipeline in 154 postoperative cardiac surgery patients, including 12 with neurological complications, and contrast all seven combinations of EHR, PWF and TVI.
+Both imaging streams were compressed during acquisition in one-minute segments. Visual frames were encoded as HEVC/H.265 MP4 video using the NVIDIA NVENC encoder with CRF 30. Thermal frames were stored in a YUV420 12-bit representation by scaling the thermal signal into the luminance channel and setting both chrominance channels to 2048, then compressed with the CPU-based x265 encoder in lossless mode (CRF 0). This preserved quantitative thermal gradients while keeping continuous recordings manageable for storage and downstream processing.
 
-The visual imaging stream was acquired at 1080p resolution as YUV422 8-bit raw frames. Frames were buffered into one-minute segments and compressed in real time as HEVC/H.265 MP4 video using the NVIDIA NVENC encoder with CRF 30. The thermal stream was acquired at $640\times480$ pixels with 16-bit grayscale depth. Thermal frames were stored in a YUV420 12-bit representation by scaling the thermal signal into the luminance channel and setting both chrominance channels to 2048, then compressed with the CPU-based x265 encoder in lossless mode (CRF 0).
+\subsection*{Facial registration, autofocus and UV mapping}
+\label{sec:registration}
 
-For thermal representation learning, the visible face was unwrapped into $64\times64$ UV maps. The visibility mask $\mathbf{m}\in\{0,1\}^{64\times64}$ indicated valid facial measurements, and the temperature map $\mathbf{x}\in\mathbb{R}^{64\times64}$ contained the corresponding thermal values. The structured VAE produced posterior mean and scale vectors for the nuisance and physiological subspaces; each vector ($\bm{\mu}_{v}$, $\bm{\sigma}_{v}$, $\bm{\mu}_{x}$ and $\bm{\sigma}_{x}$) was 50-dimensional. The downstream TVI feature vector used only the posterior parameters of the physiological subspace, $\mathbf{c}_{\mathrm{TVI}}=\left[\bm{\mu}_{x}^{\top},\bm{\sigma}_{x}^{\top}\right]^{\top}$.
+The visual stream was processed with a real-time dense 3D face alignment model~\citep{guo2020towards}. For each frame, the model estimated subject-specific geometry, expression and pose. This reconstruction provided the facial surface and anatomical coordinate frame used to organise the thermal measurements.
+
+Thermal registration required additional handling because the visual and thermal cameras did not share an optical axis, and because the thermal lens had a narrow depth of field with a focus-dependent focal length. We therefore used an automated shape-through-focus procedure at the start of each recording. The thermal camera swept a predefined set of focus positions; at each position, a thermal image was acquired and scored using an image-gradient sharpness metric. The focus setting with the highest sharpness was selected. At this setting, the 3D facial reconstruction was used to estimate patient-specific facial scale, which served as a reference for camera-to-face distance estimation during the recording. As the patient's head position changed, the system updated the distance estimate from the tracked visual face size and adjusted the thermal focus and registration parameters accordingly.
+
+For each thermal frame, visible facial surface elements were mapped into a common UV coordinate system. This representation assigns corresponding anatomical regions, such as the eyes, nose and cheeks, to consistent coordinates across frames and patients. Visibility was determined geometrically by testing whether a facial surface element was exposed to the thermal camera or occluded by another part of the reconstructed face. The resulting UV maps were stored at $256\times256$ resolution during acquisition and resampled to $64\times64$ temperature maps for representation learning.
+
+This UV representation also reduced identifiability of the stored thermal data. The transformation preserved local temperature values in a standard anatomical coordinate system but discarded subject-specific three-dimensional facial geometry, pose and visual appearance. Consequently, re-identification from the UV temperature maps alone would be very difficult, and is not expected to be feasible with reasonable effort.
+
+\subsection*{Thermal representation learning}
+
+For representation learning, the visible face was represented as a $64\times64$ UV temperature map $\mathbf{x}$ and a corresponding binary visibility mask $\mathbf{m}$. These maps were encoded by the structured variational autoencoder described in Methods, with separate physiological and nuisance latent subspaces. The physiological subspace captured reproducible facial thermal structure, whereas the nuisance subspace modelled variation from occlusions, tubes, adhesive material, facial hair and motion-related artefacts. The posterior mean and scale vectors of each subspace were 50-dimensional. Only the posterior parameters of the physiological subspace were propagated to the prediction model, giving $\mathbf{c}_{\mathrm{TVI}}=\left[\bm{\mu}_{x}^{\top},\bm{\sigma}_{x}^{\top}\right]^{\top}\in\mathbb{R}^{100}$ (Figure~\ref{fig:thermal-pipeline-vae}).
+
+
+\begin{figure*}[htbp]
+  \centering
+  \begin{tikzpicture}[
+      x=0.49cm,
+      y=0.45cm,
+      font=\normalfont\normalsize,
+      line cap=round,
+      line join=round,
+      every node/.style={align=center}
+    ]
+    \definecolor{panelgray}{RGB}{242,242,242}
+    \definecolor{arrowgray}{RGB}{191,191,191}
+    \definecolor{latentpink}{RGB}{241,218,234}
+    \definecolor{latentviolet}{RGB}{226,226,245}
+
+    \fill[panelgray] (0.00,0.00) rectangle (7.60,11.00);
+    \fill[panelgray] (8.15,0.00) rectangle (13.15,11.00);
+    \fill[panelgray] (13.70,0.00) rectangle (19.70,11.00);
+    \fill[panelgray] (20.25,0.00) rectangle (25.25,11.00);
+
+    \tikzset{panelletter/.style={font=\bfseries\small, anchor=north west, inner sep=0pt}}
+    \node[panelletter] at (0.25,10.75) {A};
+    \node[panelletter] at (8.40,10.75) {B};
+    \node[panelletter] at (13.95,10.75) {C};
+    \node[panelletter] at (20.50,10.75) {D};
+
+    \draw[line width=0.8pt, fill=white] (0.60,5.80) rectangle (6.40,10.10);
+    \draw[line width=0.8pt, fill=white] (0.60,1.10) rectangle (6.40,5.40);
+    \node at (3.50,7.95) {Visual};
+    \node at (3.50,3.25) {Thermal};
+
+    \path[fill=arrowgray, draw=none]
+    (6.80,1.20) -- (8.90,2.70) -- (8.90,8.50) -- (6.80,10.00) -- cycle;
+    \node[rotate=90] at (7.85,5.60) {Preprocessing};
+
+    \draw[line width=0.8pt, fill=white] (9.10,6.00) rectangle (12.20,9.10);
+    \draw[line width=0.8pt, fill=white] (9.10,2.10) rectangle (12.20,5.20);
+    \node[font=\bfseries] at (10.65,7.55) {$\mathbf{m}$};
+    \node[font=\bfseries] at (10.65,3.65) {$\mathbf{x}$};
+
+    \path[fill=arrowgray, draw=none]
+    (12.50,9.10) -- (14.40,8.00) -- (14.40,3.20) -- (12.50,2.10) -- cycle;
+    \node at (13.35,5.60) {$f_{\phi}$};
+
+    \draw[dashed, line width=0.8pt, dash pattern=on 4pt off 2pt, rounded corners=3pt]
+    (14.78,3.35) rectangle (15.64,5.55);
+    \fill[latentviolet] (14.98,6.85) rectangle (15.42,7.70);
+    \fill[latentviolet] (14.98,5.80) rectangle (15.42,6.65);
+    \fill[latentpink] (14.98,4.55) rectangle (15.42,5.40);
+    \fill[latentpink] (14.98,3.50) rectangle (15.42,4.35);
+    \draw[line width=0.8pt] (14.98,6.85) rectangle (15.42,7.70);
+    \draw[line width=0.8pt] (14.98,5.80) rectangle (15.42,6.65);
+    \draw[line width=0.8pt] (14.98,4.55) rectangle (15.42,5.40);
+    \draw[line width=0.8pt] (14.98,3.50) rectangle (15.42,4.35);
+
+    \node[anchor=west] at (15.65,7.28) {$\bm{\mu}_{v}$};
+    \node[anchor=west] at (15.65,6.23) {$\bm{\sigma}_{v}$};
+    \node[anchor=west] at (15.65,4.98) {$\bm{\mu}_{x}$};
+    \node[anchor=west] at (15.65,3.93) {$\bm{\sigma}_{x}$};
+    \node at (15.66,2.90) {$\mathbf{c}_{\mathrm{TVI}}$};
+
+    \draw[decorate, decoration={brace, amplitude=4pt}, line width=0.8pt]
+    (16.85,7.70) -- (16.85,5.80);
+    \draw[decorate, decoration={brace, amplitude=4pt}, line width=0.8pt]
+    (16.85,5.40) -- (16.85,3.50);
+
+    \node at (17.72,6.75) {$\mathbf{z}_{v}$};
+    \node at (17.72,4.45) {$\mathbf{z}_{x}$};
+
+    \draw[line width=0.8pt, fill=white] (18.00,6.30) rectangle (18.42,7.20);
+    \draw[line width=0.8pt, fill=white] (18.00,4.00) rectangle (18.42,4.90);
+
+    \path[fill=arrowgray, draw=none]
+    (20.80,6.00) -- (18.72,6.30) -- (18.72,7.20) -- (20.80,9.10) -- cycle;
+    \path[fill=arrowgray, draw=none]
+    (20.80,2.10) -- (18.72,4.00) -- (18.72,4.90) -- (20.80,5.20) -- cycle;
+
+    \node at (19.82,7.15) {$d_{\gamma}^{v}$};
+    \node at (19.82,4.05) {$d_{\theta}^{x}$};
+
+    \draw[line width=0.8pt, fill=white] (21.10,6.00) rectangle (24.20,9.10);
+    \draw[line width=0.8pt, fill=white] (21.10,2.10) rectangle (24.20,5.20);
+    \node[font=\bfseries] at (22.65,7.55) {$\mathbf{v}$};
+    \node[font=\bfseries] at (22.65,3.65) {$\hat{\mathbf{x}}$};
+
+    \def\meshimage#1{\includegraphics[width=1.64cm,height=1.64cm,keepaspectratio]{plot_components/230921128/5/mesh/#1}}
+    \tikzset{
+      meshcallout/.style={inner sep=0pt, outer sep=0pt},
+      meshprojectarrow/.style={fill=black!55, draw=white, line width=0.45pt}
+    }
+
+    \node[meshcallout, anchor=south] at (10.65,9.62) {\meshimage{visibility.png}};
+    \node[meshcallout, anchor=north] at (10.65,1.58) {\meshimage{original.png}};
+    \node[meshcallout, anchor=south] at (22.65,9.62) {\meshimage{variance2.png}};
+    \node[meshcallout, anchor=north] at (22.65,1.58) {\meshimage{our_vae.png}};
+    \path[meshprojectarrow]
+    (10.40,9.13) -- (10.90,9.13) -- (10.90,9.39) -- (11.08,9.39) --
+    (10.65,9.60) -- (10.22,9.39) -- (10.40,9.39) -- cycle;
+    \path[meshprojectarrow]
+    (10.40,2.07) -- (10.90,2.07) -- (10.90,1.81) -- (11.08,1.81) --
+    (10.65,1.60) -- (10.22,1.81) -- (10.40,1.81) -- cycle;
+    \path[meshprojectarrow]
+    (22.40,9.13) -- (22.90,9.13) -- (22.90,9.39) -- (23.08,9.39) --
+    (22.65,9.60) -- (22.22,9.39) -- (22.40,9.39) -- cycle;
+    \path[meshprojectarrow]
+    (22.40,2.07) -- (22.90,2.07) -- (22.90,1.81) -- (23.08,1.81) --
+    (22.65,1.60) -- (22.22,1.81) -- (22.40,1.81) -- cycle;
+  \end{tikzpicture}%
+  \caption{Thermo-visual standardisation and structured representation learning.
+    \textbf{A,} Synchronised visual and thermal video streams are acquired at
+    the bedside. \textbf{B,} Visual face reconstruction is registered to the
+    thermal frame and used to unwrap visible facial temperature measurements
+    into a thermal UV map $\mathbf{x}$, together with a visibility mask
+    $\mathbf{m}$. \textbf{C,} A
+    structured variational autoencoder maps the UV inputs to complementary
+    latent subspaces that separate nuisance variation from physiological
+    thermal structure; the TVI descriptor is formed from the physiological
+    posterior. \textbf{D,} The variance decoder outputs the UV map
+    $\mathbf{v}$, and the mean decoder outputs the reconstructed thermal UV map
+    $\hat{\mathbf{x}}$. Adjacent rendered meshes illustrate representative
+    reprojections of the actual data: the input thermal distribution shows a
+    partly occluded face with the head tilted to the right and tube or tape
+    artefacts near the patient's right lower mouth corner, whereas the mean
+    decoder reconstructs an occlusion- and confounder-free facial temperature
+  distribution and the variance map captures the confounding tube.}
+  \label{fig:thermal-pipeline-vae}
+\end{figure*}
+
+\subsection*{Physiological waveform acquisition}
+
+Using the bedside monitor interface described above, VSCapture continuously exported electrocardiography, invasive arterial blood pressure and plethysmographic waveforms during the PACU stay. The raw streams were stored with acquisition-system timestamps and subsequently passed to the waveform preprocessing pipeline for cardiac-cycle segmentation and feature extraction.
+
+The GE Carescape B650 monitors did not synchronise their internal clocks over the hospital network. Monitor-generated timestamps were therefore not used as the primary time base. Instead, VSCapture was modified to timestamp incoming waveform samples with the NTP-synchronised system time of the bedside computing unit. This placed the waveform stream on the same clock as the TVI and EHR streams before multimodal feature alignment.
+
+\subsection*{Electronic health record extraction}
+
+EHR data were extracted from the local mlife and medfolio clinical information systems. Database access used read-only connections through SQLAlchemy within the secure hospital network, with permissions restricted to the variables required for the study. The two systems stored complementary clinical information with different schemas and temporal resolutions; extracted records were therefore harmonised into a common patient-level timeline before feature construction. Time-stamped EHR observations were aligned to the same NTP-synchronised acquisition clock as the imaging and waveform streams, and the downstream EHR feature processing described in Methods was applied only after this harmonisation step.
+
 
 \begingroup
 \scriptsize
