@@ -98,7 +98,7 @@ EHR data provided low-frequency clinical measurements, laboratory values and tre
 
 \begin{figure*}[htbp!]
   \centering
-  \includegraphics[width=\textwidth]{figs/Overview.png}
+  \includegraphics[width=\textwidth]{figs/Overview_new.png}
   \caption{Integrated bedside pipeline for early postoperative neurological risk assessment. Thermo-visual imaging (TVI), physiological waveform data (PWF) and electronic health records (EHR) are synchronised during the post-anaesthesia care unit stay. Each stream is converted into modality-specific features, embedded into a shared latent representation and processed by a temporal transformer classifier for neurological risk prediction.}
   \label{fig:overview}
 \end{figure*}
@@ -108,11 +108,11 @@ Raw thermal video is high dimensional and affected by patient motion, occlusions
 \begin{figure*}[htbp!]
   \centering
   \includegraphics[width=0.5\textwidth]{figs/Thermal_pipeline.png}
-  \caption{\textbf{Thermal processing pipeline:} Visual data was used for 3D face reconstruction, which was registered to the thermal stream. The 3D geometry was unwrapped into 2D UV-maps and encoded into a latent space via a pretrained VAE encoder.}
+  \caption{\textbf{Thermal processing pipeline:} Visual data was used for 3D face reconstruction, which was registered to the thermal stream. The 3D geometry was unwrapped into 2D UV-maps and encoded into a latent space via a pretrained VAE encoder. Image obtained at Charité -- Universitätsmedizin Berlin; written informed consent for publication was obtained from the depicted individual.}
   \label{fig:thermal-pipeline}
 \end{figure*}
 
-The analysis included 154 postoperative cardiac surgery patients, of whom 12 developed postoperative neurological complications. The events comprised focal neurological deficits, seizures, delirium and radiologically confirmed cerebral ischaemia or haemorrhage (case summaries are provided in the Supplementary Information). Baseline age, sex, body mass index, cardiopulmonary bypass use and surgical procedure type did not differ statistically between patients with and without neurological complications (Table~\ref{tab:cohort_biomarkers}). Patients with neurological complications had longer intensive care unit and hospital stays, consistent with the clinical severity of the endpoint.
+The analysis included 154 postoperative cardiac surgery patients, of whom 12 developed postoperative neurological complications. The events comprised focal neurological deficits, seizures, delirium and radiologically confirmed cerebral ischaemia or haemorrhage (short case summaries are provided in Figure~\ref{fig:patient-ranks}). Baseline age, sex, body mass index, cardiopulmonary bypass use and surgical procedure type did not differ statistically between patients with and without neurological complications (Table~\ref{tab:cohort_biomarkers}). Patients with neurological complications had longer intensive care unit and hospital stays, consistent with the clinical severity of the endpoint.
 
 \subsection*{Thermal gradients distinguish complication cases}
 EHR variables and waveform-derived haemodynamic features largely showed no statistically significant differences between groups. While haemoglobin was marginally lower in the complication group ($p=0.047$), this effect does not survive adjustment for the multiple testing across all EHR parameters. Mean arterial pressure, pulse pressure and mean arterial blood pressure were similar between groups, and EHR variables including lactate, arterial blood gases, creatinine, vasoactive-inotropic score, catecholamine doses and transfusion variables did not provide a robust univariate signal (Table~\ref{tab:cohort_biomarkers}).
@@ -166,7 +166,7 @@ Model discrimination was assessed using the area under the receiver operating ch
 
 \begin{table*}[t]
   \caption{
-    AUROC from 10 to 90 min after PACU admission for all combinations of EHR, physiological waveforms (PWF), and thermo-visual imaging (TVI). Values are mean $\pm$ s.d. across seven random seeds. The highest mean AUROC in each row is shown in bold.
+    AUROC from 10 to 90\,min after PACU admission for models trained on different combinations of electronic health records (EHR), physiological waveforms (PWF) and thermo-visual imaging (TVI) to detect postoperative neurological complications. Values are mean $\pm$ s.d. across seven random seeds. The highest mean AUROC in each row is shown in bold. Models incorporating TVI achieve consistently higher AUROCs from as early as 10\,min after admission.
   }
   \label{tab:results_by_time}
   \centering
@@ -235,7 +235,7 @@ Model discrimination was assessed using the area under the receiver operating ch
 \begin{figure*}[htbp]
   \centering
   \includegraphics[width=0.95\textwidth]{figs/auroc_and_roc_combined.pdf}
-  \caption{Discrimination performance across modality combinations. Models were trained with all combinations of electronic health records (EHR), physiological waveform data (PWF) and thermo-visual imaging (TVI). Receiver operating characteristic curves are shown at 10 and 90\,min after post-anaesthesia care unit admission. AUROC trajectories summarize discrimination from 10 to 90\,min. Values are based on 12 neurological complication cases and 142 controls; summary statistics across random seeds are provided in Table~\ref{tab:results_by_time}.}
+  \caption{\textbf{Thermo-visual imaging improves early prediction of postoperative neurological complications.} Discrimination performance over time for models trained with different combinations of electronic health records (EHR), physiological waveform data (PWF), and thermo-visual imaging (TVI). The top row shows modality combinations without TVI; the bottom row shows combinations incorporating TVI. Receiver operating characteristic (ROC) curves are shown at 10\,min (left column) and 90\,min (right column) after post-anaesthesia care unit admission. The middle column shows the area under the ROC curve (AUROC) trajectories from 10 to 90\,min. Models without TVI performed only slightly better than chance throughout the observation period (AUROC $\le$ 0.63 at 90\,min). In contrast, models with TVI achieved strong early discrimination (AUROC $\approx$ 0.70 at 10\,min) that steadily improved over the course of the stay (AUROC up to 0.79 at 90\,min). Values are based on 12 neurological complication cases and 142 controls; summary statistics across random seeds are provided in Table~\ref{tab:results_by_time}.}
   \label{fig:auroc-roc}
 \end{figure*}
 
@@ -246,7 +246,7 @@ To estimate practical utility for early warning, we evaluated the models at a fi
 \begin{figure*}[htbp]
   \centering
   \includegraphics[width=\textwidth]{figs/patient_ranks_over_time.pdf}
-  \caption{Temporal evolution of patient risk ranks during the early postoperative period. Each line traces the relative risk rank assigned to an individual patient with a neurological complication across time for a model trained on a specific modality combination. Higher values denote a higher model-assigned risk rank. Curves summarize 12 biological cases with neurological complications across cross-validation folds and random seeds.}
+  \caption{Temporal evolution of relative risk ranks for individual patients with postoperative neurological complications during the early postoperative period. The upper row shows models trained without thermo-visual imaging (TVI), and the lower row shows models trained with TVI. Each panel corresponds to a specific modality combination, as indicated in the panel title, and reports mean relative ranks from 12-fold cross-validation averaged across seven random seeds. Colored lines trace the 12 complication cases (patients A--L); higher values indicate higher model-assigned risk. The legend summarises the clinical presentation of each case. Models incorporating TVI rank complication cases more consistently among the highest-risk patients than models without TVI.}
   \label{fig:patient-ranks}
 \end{figure*}
 
@@ -259,29 +259,29 @@ The patients with neurological complications were not enriched for higher vasoac
 \begin{figure*}[htbp]
   \centering
   \includegraphics[width=\textwidth]{figs/thermal_evolution_neuro_means.png}
-  \caption{Facial thermal maps over the first 3\,h in the post-anaesthesia care unit for patients with and without postoperative neurological complications. Rows 1 and 2 show mean facial temperature maps for controls (n=142) and complication cases (n=12) across consecutive 15-min intervals. Rows 3 and 4 show the corresponding standard deviations across patients. Row 5 shows bladder-derived core temperature, reported as the mean trajectory for each group. Temperature values are shown in kelvin where applicable.}
+  \caption{Mean facial thermal maps over the first 90\,min in the post-anaesthesia care unit for patients with and without postoperative neurological complications. Rows 1 and 2 show mean facial temperature maps for controls (n=142) and complication cases (n=12) across consecutive 15-min intervals. Rows 3 and 4 show the corresponding standard deviations across patients. Row 5 shows bladder-derived core temperature, reported as the mean trajectory for each group. Temperature values are shown in kelvin where applicable.}
   \label{fig:neuro-temp}
 \end{figure*}
 
 \section*{Discussion}
 
-This study associates early postoperative facial thermal patterns with neurological complications after cardiac surgery. In a cohort of 154 patients, TVI-derived facial temperature gradients differed between patients with and without neurological complications, whereas routine EHR variables and waveform-derived haemodynamic features did not show robust univariate differences. In temporal prediction models, modality combinations containing TVI discriminated neurological complications from the first 10\,min after PACU admission and ranked complication cases higher than models trained only on EHR or PWF data.
+Neurological complications after cardiac surgery remain a major source of morbidity and mortality, with early detection hampered by the clinically silent period following surgery~\citep{arrowsmith2000central, salazar2001stroke, liu2022recent, amundson2020timing}. Existing risk scores and bedside screens are limited in this context, as they rely on clinical signs that emerge only after anaesthesia wears off~\citep{euroscore2, sts2018, ely2001camicu, nudesc}. Recent work has highlighted the role of autonomic dysfunction and sympathetic predominance as early markers of neurological injury~\citep{wehrwein2016overview, jimenez2021cardiovascular, sposato2020post, de2015autonomic, mankoo2023role, mattimore2023delirium}. Our study addresses this gap by evaluating thermo-visual imaging (TVI) as a non-contact, real-time approach for early risk stratification.
 
-The main physiological observation was a pattern of peripheral facial cooling with preserved core temperature. Because sedated and mechanically ventilated patients cannot be examined neurologically, this interval is clinically important: risk information that is available before emergence from anaesthesia could support closer monitoring and prioritization for neurological assessment. The present data do not show that thermal imaging diagnoses neurological injury, nor do they define an intervention threshold. Rather, they indicate that non-contact facial thermometry contains information associated with neurological risk that is not captured by the routine variables evaluated here.
+We found that facial thermal gradients, derived from TVI, distinguished patients with neurological complications from controls within minutes of PACU admission, outperforming models based on routine electronic health record and waveform data. These findings suggest that TVI can provide actionable risk information during a period when conventional assessment is not feasible. The observed association between peripheral facial cooling and neurological risk is consistent with the hypothesis that autonomic changes can influence peripheral vasoconstriction ~\citep{wehrwein2016overview, sheng2018crosstalk, jorge_non-contact_2021}. Importantly, our findings pertain specifically to sedated and mechanically ventilated patients in the very controlled environment of a PACU, including standardized air conditioning and tightly regulated perioperative care, which minimizes external variability.
 
-One possible interpretation is that the thermal phenotype reflects autonomic or microvascular changes related to perioperative neurological injury. Sympathetic activation, impaired cerebral autoregulation, inflammation and catecholamine release have all been implicated in neurological complications and can influence peripheral perfusion. The observation that the strongest differences occurred in peripheral facial regions, rather than in bladder-derived core temperature, is consistent with this interpretation. However, the endpoint was clinically heterogeneous, including ischaemic events, seizures and delirium, and the shared thermal pattern should therefore be interpreted as a risk-associated phenotype rather than a single disease-specific mechanism.
+Several limitations should be considered. The study was conducted at a single tertiary center with a modest number of neurological complication cases, and retrospective analysis may introduce bias. The neurological endpoint was clinically heterogeneous, and the requirement for synchronized data acquisition may limit immediate applicability in all settings. External validation in larger, diverse cohorts is needed to establish generalizability and clinical utility.
 
-The study has limitations. It was performed at a single tertiary cardiac centre, with 12 neurological complication cases, and the models were evaluated retrospectively. Although cross-validation was designed to keep one complication case per fold and was repeated across random seeds, external validation is required to quantify generalisation across institutions, surgical case mix, camera placement, ventilation practices and postoperative workflows. The neurological endpoint was based on clinically recognised complications; subclinical events may have been missed. The acquisition system required synchronised imaging, waveform and EHR capture, which may not yet be available in many PACU environments. Finally, unmeasured confounding remains possible, and the association between facial thermal patterns and neurological injury should not be interpreted causally.
+Future research should focus on prospective, multicenter studies to confirm these findings, define clinically actionable thresholds, and assess the impact of TVI-guided monitoring on patient outcomes. Further work is also warranted to explore the physiological mechanisms underlying the observed associations.
 
-Future work should test the approach prospectively in larger multicentre cohorts, predefine clinically actionable risk thresholds and assess whether early TVI-informed monitoring changes time to neurological assessment or treatment. The present results support further evaluation of anatomically standardised facial thermometry as a non-contact source of postoperative risk information during a period in which conventional examination is limited.
+In summary, our results support the use of open, non-contact thermal imaging as a promising tool for early neurological risk assessment after cardiac surgery. By making our methods and resources—including the transformer, VAE code, and the entire TVI/PWF/EHR setup with hardware designs, acquisition software, and detailed user manuals—openly available (see Supplementary Information and our public repository), we aim to accelerate collaborative progress toward improved perioperative care.
 
 \section*{Methods}
 
-The pipeline comprised five stages: synchronised bedside acquisition of EHR, PWF and TVI streams during the PACU stay; thermal calibration and unwrapping of facial temperature into anatomically standardised UV maps; structured representation learning on the UV maps with a one-encoder-two-decoder VAE; modality-specific feature extraction yielding $\mathbf{c}_{\mathrm{TVI}}$, $\mathbf{c}_{\mathrm{PWF}}$ and $\mathbf{c}_{\mathrm{EHR}}$; and temporal classification with a multimodal transformer. The following subsections detail each stage; encoding, calibration and dimensioning details that are not essential to interpretation are deferred to the Supplementary Information.
+This observational study combined synchronised bedside acquisition of thermo-visual imaging (TVI), physiological waveform data (PWF) and electronic health record (EHR) data during the early PACU stay with a multimodal machine-learning pipeline for neurological risk prediction. Thermal and visual video were calibrated, registered and unwrapped into anatomically standardised facial UV temperature maps, which were encoded with a structured variational autoencoder to derive the TVI representation. In parallel, cycle-level waveform descriptors and standardised EHR variables were aggregated into modality-specific feature vectors. These TVI, PWF and EHR features were then projected into a shared temporal model that produced neurological risk estimates from admission up to the prediction time. The following subsections describe study design, acquisition, preprocessing, representation learning and model evaluation; implementation details that are not essential to interpretation are provided in the Supplementary Information.
 
 \subsection*{Study design and participants}
 
-This observational study included adult postoperative cardiac surgery patients monitored in the PACU. The analysis cohort comprised 154 patients, of whom 142 had no postoperative neurological complication and 12 had at least one. Data were acquired during routine postoperative care using synchronised bedside sensing and electronic record extraction. The study was approved by \TODO{insert ethics committee name and approval identifier}; written informed consent and data-use procedures followed the approved protocol.
+This observational study included adult postoperative cardiac surgery patients monitored in the PACU. The analysis cohort comprised 154 patients, of whom 142 had no postoperative neurological complication and 12 had at least one. Data were acquired during routine postoperative care using synchronised bedside sensing and electronic record extraction. The study was approved by the ethics committee of the Charité – Universitätsmedizin Berlin. Written informed consent was obtained from all patients. Data-use procedures followed the approved protocol.
 
 \subsection*{Outcome definition}
 
@@ -289,37 +289,37 @@ The primary endpoint was a postoperative neurological complication identified cl
 
 \subsection*{Bedside data acquisition}
 
-A mobile bedside acquisition system synchronised thermal and visual video, physiological waveforms and EHR data. The thermal and visual cameras were positioned above the patient bed to capture the exposed face without contact. Physiological waveforms were acquired from bedside monitors, including electrocardiography at 300\,Hz and invasive arterial blood pressure and photoplethysmography at 100\,Hz. EHR data were extracted from clinical information systems and time-aligned with the imaging and waveform streams.
+A mobile bedside acquisition system synchronised thermal and visual video, physiological waveforms and EHR data. A single thermo-visual camera system with separate thermal and visual lenses was positioned above the patient bed to capture the exposed face without contact. Physiological waveforms were acquired from bedside monitors, including electrocardiography at 300\,Hz and invasive arterial blood pressure and photoplethysmography at 100\,Hz. EHR data were extracted from clinical information systems and time-aligned with the imaging and waveform streams.
 
 \subsection*{Thermal preprocessing}
 
-Thermal camera values were converted to temperature using camera-specific calibration coefficients and standard corrections for skin emissivity, ambient radiation and atmospheric transmission (Supplementary Note 1).
+The raw power output of the thermal camera was converted to temperature values using camera-specific calibration coefficients and standard corrections for skin emissivity, ambient radiation and atmospheric transmission (Supplementary Note 1).
 
-Visual frames were processed with three-dimensional face reconstruction to estimate facial geometry and pose~\citep{feng2018joint, Deng_2020_CVPR, guo2020towards}. The facial mesh was registered to the thermal image, and visible facial regions were unwrapped to a common UV coordinate system. Visibility masks indicated which UV pixels contained valid thermal measurements at each timepoint. This standardisation allowed facial regions to be compared across patients while reducing variation from head pose and camera position.
+Visual frames were processed with three-dimensional face reconstruction to estimate facial geometry and pose~\citep{Deng_2020_CVPR, guo2020towards}. The facial mesh was registered to the thermal image, and visible facial regions were unwrapped to a common UV coordinate system. Visibility masks indicated which UV pixels contained valid thermal measurements at each timepoint. For representation learning, the resampled UV maps were normalised and non-visible pixels were set to zero. This standardisation allowed facial regions to be compared across patients while reducing variation from head pose and camera position.
 
 \subsection*{Structured thermal representation learning}
 
-Thermal UV maps were encoded with a structured variational autoencoder (VAE)~\citep{kingma2013auto}. Let $\mathbf{x}\in\mathbb{R}^{D}$ denote the vectorised UV temperature map of a single frame, with $D$ the number of UV pixels, and let $\mathbf{m}\in\{0,1\}^{D}$ denote the associated binary visibility mask, where $m_d=1$ indicates that UV pixel $d$ contained a valid thermal measurement and $m_d=0$ otherwise. The encoder $f_{\phi}$ with parameters $\phi$ mapped each input to two Gaussian posteriors,
+Thermal UV maps were encoded with a structured variational autoencoder (VAE)~\citep{kingma2013auto}. Let $w$ denote the side length of the square UV maps, with $w=64$ in our implementation. Let $\mathbf{m}\in\{0,1\}^{w\times w}$ denote the associated binary visibility mask, where $m_{ij}=1$ indicates that UV pixel $(i,j)$ contained a valid thermal measurement and $m_{ij}=0$ otherwise. Let $\mathbf{x}\in\mathbb{R}^{w\times w}$ denote the corresponding normalised UV temperature map after setting non-visible pixels to zero. The encoder $f_{\phi}$ with parameters $\phi$ was implemented with convolutional layers and took $\mathbf{x}$ as input, mapping each sample to two Gaussian posteriors,
 \[
   q_{\phi}(\mathbf{z}_{x}\mid\mathbf{x}) = \mathcal{N}\!\left(\bm{\mu}_{x},\,\mathrm{diag}(\bm{\sigma}_{x}^{2})\right), \qquad
   q_{\phi}(\mathbf{z}_{v}\mid\mathbf{x}) = \mathcal{N}\!\left(\bm{\mu}_{v},\,\mathrm{diag}(\bm{\sigma}_{v}^{2})\right),
 \]
 defined on two complementary latent subspaces. The subspace $\mathbf{z}_{x}\in\mathbb{R}^{L_{x}}$ was intended to capture physiological thermal structure, whereas $\mathbf{z}_{v}\in\mathbb{R}^{L_{v}}$ was intended to absorb spurious variation such as tubes, adhesive material, facial hair, occlusion or motion. Both subspaces were assigned standard normal priors, $p(\mathbf{z}_{x})=\mathcal{N}(\mathbf{0},\mathbf{I})$ and $p(\mathbf{z}_{v})=\mathcal{N}(\mathbf{0},\mathbf{I})$.
 
-Two separate decoder networks were used, each operating on a single latent subspace. A mean decoder $d_{\theta}^{x}$ with parameters $\theta$ took only $\mathbf{z}_{x}$ as input and produced the per-pixel reconstructed temperature map $\hat{x}_{d}(\mathbf{z}_{x})$, while a variance decoder $d_{\gamma}^{v}$ with parameters $\gamma$ took only $\mathbf{z}_{v}$ as input and produced the per-pixel variance $v_{d}(\mathbf{z}_{v})>0$. This architectural separation was a central inductive bias of the model: by construction, the physiological subspace $\mathbf{z}_{x}$ could not modulate pixel-wise uncertainty, and the spurious-variation subspace $\mathbf{z}_{v}$ could not contribute to the reconstructed mean temperature. The resulting heteroscedastic Gaussian likelihood was
+Two separate decoder networks were used, each operating on a single latent subspace. A mean decoder $d_{\theta}^{x}$ with parameters $\theta$ took only $\mathbf{z}_{x}$ as input and produced the reconstructed temperature map $\hat{\mathbf{x}}(\mathbf{z}_{x})\in\mathbb{R}^{w\times w}$, while a variance decoder $d_{\gamma}^{v}$ with parameters $\gamma$ took only $\mathbf{z}_{v}$ as input and produced the variance map $\mathbf{v}(\mathbf{z}_{v})\in\mathbb{R}_{>0}^{w\times w}$. This architectural separation was a central inductive bias of the model: by construction, the physiological subspace $\mathbf{z}_{x}$ could not modulate pixel-wise uncertainty, and the spurious-variation subspace $\mathbf{z}_{v}$ could not contribute to the reconstructed mean temperature. For pixel location $(i,j)$, the resulting heteroscedastic Gaussian likelihood was
 \[
-  p_{\theta,\gamma}(x_{d}\mid\mathbf{z}_{x},\mathbf{z}_{v}) = \mathcal{N}\!\left(\hat{x}_{d}(\mathbf{z}_{x}),\,v_{d}(\mathbf{z}_{v})\right),
+  p_{\theta,\gamma}(x_{ij}\mid\mathbf{z}_{x},\mathbf{z}_{v}) = \mathcal{N}\!\left(\hat{x}_{ij}(\mathbf{z}_{x}),\,v_{ij}(\mathbf{z}_{v})\right),
 \]
 which allowed the variance branch to localise high-uncertainty regions, such as occlusions or device artefacts, and to down-weight their contribution to the reconstruction loss without contaminating the physiological mean estimate. Up to additive constants, the negative log-likelihood evaluated only on visible pixels gave the masked heteroscedastic reconstruction loss
 \[
-  \mathcal{L}_{\mathrm{rec}} = \tfrac{1}{2}\sum_{d=1}^{D} m_{d}\left(\ln v_{d} + \frac{(x_{d}-\hat{x}_{d})^{2}}{v_{d}}\right).
+  \mathcal{L}_{\mathrm{rec}} = \tfrac{1}{2}\sum_{i=1}^{w}\sum_{j=1}^{w} m_{ij}\left(\ln v_{ij} + \frac{(x_{ij}-\hat{x}_{ij})^{2}}{v_{ij}}\right).
 \]
 
 The training objective combined the reconstruction term with subspace-specific Kullback--Leibler (KL) regularisers and a temporal contrastive term acting on the physiological latent subspace,
 \[
   \mathcal{L}_{\mathrm{VAE}} = \mathcal{L}_{\mathrm{rec}} + \mathcal{L}^{v}_{\mathrm{KL}} + (1-\kappa)\,\mathcal{L}^{x}_{\mathrm{KL}} + \kappa\,\mathcal{L}_{\mathrm{contr}}(\mathbf{z}_{x},\mathbf{z}'_{x}),
 \]
-with $\mathcal{L}^{x}_{\mathrm{KL}} = \mathrm{KL}\!\left(q_{\phi}(\mathbf{z}_{x}\mid\mathbf{x})\,\|\,p(\mathbf{z}_{x})\right)$ and $\mathcal{L}^{v}_{\mathrm{KL}}$ defined analogously for $\mathbf{z}_{v}$. The contrastive loss $\mathcal{L}_{\mathrm{contr}}$ was the InfoNCE objective~\citep{oord2018representation} computed on cosine similarities between the physiological embedding $\mathbf{z}_{x}$ of the current UV map and the embedding $\mathbf{z}'_{x}$ of a positive UV map sampled from the same patient at a preceding timepoint $t'<t$ with a time gap $t-t'$ drawn from an exponentially decaying distribution; negative samples were drawn from UV maps of other patients within the same minibatch. The scalar weight $\kappa\in[0,1]$ controlled the trade-off between contrastive structuring and KL regularisation of the physiological subspace; it was initialised at $\kappa=1$ and decayed exponentially towards $\kappa_{\mathrm{end}}=0.1$ over the course of training, so that the early phase emphasised semantically organised, deterministic embeddings and the later phase recovered a smooth, generative latent geometry~\citep{qian2021spatiotemporal}. Horizontal flipping and elastic deformations were applied as data augmentation during VAE training~\citep{ronneberger2015u}.
+with $\mathcal{L}^{x}_{\mathrm{KL}} = \mathrm{KL}\!\left(q_{\phi}(\mathbf{z}_{x}\mid\mathbf{x})\,\|\,p(\mathbf{z}_{x})\right)$ and $\mathcal{L}^{v}_{\mathrm{KL}}$ defined analogously for $\mathbf{z}_{v}$. The contrastive loss $\mathcal{L}_{\mathrm{contr}}$ was the InfoNCE objective~\citep{oord2018representation} computed on cosine similarities between the physiological embedding $\mathbf{z}_{x}$ of the current normalised UV map and the embedding $\mathbf{z}'_{x}$ of a positive UV map sampled from the same patient at a preceding timepoint $t'<t$ with a time gap $t-t'$ drawn from an exponentially decaying distribution; negative samples were drawn from UV maps of other patients within the same minibatch \cite{qian2021spatiotemporal}. The scalar weight $\kappa\in[0,1]$ controlled the trade-off between contrastive structuring and KL regularisation of the physiological subspace; it was initialised at $\kappa=1$ and decayed exponentially towards $\kappa_{\mathrm{end}}=0.1$ over the course of training, so that the early phase emphasised semantically organised, deterministic embeddings and the later phase recovered a smooth, generative latent geometry~\cite{geyer2025orthogonal, geyermeasuring}. Horizontal flipping and elastic deformations were applied as data augmentation during VAE training~\citep{ronneberger2015u}.
 
 The VAE was trained without neurological outcome labels. The TVI feature vector at prediction time $t$ was defined as the concatenation of the posterior parameters of the physiological subspace,
 \begin{equation}
@@ -792,7 +792,7 @@ Waveform acquisition used GE Carescape B650 bedside monitors and VSCapture, an o
 
 \subsection*{Thermo-visual acquisition, calibration and storage}
 
-Thermal imaging was performed with a FLUKE thermal imaging system (\TODO{insert exact thermal camera model}) connected to the bedside acquisition unit by Ethernet. The thermal stream was acquired at $640\times480$ pixels with 16-bit grayscale depth. A paired visual stream was acquired at 1080p resolution as YUV422 8-bit raw frames.
+Thermo-visual imaging was performed with a FLUKE camera system (\TODO{insert exact thermal camera model}) connected to the bedside acquisition unit by Ethernet. The system provided paired thermal and visual streams through separate thermal and visual lenses with offset optical axes. The thermal stream was acquired at $640\times480$ pixels with 16-bit grayscale depth, and the paired visual stream was acquired at 1080p resolution as YUV422 8-bit raw frames.
 
 The thermal camera recorded a raw emissive-power surrogate rather than temperature directly. Camera-specific calibration information was embedded in the thermal stream and extracted at the start of each acquisition session. Within each calibration segment, temperature $T$ and raw power $P$ were related by
 \[
@@ -819,15 +819,15 @@ Both imaging streams were compressed during acquisition in one-minute segments. 
 
 The visual stream was processed with a real-time dense 3D face alignment model~\citep{guo2020towards}. For each frame, the model estimated subject-specific geometry, expression and pose. This reconstruction provided the facial surface and anatomical coordinate frame used to organise the thermal measurements.
 
-Thermal registration required additional handling because the visual and thermal cameras did not share an optical axis, and because the thermal lens had a narrow depth of field with a focus-dependent focal length. We therefore used an automated shape-through-focus procedure at the start of each recording. The thermal camera swept a predefined set of focus positions; at each position, a thermal image was acquired and scored using an image-gradient sharpness metric. The focus setting with the highest sharpness was selected. At this setting, the 3D facial reconstruction was used to estimate patient-specific facial scale, which served as a reference for camera-to-face distance estimation during the recording. As the patient's head position changed, the system updated the distance estimate from the tracked visual face size and adjusted the thermal focus and registration parameters accordingly.
+Thermal registration required additional handling because the thermal and visual lenses of the camera system did not share an optical axis, and because the thermal lens had a narrow depth of field with a focus-dependent focal length. We therefore used an automated shape-through-focus procedure at the start of each recording. The thermal camera swept a predefined set of focus positions; at each position, a thermal image was acquired and scored using an image-gradient sharpness metric. The focus setting with the highest sharpness was selected. At this setting, the 3D facial reconstruction was used to estimate patient-specific facial scale, which served as a reference for camera-to-face distance estimation during the recording. As the patient's head position changed, the system updated the distance estimate from the tracked visual face size and adjusted the thermal focus and registration parameters accordingly.
 
-For each thermal frame, visible facial surface elements were mapped into a common UV coordinate system. This representation assigns corresponding anatomical regions, such as the eyes, nose and cheeks, to consistent coordinates across frames and patients. Visibility was determined geometrically by testing whether a facial surface element was exposed to the thermal camera or occluded by another part of the reconstructed face. The resulting UV maps were stored at $256\times256$ resolution during acquisition and resampled to $64\times64$ temperature maps for representation learning.
+For each thermal frame, visible facial surface elements were mapped into a common UV coordinate system. This representation assigns corresponding anatomical regions, such as the eyes, nose and cheeks, to consistent coordinates across frames and patients. Visibility was determined geometrically by testing whether a facial surface element was exposed to the thermal camera or occluded by another part of the reconstructed face. The resulting UV maps were stored at $256\times256$ resolution during acquisition and resampled to $w\times w$ temperature maps for representation learning, with $w=64$ in our implementation.
 
 This UV representation also reduced identifiability of the stored thermal data. The transformation preserved local temperature values in a standard anatomical coordinate system but discarded subject-specific three-dimensional facial geometry, pose and visual appearance. Consequently, re-identification from the UV temperature maps alone would be very difficult, and is not expected to be feasible with reasonable effort.
 
 \subsection*{Thermal representation learning}
 
-For representation learning, the visible face was represented as a $64\times64$ UV temperature map $\mathbf{x}$ and a corresponding binary visibility mask $\mathbf{m}$. These maps were encoded by the structured variational autoencoder described in Methods, with separate physiological and nuisance latent subspaces. The physiological subspace captured reproducible facial thermal structure, whereas the nuisance subspace modelled variation from occlusions, tubes, adhesive material, facial hair and motion-related artefacts. The posterior mean and scale vectors of each subspace were 50-dimensional. Only the posterior parameters of the physiological subspace were propagated to the prediction model, giving $\mathbf{c}_{\mathrm{TVI}}=\left[\bm{\mu}_{x}^{\top},\bm{\sigma}_{x}^{\top}\right]^{\top}\in\mathbb{R}^{100}$ (Figure~\ref{fig:thermal-pipeline-vae}).
+For representation learning, the visible face was represented as a normalised $w\times w$ UV temperature map $\mathbf{x}$, with $w=64$ in our implementation. Non-visible pixels were set to zero, and the corresponding binary visibility mask $\mathbf{m}$ was retained for the masked reconstruction objective. These maps were encoded by the structured variational autoencoder described in Methods, with separate physiological and nuisance latent subspaces. The physiological subspace captured reproducible facial thermal structure, whereas the nuisance subspace modelled variation from occlusions, tubes, adhesive material, facial hair and motion-related artefacts. The posterior mean and scale vectors of each subspace were 50-dimensional. Only the posterior parameters of the physiological subspace were propagated to the prediction model, giving $\mathbf{c}_{\mathrm{TVI}}=\left[\bm{\mu}_{x}^{\top},\bm{\sigma}_{x}^{\top}\right]^{\top}\in\mathbb{R}^{100}$ (Figure~\ref{fig:thermal-pipeline-vae}).
 
 \begin{figure*}[htbp]
   \centering
@@ -941,12 +941,12 @@ For representation learning, the visible face was represented as a $64\times64$ 
     \textbf{A,} Synchronised visual and thermal video streams are acquired at
     the bedside. \textbf{B,} Visual face reconstruction is registered to the
     thermal frame and used to unwrap visible facial temperature measurements
-    into a thermal UV map $\mathbf{x}$, together with a visibility mask
-    $\mathbf{m}$. \textbf{C,} A
-    structured variational autoencoder maps the UV inputs to complementary
-    latent subspaces that separate nuisance variation from physiological
-    thermal structure; the TVI descriptor is formed from the physiological
-    posterior. \textbf{D,} The variance decoder outputs the UV map
+    into a normalised thermal UV map $\mathbf{x}$ with non-visible pixels set
+    to zero, together with a visibility mask $\mathbf{m}$ used in the masked
+    reconstruction objective. \textbf{C,} A structured variational
+    autoencoder maps the normalised UV map to complementary latent subspaces
+    that separate nuisance variation from physiological thermal structure; the
+    TVI descriptor is formed from the physiological posterior. \textbf{D,} The variance decoder outputs the UV map
     $\mathbf{v}$, and the mean decoder outputs the reconstructed thermal UV map
     $\hat{\mathbf{x}}$. Adjacent rendered meshes illustrate representative
     reprojections of the actual data: the input thermal distribution shows a
@@ -1176,34 +1176,6 @@ EHR data were extracted from the local mlife and medfolio clinical information s
     \bottomrule
   \end{tabularx}
 \end{table*}
-
-\begin{table}[t]
-  \caption{
-    Clinical summaries of the patients with postoperative neurological complications listed in Table~\ref{tab:results_ranks_90min}.
-  }
-  \label{tab:patient_descriptions}
-  \centering
-  \footnotesize
-  \renewcommand{\arraystretch}{1.2}
-  \begin{tabularx}{\textwidth}{c|X}
-    \toprule
-    Patient & Description \\
-    \midrule
-    A & Right hemiparesis from left ICA occlusion, cerebral herniation, fatal outcome. \\
-    B & Hypoactive delirium with ACA/MCA/PCA watershed infarction and tetraparesis. \\
-    C & Hyperactive delirium. \\
-    D & Left-sided hemiparesis with right-sided hemispatial neglect. \\
-    E & Recurrent generalised tonic--clonic seizures. \\
-    F & Hyperactive delirium complicated by haematoma and haemothorax requiring reoperation. \\
-    G & Severe hyperactive delirium with risk of self-harm and harm to others, necessitating re-sedation. \\
-    H & Hyperactive delirium. \\
-    I & Hypoactive delirium with somnolence. \\
-    J & Left-sided hemiparesis without identifiable radiological correlate. \\
-    K & TIA with subtle motor deficit, left hemispatial neglect, and mild delirium. \\
-    L & Left hemiparesis from M3--M4 occlusion, no interventional target, with delirium. \\
-    \bottomrule
-  \end{tabularx}
-\end{table}
 
 \clearpage
 \begin{table*}[t]
